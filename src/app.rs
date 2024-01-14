@@ -1,13 +1,19 @@
-use crate::constant::{HEIGHT, WIDTH};
+use crate::{
+    drawable::Drawable,
+    ui::{draw_fps, StageUI},
+    window::Window,
+};
 
 use macroquad::prelude::*;
 
-pub struct App {}
+pub struct App {
+    window: Window,
+}
 
 impl App {
     /// Initialize Game state
-    pub fn new() -> App {
-        Self {}
+    pub fn new(window: Window) -> App {
+        Self { window }
     }
 
     /// This is where the update happen
@@ -16,12 +22,9 @@ impl App {
     /// This is where the draw happen
     pub async fn draw(&mut self) {
         clear_background(BLACK);
-        draw_text(
-            format!("{}", get_fps()).as_str(),
-            (WIDTH - 32) as f32,
-            (HEIGHT - 4) as f32,
-            32.0,
-            WHITE,
-        );
+
+        StageUI::draw(&self.window).await;
+
+        draw_fps(&self.window, 32.0, WHITE);
     }
 }
