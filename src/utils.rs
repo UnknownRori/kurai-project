@@ -21,6 +21,12 @@ pub fn setup() -> Result<(), color_eyre::Report> {
 
 /// Get the value from [`std::env::var`] variable if, it's doesn't exist set it into default value
 /// and return
+#[cfg(target_arch = "wasm32")]
+pub fn env(_key: &str, default: &str) -> String {
+    default.to_string()
+}
+
+#[cfg(not(target_arch = "wasm32"))]
 pub fn env(key: &str, default: &str) -> String {
     match std::env::var(key) {
         Ok(val) => val,
@@ -30,4 +36,3 @@ pub fn env(key: &str, default: &str) -> String {
         }
     }
 }
-
