@@ -1,4 +1,5 @@
 use scarlet_project::app::App;
+use scarlet_project::controls::Controls;
 use scarlet_project::utils::setup;
 use scarlet_project::window::{window_conf, Window};
 
@@ -9,7 +10,8 @@ async fn main() -> Result<(), color_eyre::Report> {
     setup()?;
 
     let window = Window::default();
-    let mut app = App::new(window);
+    let controls = Controls::default();
+    let mut app = App::new(window, controls);
 
     loop {
         app.update().await;
