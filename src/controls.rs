@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::{collections::HashMap, sync::Arc};
 
 use macroquad::input::{is_key_down, is_key_pressed, KeyCode};
 

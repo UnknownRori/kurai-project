@@ -1,3 +1,3 @@
-pub mod player;
+use crate::components::{Controllable, Movable, Player};
 
-pub trait Entity {}
+pub type PlayerEntity<'a> = (&'a Player, &'a Controllable, &'a Movable);
