@@ -7,7 +7,6 @@ edition = "2021"
 
 [dependencies]
 color-eyre = "0.6.2"
-hecs = "0.10.4"
 macroquad = { version = "0.4.4", features = ["audio", "backtrace", "log"] }
 rayon = "1.8.0"
 tracing = "0.1.40"
