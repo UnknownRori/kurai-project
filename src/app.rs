@@ -1,9 +1,8 @@
 use crate::{
-    components::{Controllable, Movable, Player},
-    controls::{self, Controls},
+    components::{Controllable, DummyDraw, Movable, Player, Position},
+    controls::Controls,
     drawable::Drawable,
-    entity::PlayerEntity,
-    system::update_player_move,
+    system::update_system,
     ui::{draw_fps, StageUI},
     window::Window,
 };
@@ -22,7 +21,13 @@ impl App {
     pub fn new(window: Window, controls: Controls) -> App {
         let mut world = World::new();
 
-        world.spawn((Player, Controllable, Movable));
+        world.spawn((
+            Player,
+            Controllable,
+            Movable::default(),
+            Position::default(),
+            DummyDraw,
+        ));
 
         Self {
             window,
@@ -38,7 +43,7 @@ impl App {
     pub async fn draw(&mut self) {
         clear_background(BLACK);
 
-        update_player_move(&mut self.world, &self.controls);
+        update_system(&mut self.world, &self.controls, &self.window);
         StageUI::draw(&self.window).await;
 
         draw_fps(&self.window, 32.0, WHITE);
