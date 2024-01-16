@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use macroquad::input::KeyCode;
+use macroquad::input::{is_key_down, is_key_pressed, KeyCode};
 
 #[derive(Hash, Eq, PartialEq)]
 pub enum Action {
@@ -18,6 +18,22 @@ pub enum Action {
 
 pub struct Controls {
     controls: HashMap<Action, KeyCode>,
+}
+
+impl Controls {
+    pub fn is_down(&self, action: &Action) -> bool {
+        match self.controls.get(action) {
+            Some(a) => is_key_down(*a),
+            None => false,
+        }
+    }
+
+    pub fn is_pressed(&self, action: &Action) -> bool {
+        match self.controls.get(action) {
+            Some(a) => is_key_pressed(*a),
+            None => true,
+        }
+    }
 }
 
 impl Default for Controls {
