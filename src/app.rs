@@ -1,5 +1,5 @@
 use crate::{
-    components::{Controllable, DummyDraw, Movable, Player, Position},
+    components::{CanShoot, Controllable, DummyDraw, Movable, Player, Position},
     controls::Controls,
     drawable::Drawable,
     system::update_system,
@@ -26,6 +26,7 @@ impl App {
             Controllable,
             Movable::default(),
             Position::default(),
+            CanShoot::default(),
             DummyDraw,
         ));
 
