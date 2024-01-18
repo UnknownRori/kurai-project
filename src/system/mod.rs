@@ -3,8 +3,9 @@ use macroquad::prelude::*;
 use rayon::prelude::*;
 
 use crate::{
+    components::{Movable, Position, Velocity},
     controls::{Action, Controls},
-    entity::{spawn_player_bullet, PlayerBulletEntity, PlayerEntity},
+    entity::{spawn_player_bullet, BulletEntity, PlayerBulletEntity, PlayerEntity},
     window::Window,
 };
 
@@ -14,6 +15,8 @@ pub fn update_system(world: &mut World, controls: &Controls, screen: &Window) {
     update_render_player_bullet(world);
     update_move_bullet(world, screen);
     player_shoot(world, controls);
+
+    update_render_player(world);
 }
 
 fn player_shoot(world: &mut World, controls: &Controls) {
@@ -27,24 +30,40 @@ fn player_shoot(world: &mut World, controls: &Controls) {
 
     for (pos, can_shoot) in player_entity.iter() {
         if controls.is_down(&Action::Attack) {
-            let a = spawn_player_bullet(
+            // INFO : Spawning the bullet
+            spawn_player_bullet(
                 world,
                 &pos,
                 Vec2::from_array([0.0, -can_shoot.bullet_speed]),
             );
-
-            tracing::info!("Outside : {:#?}", a);
         }
     }
 }
 
-fn update_move_bullet(world: &mut World, screen: &Window) {}
+fn update_move_bullet(world: &mut World, screen: &Window) {
+    world
+        .query_mut::<(&mut Position, &Movable, &Velocity)>()
+        .into_iter()
+        .for_each(|(_, (position, _, velocity))| {
+            position.position.x += velocity.velocity.x;
+            position.position.y += velocity.velocity.y;
+        })
+}
 
 fn update_render_player_bullet(world: &mut World) {
     // TODO : Not query properly
-    for (a, (_, position, _, _)) in &mut world.query::<PlayerBulletEntity>() {
+    for (_, (_, position, _, _)) in &mut world.query::<PlayerBulletEntity>() {
         draw_circle(position.position.x, position.position.y, 5.0, GRAY);
     }
+}
+
+fn update_render_player(world: &mut World) {
+    world
+        .query::<PlayerEntity>()
+        .iter()
+        .for_each(|(_, (_, _, _, position, _, _))| {
+            draw_rectangle(position.position.x, position.position.y, 10.0, 10.0, BLUE);
+        })
 }
 
 fn update_player_move(world: &mut World, controls: &Controls, screen: &Window) {
@@ -80,9 +99,5 @@ fn update_player_move(world: &mut World, controls: &Controls, screen: &Window) {
                 Vec2::from_array([0.0, 0.0]),
                 Vec2::from_array([*screen.get_width() - 10.0, *screen.get_height() - 10.0]),
             );
-
-            // Draw the player using dummy rectangle
-            // TODO : Extract this to different component or system or something...
-            draw_rectangle(position.position.x, position.position.y, 10.0, 10.0, BLUE);
         });
 }
