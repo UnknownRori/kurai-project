@@ -1,5 +1,6 @@
 use hecs::World;
 use macroquad::prelude::*;
+use rayon::prelude::*;
 
 use crate::{
     controls::{Action, Controls},
@@ -19,11 +20,12 @@ fn player_shoot(world: &mut World, controls: &Controls) {
     // TODO : Make sure remove the clone since it's not efficient
     let player_entity = world
         .query::<PlayerEntity>()
-        .into_iter()
+        .iter()
+        .par_bridge()
         .map(|(_, (_, _, _, pos, can_shoot, _))| (pos.clone(), can_shoot.clone()))
         .collect::<Vec<_>>();
 
-    for (pos, can_shoot) in player_entity {
+    for (pos, can_shoot) in player_entity.iter() {
         if controls.is_down(&Action::Attack) {
             let a = spawn_player_bullet(
                 world,
@@ -46,38 +48,41 @@ fn update_render_player_bullet(world: &mut World) {
 }
 
 fn update_player_move(world: &mut World, controls: &Controls, screen: &Window) {
-    for (_, (_, _, moveable, position, _, _)) in &mut world.query::<PlayerEntity>() {
-        let mut new_pos = Vec2::new(0.0, 0.0);
+    world
+        .query::<PlayerEntity>()
+        .iter()
+        .for_each(|(_, (_, _, moveable, position, _, _))| {
+            let mut new_pos = Vec2::new(0.0, 0.0);
 
-        if controls.is_down(&Action::Left) {
-            new_pos.x -= moveable.move_speed;
-        }
+            if controls.is_down(&Action::Left) {
+                new_pos.x -= moveable.move_speed;
+            }
 
-        if controls.is_down(&Action::Right) {
-            new_pos.x += moveable.move_speed;
-        }
+            if controls.is_down(&Action::Right) {
+                new_pos.x += moveable.move_speed;
+            }
 
-        if controls.is_down(&Action::Up) {
-            new_pos.y -= moveable.move_speed;
-        }
+            if controls.is_down(&Action::Up) {
+                new_pos.y -= moveable.move_speed;
+            }
 
-        if controls.is_down(&Action::Down) {
-            new_pos.y += moveable.move_speed;
-        }
+            if controls.is_down(&Action::Down) {
+                new_pos.y += moveable.move_speed;
+            }
 
-        // Normalize the new position and set the current entity into new position
-        new_pos = new_pos.normalize_or_zero();
-        new_pos.x *= moveable.move_speed;
-        new_pos.y *= moveable.move_speed;
-        position.position.x += new_pos.x;
-        position.position.y += new_pos.y;
-        position.position = position.position.clamp(
-            Vec2::from_array([0.0, 0.0]),
-            Vec2::from_array([*screen.get_width() - 10.0, *screen.get_height() - 10.0]),
-        );
+            // Normalize the new position and set the current entity into new position
+            new_pos = new_pos.normalize_or_zero();
+            new_pos.x *= moveable.move_speed;
+            new_pos.y *= moveable.move_speed;
+            position.position.x += new_pos.x;
+            position.position.y += new_pos.y;
+            position.position = position.position.clamp(
+                Vec2::from_array([0.0, 0.0]),
+                Vec2::from_array([*screen.get_width() - 10.0, *screen.get_height() - 10.0]),
+            );
 
-        // Draw the player using dummy rectangle
-        // TODO : Extract this to different component or system or something...
-        draw_rectangle(position.position.x, position.position.y, 10.0, 10.0, BLUE);
-    }
+            // Draw the player using dummy rectangle
+            // TODO : Extract this to different component or system or something...
+            draw_rectangle(position.position.x, position.position.y, 10.0, 10.0, BLUE);
+        });
 }
