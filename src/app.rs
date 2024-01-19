@@ -3,7 +3,7 @@ use crate::{
     controls::Controls,
     drawable::Drawable,
     system::update_system,
-    ui::{draw_fps, StageUI},
+    ui::{draw_entity_number, draw_fps, StageUI},
     window::Window,
 };
 
@@ -47,6 +47,7 @@ impl App {
         update_system(&mut self.world, &self.controls, &self.window);
         StageUI::draw(&self.window).await;
 
+        draw_entity_number(&self.window, self.world.len());
         draw_fps(&self.window, 32.0, WHITE);
     }
 }
