@@ -12,10 +12,12 @@ use crate::{
 /// Register all the system related stuff of ECS here
 pub fn update_system(world: &mut World, controls: &Controls, screen: &Window) {
     update_player_move(world, controls, screen);
-    update_render_player_bullet(world);
     update_move_bullet(world, screen);
     player_shoot(world, controls);
+}
 
+pub fn update_draw(world: &World, controls: &Controls, screen: &Window) {
+    update_render_player_bullet(world);
     update_render_player(world);
 }
 
@@ -25,48 +27,44 @@ fn player_shoot(world: &mut World, controls: &Controls) {
         .query::<PlayerEntity>()
         .iter()
         .par_bridge()
-        .map(|(_, (_, _, _, pos, can_shoot, _))| (pos.clone(), can_shoot.clone()))
+        .map(|(_, (_, _, _, pos, can_shoot, _))| (*pos, *can_shoot))
         .collect::<Vec<_>>();
 
-    for (pos, can_shoot) in player_entity.iter() {
+    for (pos, can_shoot) in &player_entity {
         if controls.is_down(&Action::Attack) {
             // INFO : Spawning the bullet
-            spawn_player_bullet(
-                world,
-                &pos,
-                Vec2::from_array([0.0, -can_shoot.bullet_speed]),
-            );
+            spawn_player_bullet(world, pos, Vec2::from_array([0.0, -can_shoot.bullet_speed]));
         }
     }
 }
 
-fn update_move_bullet(world: &mut World, screen: &Window) {
+fn update_move_bullet(world: &mut World, _screen: &Window) {
     world
         .query_mut::<(&mut Position, &Movable, &Velocity)>()
         .into_iter()
         .for_each(|(_, (position, _, velocity))| {
             position.position.x += velocity.velocity.x;
             position.position.y += velocity.velocity.y;
-        })
+        });
 }
 
-fn update_render_player_bullet(world: &mut World) {
+fn update_render_player_bullet(world: &World) {
     // TODO : Not query properly
     for (_, (_, position, _, _)) in &mut world.query::<PlayerBulletEntity>() {
         draw_circle(position.position.x, position.position.y, 5.0, GRAY);
     }
 }
 
-fn update_render_player(world: &mut World) {
+fn update_render_player(world: &World) {
     world
         .query::<PlayerEntity>()
         .iter()
         .for_each(|(_, (_, _, _, position, _, _))| {
             draw_rectangle(position.position.x, position.position.y, 10.0, 10.0, BLUE);
-        })
+        });
 }
 
-fn update_player_move(world: &mut World, controls: &Controls, screen: &Window) {
+fn update_player_move(world: &World, controls: &Controls, screen: &Window) {
     world
         .query::<PlayerEntity>()
         .iter()

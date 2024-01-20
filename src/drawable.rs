@@ -1,5 +1,5 @@
 use crate::window::Window;
 
 pub trait Drawable {
-    async fn draw(window: &Window);
+    fn draw(window: &Window) -> impl std::future::Future<Output = ()> + Send;
 }

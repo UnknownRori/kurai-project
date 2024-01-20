@@ -14,9 +14,9 @@ async fn main() -> Result<(), color_eyre::Report> {
     let mut app = App::new(window, controls);
 
     loop {
-        app.update().await;
+        app.update();
         app.draw().await;
-        next_frame().await
+        next_frame().await;
     }
 
     Ok(())

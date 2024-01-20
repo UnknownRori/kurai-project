@@ -29,7 +29,8 @@ pub struct Position {
 }
 
 impl Position {
-    fn from_array(arr: [f32; 2]) -> Self {
+    #[must_use]
+    pub const fn from_array(arr: [f32; 2]) -> Self {
         Self {
             position: Vec2::from_array(arr),
         }
@@ -42,7 +43,8 @@ pub struct Velocity {
 }
 
 impl Velocity {
-    pub fn from_vec2(velocity: Vec2) -> Self {
+    #[must_use]
+    pub const fn from_vec2(velocity: Vec2) -> Self {
         Self { velocity }
     }
 }

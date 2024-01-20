@@ -4,4 +4,4 @@ pub const HEIGHT: f32 = 600.0;
 pub const FULLSCREEN: bool = false;
 pub const ASPECT_RATIO: f32 = WIDTH / HEIGHT;
 
-pub const GAME_VERSION: &'static str = "0.0 alpha";
+pub const GAME_VERSION: &str = "0.0 alpha";

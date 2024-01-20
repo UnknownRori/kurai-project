@@ -21,18 +21,16 @@ pub struct Controls {
 }
 
 impl Controls {
+    #[must_use]
     pub fn is_down(&self, action: &Action) -> bool {
-        match self.controls.get(action) {
-            Some(a) => is_key_down(*a),
-            None => false,
-        }
+        self.controls.get(action).map_or(false, |a| is_key_down(*a))
     }
 
+    #[must_use]
     pub fn is_pressed(&self, action: &Action) -> bool {
-        match self.controls.get(action) {
-            Some(a) => is_key_pressed(*a),
-            None => true,
-        }
+        self.controls
+            .get(action)
+            .map_or(false, |a| is_key_pressed(*a))
     }
 }
 

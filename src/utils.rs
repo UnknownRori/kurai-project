@@ -1,4 +1,8 @@
 /// Setup the application tracing and setting up environment variable
+///
+/// # Errors
+///
+/// It may throw error if the tracing and [`color_eyre`] failed
 pub fn setup() -> Result<(), color_eyre::Report> {
     let _ = env("RUST_LIB_BACKTRACE", "1");
     let _ = env("RUST_LOG", "debug");
@@ -22,11 +26,13 @@ pub fn setup() -> Result<(), color_eyre::Report> {
 /// Get the value from [`std::env::var`] variable if, it's doesn't exist set it into default value
 /// and return
 #[cfg(target_arch = "wasm32")]
+#[must_use]
 pub fn env(_key: &str, default: &str) -> String {
     default.to_string()
 }
 
 #[cfg(not(target_arch = "wasm32"))]
+#[must_use]
 pub fn env(key: &str, default: &str) -> String {
     match std::env::var(key) {
         Ok(val) => val,

@@ -1,8 +1,8 @@
 use crate::{
-    components::{CanShoot, Controllable, DummyDraw, Movable, Player, Position},
     controls::Controls,
     drawable::Drawable,
-    system::update_system,
+    entity::spawn_player,
+    system::{update_draw, update_system},
     ui::{draw_entity_number, draw_fps, StageUI},
     window::Window,
 };
@@ -18,17 +18,11 @@ pub struct App {
 
 impl App {
     /// Initialize Game state
-    pub fn new(window: Window, controls: Controls) -> App {
+    #[must_use]
+    pub fn new(window: Window, controls: Controls) -> Self {
         let mut world = World::new();
 
-        world.spawn((
-            Player,
-            Controllable,
-            Movable::default(),
-            Position::default(),
-            CanShoot::default(),
-            DummyDraw,
-        ));
+        let _ = spawn_player(&mut world);
 
         Self {
             window,
@@ -38,13 +32,15 @@ impl App {
     }
 
     /// This is where the update happen
-    pub async fn update(&mut self) {}
+    pub fn update(&mut self) {
+        update_system(&mut self.world, &self.controls, &self.window);
+    }
 
     /// This is where the draw happen
     pub async fn draw(&mut self) {
         clear_background(BLACK);
 
-        update_system(&mut self.world, &self.controls, &self.window);
+        update_draw(&self.world, &self.controls, &self.window);
         StageUI::draw(&self.window).await;
 
         draw_entity_number(&self.window, self.world.len());
