@@ -54,4 +54,4 @@ cargo run
 
 ## Notes
 
-Scarlet Project main purpose is currently for my graduation project.
+I plan to use Scarlet Project as my graduation project.
