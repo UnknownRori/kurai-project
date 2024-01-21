@@ -31,12 +31,9 @@ pub fn spawn_player(world: &mut World) -> Entity {
 
 pub fn spawn_player_bullet(world: &mut World, position: &Position, velocity: Vec2) -> Entity {
     // TODO : Refactor this later
-    let position = Position {
-        position: Vec2::from_array([position.position.x, position.position.y]),
-    };
     let component = (
         PlayerBullet,
-        position,
+        *position,
         Movable::default(),
         Velocity::from_vec2(velocity),
     );

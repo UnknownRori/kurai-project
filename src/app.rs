@@ -3,7 +3,7 @@ use crate::{
     drawable::Drawable,
     entity::spawn_player,
     system::{update_draw, update_system},
-    ui::{draw_entity_number, draw_fps, StageUI},
+    ui::{draw_entity_number, draw_fps, draw_version, StageUI},
     window::Window,
 };
 
@@ -45,5 +45,6 @@ impl App {
 
         draw_entity_number(&self.window, self.world.len());
         draw_fps(&self.window, 32.0, WHITE);
+        draw_version(&self.window);
     }
 }

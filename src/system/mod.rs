@@ -5,7 +5,7 @@ use rayon::prelude::*;
 use crate::{
     components::{Movable, Position, Velocity},
     controls::{Action, Controls},
-    entity::{spawn_player_bullet, BulletEntity, PlayerBulletEntity, PlayerEntity},
+    entity::{spawn_player_bullet, PlayerBulletEntity, PlayerEntity},
     window::Window,
 };
 
@@ -16,7 +16,7 @@ pub fn update_system(world: &mut World, controls: &Controls, screen: &Window) {
     player_shoot(world, controls);
 }
 
-pub fn update_draw(world: &World, controls: &Controls, screen: &Window) {
+pub fn update_draw(world: &World, _controls: &Controls, _screen: &Window) {
     update_render_player_bullet(world);
     update_render_player(world);
 }

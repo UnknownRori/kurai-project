@@ -30,6 +30,7 @@ pub struct Position {
 
 impl Position {
     #[must_use]
+    #[inline]
     pub const fn from_array(arr: [f32; 2]) -> Self {
         Self {
             position: Vec2::from_array(arr),
@@ -44,6 +45,7 @@ pub struct Velocity {
 
 impl Velocity {
     #[must_use]
+    #[inline]
     pub const fn from_vec2(velocity: Vec2) -> Self {
         Self { velocity }
     }
