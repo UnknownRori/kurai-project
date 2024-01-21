@@ -1,3 +1,5 @@
+pub mod remilia_scarlet;
+
 use hecs::{Entity, World};
 use macroquad::math::Vec2;
 
