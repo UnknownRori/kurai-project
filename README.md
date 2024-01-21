@@ -4,7 +4,6 @@
 
 &ensp;[<kbd> <br> Install <br> </kbd>](#installation)&ensp;
 &ensp;[<kbd> <br> Development <br> </kbd>](#development)&ensp;
-&ensp;[<kbd> <br> Notes <br> </kbd>](#notes)&ensp;
 <br><br><br></div>
 
 ## Introduction
@@ -51,7 +50,3 @@ cd scarlet-project
 # Run the game
 cargo run
 ```
-
-## Notes
-
-I plan to use Scarlet Project as my graduation project.
