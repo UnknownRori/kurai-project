@@ -648,6 +648,7 @@ dependencies = [
  "color-eyre",
  "hecs",
  "macroquad",
+ "num-traits",
  "rayon",
  "tracing",
  "tracing-subscriber",
