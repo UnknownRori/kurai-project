@@ -36,7 +36,7 @@ pub fn spawn_player_bullet(world: &mut World, position: &Position, velocity: Vec
     let component = (
         PlayerBullet,
         *position,
-        Movable::default(),
+        Movable::new(50.0),
         Velocity::from_vec2(velocity),
     );
     world.spawn(component)

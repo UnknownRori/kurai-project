@@ -42,9 +42,11 @@ fn update_move_bullet(world: &mut World, _screen: &Window) {
     world
         .query_mut::<(&mut Position, &Movable, &Velocity)>()
         .into_iter()
-        .for_each(|(_, (position, _, velocity))| {
-            position.position.x += velocity.velocity.x;
-            position.position.y += velocity.velocity.y;
+        .for_each(|(_, (position, moveable, velocity))| {
+            position.position = position.position.lerp(
+                position.position + velocity.velocity,
+                moveable.move_speed * get_frame_time(),
+            );
         });
 }
 
@@ -87,15 +89,15 @@ fn update_player_move(world: &World, controls: &Controls, screen: &Window) {
                 new_pos.y += moveable.move_speed;
             }
 
-            // Normalize the new position and set the current entity into new position
-            new_pos = new_pos.normalize_or_zero();
-            new_pos.x *= moveable.move_speed;
-            new_pos.y *= moveable.move_speed;
-            position.position.x += new_pos.x;
-            position.position.y += new_pos.y;
-            position.position = position.position.clamp(
-                Vec2::from_array([0.0, 0.0]),
-                Vec2::from_array([*screen.get_width() - 10.0, *screen.get_height() - 10.0]),
-            );
+            position.position = position
+                .position
+                .lerp(
+                    new_pos + position.position,
+                    moveable.move_speed * get_frame_time(),
+                )
+                .clamp(
+                    Vec2::from_array([0.0, 0.0]),
+                    Vec2::from_array([*screen.get_width() - 10.0, *screen.get_height() - 10.0]),
+                )
         });
 }

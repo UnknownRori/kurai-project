@@ -16,7 +16,13 @@ pub struct Movable {
 
 impl Default for Movable {
     fn default() -> Self {
-        Self { move_speed: 10.0 }
+        Self { move_speed: 20.0 }
+    }
+}
+
+impl Movable {
+    pub fn new(move_speed: f32) -> Self {
+        Self { move_speed }
     }
 }
 
