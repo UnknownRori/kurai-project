@@ -19,10 +19,10 @@ pub struct App {
 impl App {
     /// Initialize Game state
     #[must_use]
-    pub fn new(window: Window, controls: Controls) -> Self {
+    pub async fn new(window: Window, controls: Controls) -> Self {
         let mut world = World::new();
 
-        let _ = spawn_player(&mut world);
+        let _ = spawn_player(&mut world).await;
 
         Self {
             window,

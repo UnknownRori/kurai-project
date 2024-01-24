@@ -4,7 +4,7 @@ use hecs::{Entity, World};
 use macroquad::math::Vec2;
 
 use crate::components::{
-    CanShoot, Controllable, DummyDraw, Movable, Player, PlayerBullet, Position, Velocity,
+    CanShoot, Controllable, Movable, Player, PlayerBullet, Position, Sprite, Velocity,
 };
 
 pub type PlayerEntity<'a> = (
@@ -13,13 +13,13 @@ pub type PlayerEntity<'a> = (
     &'a Movable,
     &'a mut Position,
     &'a CanShoot,
-    &'a DummyDraw,
+    &'a Sprite,
 );
 
 pub type PlayerBulletEntity<'a> = (&'a PlayerBullet, &'a Position, &'a Movable, &'a Velocity);
 pub type BulletEntity<'a> = (&'a Position, &'a Movable, &'a Velocity);
 
-pub fn spawn_player(world: &mut World) -> Entity {
+pub async fn spawn_player(world: &mut World) -> Entity {
     // TODO : Make this support a bunch of protagonist
     world.spawn((
         Player,
@@ -27,7 +27,7 @@ pub fn spawn_player(world: &mut World) -> Entity {
         Movable::default(),
         Position::default(),
         CanShoot::default(),
-        DummyDraw,
+        Sprite::new().await,
     ))
 }
 

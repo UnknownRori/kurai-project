@@ -1,4 +1,6 @@
-use macroquad::math::Vec2;
+use std::sync::Arc;
+
+use macroquad::prelude::*;
 
 #[derive(Debug)]
 pub struct Player;
@@ -21,7 +23,8 @@ impl Default for Movable {
 }
 
 impl Movable {
-    pub fn new(move_speed: f32) -> Self {
+    #[must_use]
+    pub const fn new(move_speed: f32) -> Self {
         Self { move_speed }
     }
 }
@@ -41,6 +44,12 @@ impl Position {
         Self {
             position: Vec2::from_array(arr),
         }
+    }
+}
+
+impl From<Vec2> for Position {
+    fn from(value: Vec2) -> Self {
+        Self { position: value }
     }
 }
 
@@ -69,5 +78,32 @@ impl Default for CanShoot {
             shoot_speed: 1.0,
             bullet_speed: 20.0,
         }
+    }
+}
+
+#[derive(Clone)]
+pub struct Sprite {
+    pub texture: Arc<Texture2D>,
+}
+
+impl Sprite {
+    pub async fn new() -> Self {
+        // TODO : Put this thing away
+        let texture = load_texture("./resources/textures/remilia-scarlet/1.png")
+            .await
+            .unwrap()
+            .into();
+
+        Self { texture }
+    }
+
+    #[must_use]
+    pub fn height(&self) -> f32 {
+        self.texture.height()
+    }
+
+    #[must_use]
+    pub fn width(&self) -> f32 {
+        self.texture.width()
     }
 }
