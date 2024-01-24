@@ -15,6 +15,14 @@ nursery = "deny"
 unwrap_used = "deny"
 module_name_repetitions = "allow"
 
+# Enable a small amount of optimization in debug mode
+[profile.dev]
+opt-level = 1
+
+# Enable high optimizations for dependencies (incl. Bevy), but not for our code:
+[profile.dev.package."*"]
+opt-level = 3
+
 [dependencies]
 color-eyre = "0.6.2"
 hecs = "0.10.4"
