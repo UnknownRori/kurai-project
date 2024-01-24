@@ -1,9 +1,11 @@
 pub mod app;
+pub mod assets;
 pub mod components;
 pub mod constant;
 pub mod controls;
 pub mod drawable;
 pub mod entity;
+pub mod shaders;
 pub mod system;
 pub mod ui;
 pub mod utils;
