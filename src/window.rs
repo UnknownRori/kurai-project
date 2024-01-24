@@ -1,6 +1,13 @@
 use crate::constant::{ASPECT_RATIO, FULLSCREEN, HEIGHT, WIDTH};
 use macroquad::{miniquad::conf::Platform, prelude::*};
 
+pub struct PlayableWindow {
+    start_width: f32,
+    start_height: f32,
+    end_width: f32,
+    end_height: f32,
+}
+
 /// Abstraction for dynamic window size
 /// Make sure initialized once only, because what kind of idiot initialized this twice
 pub struct Window {
@@ -8,24 +15,33 @@ pub struct Window {
     width: f32,
     aspect_ratio: f32,
     fullscreen: bool,
+
+    playable_window: PlayableWindow,
 }
 
 impl Default for Window {
     fn default() -> Self {
-        if FULLSCREEN {
-            Self {
-                width: screen_width(),
-                height: screen_height(),
-                aspect_ratio: screen_width() / screen_height(),
-                fullscreen: true,
-            }
+        let (width, height, aspect_ratio) = if FULLSCREEN {
+            (
+                screen_width(),
+                screen_height(),
+                screen_width() / screen_height(),
+            )
         } else {
-            Self {
-                width: WIDTH,
-                height: HEIGHT,
-                aspect_ratio: ASPECT_RATIO,
-                fullscreen: false,
-            }
+            (WIDTH, HEIGHT, ASPECT_RATIO)
+        };
+
+        Self {
+            width,
+            height,
+            playable_window: PlayableWindow {
+                start_width: 0.0,
+                start_height: 0.0,
+                end_width: width / 2.5,
+                end_height: height,
+            },
+            fullscreen: FULLSCREEN,
+            aspect_ratio,
         }
     }
 }
