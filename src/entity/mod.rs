@@ -26,7 +26,7 @@ pub async fn spawn_player(world: &mut World) -> Entity {
         Player,
         Controllable,
         Movable::new(300.0),
-        Position::default(),
+        Position::from_array([400.0, 400.0]), // TODO : Make starting position to middle bottom
         CanShoot::new(5.0, 1000.0),
         Sprite::new().await,
     ))
