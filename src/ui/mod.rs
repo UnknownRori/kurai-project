@@ -1,13 +1,13 @@
 use macroquad::prelude::*;
 
-use crate::constant::GAME_VERSION;
-use crate::drawable::Drawable;
+use crate::constant::{GAME_NAME, GAME_VERSION};
+use crate::score::ScoreData;
 use crate::window::Window;
 
 pub struct StageUI {}
 
 #[inline]
-fn draw_scoreboard(window: &Window) {
+fn draw_scoreboard(window: &Window, score_board: &ScoreData) {
     let width_score = window.get_width() / 2.5;
     draw_rectangle(
         window.get_width() - width_score,
@@ -16,6 +16,26 @@ fn draw_scoreboard(window: &Window) {
         *window.get_height(),
         RED,
     );
+
+    draw_text(
+        "Score",
+        window.get_playable_window().get_end_width()
+            + (window.get_width() - window.get_playable_window().get_end_width()) / 5.0,
+        50.0,
+        32.0,
+        WHITE,
+    );
+
+    draw_text(
+        format!("{:012}", score_board.score).as_str(),
+        window.get_playable_window().get_end_width()
+            + (window.get_width() - window.get_playable_window().get_end_width()) / 5.0,
+        80.0,
+        32.0,
+        WHITE,
+    );
+
+    draw_game_name(&window);
 }
 
 #[inline]
@@ -51,8 +71,28 @@ pub fn draw_fps(window: &Window, font_size: f32, color: Color) {
     );
 }
 
-impl Drawable for StageUI {
-    async fn draw(window: &Window) {
-        draw_scoreboard(window);
+#[inline]
+pub fn draw_game_name(window: &Window) {
+    draw_text(
+        "DEMO!",
+        window.get_playable_window().get_end_width()
+            + (window.get_width() - window.get_playable_window().get_end_width()) / 2.5,
+        window.get_height() - 50.0,
+        32.0,
+        WHITE,
+    );
+    draw_text(
+        GAME_NAME,
+        window.get_playable_window().get_end_width()
+            + (window.get_width() - window.get_playable_window().get_end_width()) / 5.0,
+        window.get_height() - 80.0,
+        32.0,
+        WHITE,
+    );
+}
+
+impl StageUI {
+    pub async fn draw(window: &Window, score_data: &ScoreData) {
+        draw_scoreboard(window, score_data);
     }
 }
