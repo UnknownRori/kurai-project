@@ -1,6 +1,7 @@
 use std::sync::Arc;
 
 use macroquad::prelude::*;
+use num_complex::Complex;
 
 #[derive(Debug)]
 pub struct Player;
@@ -34,7 +35,7 @@ pub struct DummyDraw;
 
 #[derive(Debug, Clone, Copy, Default)]
 pub struct Position {
-    pub position: Vec2,
+    pub position: Complex<f32>,
 }
 
 impl Position {
@@ -42,27 +43,25 @@ impl Position {
     #[inline]
     pub const fn from_array(arr: [f32; 2]) -> Self {
         Self {
-            position: Vec2::from_array(arr),
+            position: Complex::new(arr[0], arr[1]),
         }
     }
 }
 
-impl From<Vec2> for Position {
-    fn from(value: Vec2) -> Self {
+impl From<Complex<f32>> for Position {
+    fn from(value: Complex<f32>) -> Self {
         Self { position: value }
     }
 }
 
 #[derive(Debug, Default)]
 pub struct Velocity {
-    pub velocity: Vec2,
+    pub velocity: Complex<f32>,
 }
 
-impl Velocity {
-    #[must_use]
-    #[inline]
-    pub const fn from_vec2(velocity: Vec2) -> Self {
-        Self { velocity }
+impl From<Complex<f32>> for Velocity {
+    fn from(value: Complex<f32>) -> Self {
+        Self { velocity: value }
     }
 }
 
@@ -77,6 +76,15 @@ impl Default for CanShoot {
         Self {
             shoot_speed: 1.0,
             bullet_speed: 20.0,
+        }
+    }
+}
+
+impl CanShoot {
+    pub fn new(firerate: f32, speed: f32) -> Self {
+        Self {
+            shoot_speed: firerate,
+            bullet_speed: speed,
         }
     }
 }

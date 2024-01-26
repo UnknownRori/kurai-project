@@ -3,13 +3,12 @@ use macroquad::prelude::*;
 
 use crate::{
     entity::{PlayerBulletEntity, PlayerEntity},
-    shaders::shadow_shader_material,
     window::Window,
 };
 
 pub fn update_render_player_bullet(world: &World) {
     for (_, (_, position, _, _)) in &mut world.query::<PlayerBulletEntity>() {
-        draw_circle(position.position.x, position.position.y, 5.0, GRAY);
+        draw_circle(position.position.re, position.position.im, 5.0, GRAY);
     }
 }
 
@@ -23,8 +22,8 @@ pub fn update_render_player(world: &World, screen: &Window) {
             // gl_use_material(&material);
             draw_texture_ex(
                 &sprite.texture,
-                position.position.x,
-                position.position.y,
+                position.position.re,
+                position.position.im,
                 WHITE,
                 DrawTextureParams {
                     dest_size: Some(vec2(64.0, 64.0)),

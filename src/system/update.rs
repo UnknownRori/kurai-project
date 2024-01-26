@@ -1,5 +1,6 @@
 use hecs::World;
 use macroquad::prelude::*;
+use num_complex::Complex;
 use rayon::prelude::*;
 
 use crate::{
@@ -20,12 +21,12 @@ pub fn player_shoot(world: &mut World, controls: &Controls) {
 
     for (pos, can_shoot, sprite) in &player_entity {
         if controls.is_down(&Action::Attack) {
-            let pos = pos.position + vec2(32.0, 32.0);
+            let pos = pos.position + Complex::new(32.0, 32.0);
 
             spawn_player_bullet(
                 world,
                 &pos.into(),
-                Vec2::from_array([0.0, -can_shoot.bullet_speed]),
+                Complex::new(0.0, -can_shoot.bullet_speed),
             );
         }
     }
@@ -38,10 +39,10 @@ pub fn update_delete_bullet_offscreen(world: &mut World, screen: &Window) {
         .iter()
         .par_bridge()
         .filter(|(_, (pos, _, _))| {
-            pos.position.y > *screen.get_height()
-                || pos.position.y < 0.0
-                || pos.position.x < 0.0
-                || pos.position.x > *screen.get_width()
+            pos.position.im > *screen.get_height()
+                || pos.position.im < 0.0
+                || pos.position.re < 0.0
+                || pos.position.re > *screen.get_width()
         })
         .map(|(id, _)| id)
         .collect::<Vec<_>>();
@@ -56,10 +57,7 @@ pub fn update_move_bullet(world: &mut World, _screen: &Window) {
         .query_mut::<(&mut Position, &Movable, &Velocity)>()
         .into_iter()
         .for_each(|(_, (position, moveable, velocity))| {
-            position.position = position.position.lerp(
-                position.position + velocity.velocity,
-                moveable.move_speed * get_frame_time(),
-            );
+            position.position += velocity.velocity * get_frame_time();
         });
 }
 
@@ -68,33 +66,32 @@ pub fn update_player_move(world: &World, controls: &Controls, screen: &Window) {
         .query::<PlayerEntity>()
         .iter()
         .for_each(|(_, (_, _, moveable, position, _, _))| {
-            let mut new_pos = Vec2::new(0.0, 0.0);
+            let mut new_pos = Complex::new(0.0, 0.0);
 
             if controls.is_down(&Action::Left) {
-                new_pos.x -= moveable.move_speed;
+                new_pos += Complex::new(-moveable.move_speed, 0.0);
             }
 
             if controls.is_down(&Action::Right) {
-                new_pos.x += moveable.move_speed;
+                new_pos += Complex::new(moveable.move_speed, 0.0);
             }
 
             if controls.is_down(&Action::Up) {
-                new_pos.y -= moveable.move_speed;
+                new_pos += Complex::new(0.0, -moveable.move_speed);
             }
 
             if controls.is_down(&Action::Down) {
-                new_pos.y += moveable.move_speed;
+                new_pos += Complex::new(0.0, moveable.move_speed);
             }
 
-            position.position = position
+            position.position += new_pos * get_frame_time();
+            position.position.re = position
                 .position
-                .lerp(
-                    new_pos + position.position,
-                    moveable.move_speed * get_frame_time(),
-                )
-                .clamp(
-                    Vec2::from_array([0.0, 0.0]),
-                    Vec2::from_array([*screen.get_width() - 10.0, *screen.get_height() - 10.0]),
-                );
+                .re
+                .clamp(-32.0, *screen.get_width() + 32.0);
+            position.position.im = position
+                .position
+                .im
+                .clamp(-32.0, *screen.get_height() - 32.0);
         });
 }
