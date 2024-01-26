@@ -5,6 +5,7 @@ pub mod constant;
 pub mod controls;
 pub mod drawable;
 pub mod entity;
+pub mod score;
 pub mod shaders;
 pub mod system;
 pub mod ui;

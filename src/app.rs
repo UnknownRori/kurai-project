@@ -2,6 +2,7 @@ use crate::{
     controls::Controls,
     drawable::Drawable,
     entity::spawn_player,
+    score::ScoreData,
     system::{update_draw, update_system},
     ui::{draw_entity_number, draw_fps, draw_version, StageUI},
     window::Window,
@@ -14,6 +15,7 @@ pub struct App {
     window: Window,
     controls: Controls,
     world: World,
+    score_data: ScoreData,
 }
 
 impl App {
@@ -21,10 +23,12 @@ impl App {
     #[must_use]
     pub async fn new(window: Window, controls: Controls) -> Self {
         let mut world = World::new();
+        let score_data = ScoreData::default();
 
         let _ = spawn_player(&mut world).await;
 
         Self {
+            score_data,
             window,
             controls,
             world,
@@ -41,7 +45,7 @@ impl App {
         clear_background(BLACK);
 
         update_draw(&self.world, &self.controls, &self.window);
-        StageUI::draw(&self.window).await;
+        StageUI::draw(&self.window, &self.score_data).await;
 
         draw_entity_number(&self.window, self.world.len());
         draw_fps(&self.window, 32.0, WHITE);
