@@ -88,10 +88,10 @@ pub fn update_player_move(world: &World, controls: &Controls, screen: &Window) {
             position.position.re = position
                 .position
                 .re
-                .clamp(-32.0, *screen.get_width() + 32.0);
+                .clamp(-32.0, screen.get_playable_window().get_end_width() - 32.0);
             position.position.im = position
                 .position
                 .im
-                .clamp(-32.0, *screen.get_height() - 32.0);
+                .clamp(-32.0, *screen.get_playable_window().get_end_height() - 32.0);
         });
 }
