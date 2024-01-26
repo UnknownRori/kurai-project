@@ -1,4 +1,4 @@
-use crate::constant::{ASPECT_RATIO, FULLSCREEN, HEIGHT, WIDTH};
+use crate::constant::{ASPECT_RATIO, FULLSCREEN, GAME_NAME, HEIGHT, WIDTH};
 use macroquad::{miniquad::conf::Platform, prelude::*};
 
 pub struct PlayableWindow {
@@ -37,7 +37,7 @@ impl Default for Window {
             playable_window: PlayableWindow {
                 start_width: 0.0,
                 start_height: 0.0,
-                end_width: width / 2.5,
+                end_width: width - width / 2.5,
                 end_height: height,
             },
             fullscreen: FULLSCREEN,
@@ -56,13 +56,37 @@ impl Window {
     pub const fn get_height(&self) -> &f32 {
         &self.height
     }
+
+    #[must_use]
+    pub const fn get_playable_window(&self) -> &PlayableWindow {
+        &self.playable_window
+    }
+}
+
+impl PlayableWindow {
+    #[must_use]
+    pub const fn get_start_width(&self) -> &f32 {
+        &self.start_width
+    }
+    #[must_use]
+    pub const fn get_end_width(&self) -> &f32 {
+        &self.end_width
+    }
+    #[must_use]
+    pub const fn get_start_height(&self) -> &f32 {
+        &self.start_height
+    }
+    #[must_use]
+    pub const fn get_end_height(&self) -> &f32 {
+        &self.end_height
+    }
 }
 
 #[must_use]
 #[allow(clippy::cast_possible_truncation)]
 pub fn window_conf() -> Conf {
     Conf {
-        window_title: "Scarlet Project".to_owned(),
+        window_title: GAME_NAME.to_owned(),
         fullscreen: FULLSCREEN,
         window_height: HEIGHT.floor() as i32,
         window_width: WIDTH.floor() as i32,
