@@ -1,10 +1,13 @@
-use std::sync::Arc;
+use std::{sync::Arc, time::Instant};
 
 use macroquad::prelude::*;
 use num_complex::Complex;
 
 #[derive(Debug)]
 pub struct Player;
+
+#[derive(Debug)]
+pub struct Enemy;
 
 #[derive(Debug)]
 pub struct PlayerBullet;
@@ -16,6 +19,15 @@ pub struct Controllable;
 pub struct Movable {
     pub move_speed: f32,
 }
+
+#[derive(Debug)]
+pub struct TargetPlayer;
+
+#[derive(Debug)]
+pub struct SingleShoot;
+
+#[derive(Debug)]
+pub struct EnemyBullet;
 
 impl Default for Movable {
     fn default() -> Self {
@@ -67,15 +79,17 @@ impl From<Complex<f32>> for Velocity {
 
 #[derive(Debug, Clone, Copy)]
 pub struct CanShoot {
-    pub shoot_speed: f32,
+    pub fire_rate: f32,
+    pub last_shoot: Instant, // INFO : This is not work for wasm
     pub bullet_speed: f32,
 }
 
 impl Default for CanShoot {
     fn default() -> Self {
         Self {
-            shoot_speed: 1.0,
+            fire_rate: 1.0,
             bullet_speed: 20.0,
+            last_shoot: Instant::now(),
         }
     }
 }
@@ -83,9 +97,18 @@ impl Default for CanShoot {
 impl CanShoot {
     pub fn new(firerate: f32, speed: f32) -> Self {
         Self {
-            shoot_speed: firerate,
+            fire_rate: firerate,
             bullet_speed: speed,
+            last_shoot: Instant::now(),
         }
+    }
+
+    pub fn can_fire(&self) -> bool {
+        self.last_shoot.elapsed().as_secs_f32() >= 1.0 / self.fire_rate
+    }
+
+    pub fn update_cooldown(&mut self) {
+        self.last_shoot = Instant::now();
     }
 }
 
