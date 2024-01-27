@@ -1,7 +1,8 @@
 use crate::{
+    components::Position,
     controls::Controls,
     drawable::Drawable,
-    entity::spawn_player,
+    entity::{spawn_enemy, spawn_player},
     score::ScoreData,
     system::{update_draw, update_system},
     ui::{draw_entity_number, draw_fps, draw_version, StageUI},
@@ -26,6 +27,7 @@ impl App {
         let score_data = ScoreData::default();
 
         let _ = spawn_player(&mut world).await;
+        let _ = spawn_enemy(&mut world, Position::from_array([100.0, 100.0])).await;
 
         Self {
             score_data,

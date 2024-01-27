@@ -1,14 +1,55 @@
+use std::time::Instant;
+
 use hecs::World;
 use macroquad::prelude::*;
 use num_complex::Complex;
 use rayon::prelude::*;
 
+use crate::components::CanShoot;
+use crate::math::*;
+
 use crate::{
-    components::{Movable, Position, Velocity},
+    components::{EnemyBullet, Movable, Velocity},
     controls::{Action, Controls},
-    entity::{spawn_player_bullet, BulletEntity, PlayerEntity},
+    entity::{spawn_player_bullet, BulletEntity, NormalFairyEntity, PlayerEntity},
     window::Window,
 };
+
+pub fn enemy_shoot_normal_fairy(world: &mut World) {
+    let player_pos = world
+        .query::<PlayerEntity>()
+        .iter()
+        .par_bridge()
+        .map(|(_, (_, _, _, pos, _, _))| (*pos))
+        .collect::<Vec<_>>();
+
+    if let Some(player_pos) = player_pos.first() {
+        let enemy = world
+            .query::<NormalFairyEntity>()
+            .iter()
+            .par_bridge()
+            .filter(|(_, (_, _, _, can_shoot, _, _))| can_shoot.can_fire())
+            .map(|(entity, (_, pos, _, can_shoot, _, _))| (entity, *pos, *can_shoot))
+            .collect::<Vec<_>>();
+
+        for (entity, pos, can_shoot) in enemy {
+            let direction =
+                (player_pos.position - pos.position).normalize() * can_shoot.bullet_speed;
+
+            world.spawn((
+                EnemyBullet,
+                pos.clone(),
+                Movable::default(),
+                Velocity::from(direction),
+            ));
+
+            world
+                .get::<&mut CanShoot>(entity)
+                .unwrap()
+                .update_cooldown();
+        }
+    };
+}
 
 pub fn player_shoot(world: &mut World, controls: &Controls) {
     // TODO : Make sure remove the clone since it's not efficient
@@ -53,12 +94,11 @@ pub fn update_delete_bullet_offscreen(world: &mut World, screen: &Window) {
 }
 
 pub fn update_move_bullet(world: &mut World, _screen: &Window) {
-    world
-        .query_mut::<(&mut Position, &Movable, &Velocity)>()
-        .into_iter()
-        .for_each(|(_, (position, moveable, velocity))| {
+    world.query_mut::<BulletEntity>().into_iter().for_each(
+        |(_, (position, moveable, velocity))| {
             position.position += velocity.velocity * get_frame_time();
-        });
+        },
+    );
 }
 
 pub fn update_player_move(world: &World, controls: &Controls, screen: &Window) {
