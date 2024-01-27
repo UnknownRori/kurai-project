@@ -95,6 +95,7 @@ impl Default for CanShoot {
 }
 
 impl CanShoot {
+    #[must_use]
     pub fn new(firerate: f32, speed: f32) -> Self {
         Self {
             fire_rate: firerate,
@@ -103,10 +104,12 @@ impl CanShoot {
         }
     }
 
+    #[must_use]
     pub fn can_fire(&self) -> bool {
         self.last_shoot.elapsed().as_secs_f32() >= 1.0 / self.fire_rate
     }
 
+    #[must_use]
     pub fn update_cooldown(&mut self) {
         self.last_shoot = Instant::now();
     }

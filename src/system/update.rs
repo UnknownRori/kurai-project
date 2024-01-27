@@ -43,7 +43,7 @@ pub fn enemy_shoot_normal_fairy(world: &mut World) {
                 Velocity::from(direction),
             ));
 
-            world
+            let _ = world
                 .get::<&mut CanShoot>(entity)
                 .unwrap()
                 .update_cooldown();
@@ -62,7 +62,7 @@ pub fn player_shoot(world: &mut World, controls: &Controls) {
 
     for (pos, can_shoot, sprite) in &player_entity {
         if controls.is_down(&Action::Attack) {
-            let pos = pos.position + Complex::new(32.0, 32.0);
+            let pos = pos.position + Complex::new(0.0, 0.0);
 
             spawn_player_bullet(
                 world,

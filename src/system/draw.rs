@@ -2,7 +2,6 @@ use hecs::World;
 use macroquad::prelude::*;
 
 use crate::{
-    components::EnemyBullet,
     entity::{NormalFairyBulletEntity, NormalFairyEntity, PlayerBulletEntity, PlayerEntity},
     window::Window,
 };
@@ -19,7 +18,7 @@ pub fn update_render_enemy(world: &World) {
         .iter()
         .for_each(|(_, (_, pos, _, _, _, _))| {
             draw_rectangle(pos.position.re, pos.position.im, 10.0, 10.0, RED);
-        })
+        });
 }
 
 pub fn update_render_normal_fairy_bullet(world: &World) {
@@ -39,8 +38,8 @@ pub fn update_render_player(world: &World, screen: &Window) {
             // gl_use_material(&material);
             draw_texture_ex(
                 &sprite.texture,
-                position.position.re,
-                position.position.im,
+                position.position.re - 32.0,
+                position.position.im - 32.0,
                 WHITE,
                 DrawTextureParams {
                     dest_size: Some(vec2(64.0, 64.0)),

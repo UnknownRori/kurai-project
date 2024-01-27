@@ -1,4 +1,5 @@
 use num_complex::Complex;
+use num_traits::{Float, MulAdd};
 
 pub trait CartesianCoordinate<T> {
     fn x(&self) -> &T;
@@ -16,7 +17,10 @@ impl<T> CartesianCoordinate<T> for Complex<T> {
 }
 
 pub trait ExtendedComplexNumber {
+    #[must_use]
     fn normalize(&self) -> Self;
+
+    #[must_use]
     fn lerp(&self, other: Complex<f32>, t: f32) -> Self;
 }
 
@@ -27,8 +31,9 @@ impl ExtendedComplexNumber for Complex<f32> {
     }
 
     fn lerp(&self, other: Complex<f32>, t: f32) -> Self {
-        let re = (1.0 - t) * self.re + t * other.re;
-        let im = (1.0 - t) * self.im + t * other.im;
-        Complex::new(re, im)
+        let re = (1.0 - t).mul_add(self.re, t * other.re);
+        let im = (1.0 - t).mul_add(self.im, t * other.im);
+
+        Self::new(re, im)
     }
 }

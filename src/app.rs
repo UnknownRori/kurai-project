@@ -30,10 +30,10 @@ impl App {
         let _ = spawn_enemy(&mut world, Position::from_array([100.0, 100.0])).await;
 
         Self {
-            score_data,
             window,
             controls,
             world,
+            score_data,
         }
     }
 
