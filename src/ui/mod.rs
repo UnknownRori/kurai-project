@@ -1,5 +1,6 @@
 use macroquad::prelude::*;
 
+use crate::assets::AssetsManager;
 use crate::constant::{GAME_NAME, GAME_VERSION};
 use crate::score::ScoreData;
 use crate::window::Window;
@@ -7,15 +8,25 @@ use crate::window::Window;
 pub struct StageUI {}
 
 #[inline]
-fn draw_scoreboard(window: &Window, score_board: &ScoreData) {
+fn draw_scoreboard(window: &Window, score_board: &ScoreData, assets_manager: &AssetsManager) {
     let width_score = window.get_width() / 2.5;
-    draw_rectangle(
+    draw_texture_ex(
+        &assets_manager.get_texture("stage_ui").unwrap(),
         window.get_width() - width_score,
         0.0,
-        width_score,
-        *window.get_height(),
-        RED,
+        WHITE,
+        DrawTextureParams {
+            dest_size: Some(vec2(width_score, *window.get_height())),
+            ..Default::default()
+        },
     );
+    // draw_rectangle(
+    //     window.get_width() - width_score,
+    //     0.0,
+    //     width_score,
+    //     *window.get_height(),
+    //     RED,
+    // );
 
     draw_text(
         "Score",
@@ -92,7 +103,7 @@ pub fn draw_game_name(window: &Window) {
 }
 
 impl StageUI {
-    pub async fn draw(window: &Window, score_data: &ScoreData) {
-        draw_scoreboard(window, score_data);
+    pub async fn draw(window: &Window, score_data: &ScoreData, assets_manager: &AssetsManager) {
+        draw_scoreboard(window, score_data, assets_manager);
     }
 }

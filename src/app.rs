@@ -28,13 +28,14 @@ impl App {
         let mut world = World::new();
         let mut assets_manager = AssetsManager::default();
         let score_data = ScoreData::default();
-
         assets_manager
-            .register_texture("remilia0", "./resources/textures/remilia-scarlet/1.png")
-            .await;
-        assets_manager
-            .register_texture("fairy0", "./resources/textures/fairy/fairy0001.png")
-            .await;
+            .register_texture_batch(&[
+                ("stage_ui", "./resources/ui/stage-background.png"),
+                ("remilia0", "./resources/textures/remilia-scarlet/1.png"),
+                ("fairy0", "./resources/textures/fairy/fairy0001.png"),
+            ])
+            .await
+            .unwrap();
 
         let _ = spawn_player(
             &mut world,
@@ -70,7 +71,7 @@ impl App {
         clear_background(BLACK);
 
         update_draw(&self.world, &self.controls, &self.window);
-        StageUI::draw(&self.window, &self.score_data).await;
+        StageUI::draw(&self.window, &self.score_data, &self.assets_manager).await;
 
         draw_entity_number(&self.window, self.world.len());
         draw_fps(&self.window, 32.0, WHITE);
