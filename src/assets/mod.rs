@@ -24,8 +24,8 @@ impl AssetsManager {
             .texture_collection
             .insert(name.to_owned(), texture.into())
         {
-            None => Err(eyre!("Cannot store texture with the same name!")),
-            _ => Ok(()),
+            Some(_) => Err(eyre!("Cannot store texture with the same name!")),
+            None => Ok(()),
         }
     }
 
@@ -37,9 +37,29 @@ impl AssetsManager {
         let sfx = load_sound(file_name).await?;
 
         match self.sfx_collection.insert(name.to_owned(), sfx.into()) {
-            None => Err(eyre!("Cannot store sfx with the same name!")),
-            _ => Ok(()),
+            Some(_) => Err(eyre!("Cannot store sfx with the same name!")),
+            None => Ok(()),
         }
+    }
+
+    pub async fn register_texture_batch(
+        &mut self,
+        batch: &[(&str, &str)],
+    ) -> Result<(), color_eyre::Report> {
+        for a in batch {
+            self.register_texture(a.0, a.1).await?;
+        }
+        Ok(())
+    }
+
+    pub async fn register_sfx_batch(
+        &mut self,
+        batch: &[(&str, &str)],
+    ) -> Result<(), color_eyre::Report> {
+        for a in batch {
+            self.register_sfx(a.0, a.1).await?;
+        }
+        Ok(())
     }
 
     pub fn get_texture(&self, name: &str) -> Option<Arc<Texture2D>> {
