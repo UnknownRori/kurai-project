@@ -1,4 +1,5 @@
 use crate::{
+    assets::AssetsManager,
     components::Position,
     controls::Controls,
     drawable::Drawable,
@@ -17,6 +18,7 @@ pub struct App {
     controls: Controls,
     world: World,
     score_data: ScoreData,
+    assets_manager: AssetsManager,
 }
 
 impl App {
@@ -24,16 +26,37 @@ impl App {
     #[must_use]
     pub async fn new(window: Window, controls: Controls) -> Self {
         let mut world = World::new();
+        let mut assets_manager = AssetsManager::default();
         let score_data = ScoreData::default();
 
-        let _ = spawn_player(&mut world).await;
-        let _ = spawn_enemy(&mut world, Position::from_array([100.0, 100.0])).await;
+        assets_manager
+            .register_texture("remilia0", "./resources/textures/remilia-scarlet/1.png")
+            .await;
+        assets_manager
+            .register_texture("fairy0", "./resources/textures/fairy/fairy0001.png")
+            .await;
+
+        let _ = spawn_player(
+            &mut world,
+            assets_manager
+                .get_texture("remilia0")
+                .expect("There is no Remilia Texture"),
+        );
+        let _ = spawn_enemy(
+            &mut world,
+            Position::from_array([100.0, 100.0]),
+            assets_manager
+                .get_texture("fairy0")
+                .expect("There is no Fairy Texture"),
+        )
+        .await;
 
         Self {
             window,
             controls,
             world,
             score_data,
+            assets_manager,
         }
     }
 

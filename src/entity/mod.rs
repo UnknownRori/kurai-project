@@ -1,6 +1,9 @@
 pub mod remilia_scarlet;
 
+use std::sync::Arc;
+
 use hecs::{Entity, World};
+use macroquad::texture::Texture2D;
 use num_complex::Complex;
 
 use crate::components::{
@@ -15,6 +18,7 @@ pub type NormalFairyEntity<'a> = (
     &'a CanShoot,
     &'a TargetPlayer,
     &'a SingleShoot,
+    &'a Sprite,
 );
 
 pub type PlayerEntity<'a> = (
@@ -45,7 +49,7 @@ pub fn spawn_generic_bullet(
     todo!()
 }
 
-pub async fn spawn_enemy(world: &mut World, pos: Position) -> Entity {
+pub async fn spawn_enemy(world: &mut World, pos: Position, texture: Arc<Texture2D>) -> Entity {
     world.spawn((
         Enemy,
         pos,
@@ -53,10 +57,11 @@ pub async fn spawn_enemy(world: &mut World, pos: Position) -> Entity {
         CanShoot::new(1.0, 500.0),
         TargetPlayer,
         SingleShoot,
+        Sprite::new(texture),
     ))
 }
 
-pub async fn spawn_player(world: &mut World) -> Entity {
+pub fn spawn_player(world: &mut World, texture: Arc<Texture2D>) -> Entity {
     world.spawn((
         Player,
         Controllable,
@@ -64,7 +69,7 @@ pub async fn spawn_player(world: &mut World) -> Entity {
         // Position::from_array([200.0, 450.0]), // TODO : Make starting position to middle bottom
         Position::from_array([200.0, 450.0]), // TODO : Make starting position to middle bottom
         CanShoot::new(5.0, 1000.0),
-        Sprite::new().await,
+        Sprite::new(texture),
     ))
 }
 

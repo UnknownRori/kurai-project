@@ -28,8 +28,8 @@ pub fn enemy_shoot_normal_fairy(world: &mut World) {
             .query::<NormalFairyEntity>()
             .iter()
             .par_bridge()
-            .filter(|(_, (_, _, _, can_shoot, _, _))| can_shoot.can_fire())
-            .map(|(entity, (_, pos, _, can_shoot, _, _))| (entity, *pos, *can_shoot))
+            .filter(|(_, (_, _, _, can_shoot, _, _, _))| can_shoot.can_fire())
+            .map(|(entity, (_, pos, _, can_shoot, _, _, _))| (entity, *pos, *can_shoot))
             .collect::<Vec<_>>();
 
         for (entity, pos, can_shoot) in enemy {

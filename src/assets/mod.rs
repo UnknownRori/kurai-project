@@ -1,4 +1,4 @@
-use std::{collections::HashMap, rc::Rc};
+use std::{collections::HashMap, sync::Arc};
 
 use color_eyre::eyre::{eyre, Ok};
 use macroquad::{
@@ -8,8 +8,8 @@ use macroquad::{
 
 #[derive(Default)]
 pub struct AssetsManager {
-    texture_collection: HashMap<String, Rc<Texture2D>>,
-    sfx_collection: HashMap<String, Rc<Sound>>,
+    texture_collection: HashMap<String, Arc<Texture2D>>,
+    sfx_collection: HashMap<String, Arc<Sound>>,
 }
 
 impl AssetsManager {
@@ -42,11 +42,11 @@ impl AssetsManager {
         }
     }
 
-    pub fn get_texture(&self, name: &str) -> Option<Rc<Texture2D>> {
-        self.texture_collection.get(name).map(|a| Rc::clone(a))
+    pub fn get_texture(&self, name: &str) -> Option<Arc<Texture2D>> {
+        self.texture_collection.get(name).map(|a| Arc::clone(a))
     }
 
-    pub fn get_sfx(&self, name: &str) -> Option<Rc<Sound>> {
-        self.sfx_collection.get(name).map(|a| Rc::clone(a))
+    pub fn get_sfx(&self, name: &str) -> Option<Arc<Sound>> {
+        self.sfx_collection.get(name).map(|a| Arc::clone(a))
     }
 }

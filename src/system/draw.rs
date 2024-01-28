@@ -16,8 +16,8 @@ pub fn update_render_enemy(world: &World) {
     world
         .query::<NormalFairyEntity>()
         .iter()
-        .for_each(|(_, (_, pos, _, _, _, _))| {
-            draw_rectangle(pos.position.re, pos.position.im, 10.0, 10.0, RED);
+        .for_each(|(_, (_, pos, _, _, _, _, sprite))| {
+            sprite.draw(&pos);
         });
 }
 
@@ -36,16 +36,7 @@ pub fn update_render_player(world: &World, screen: &Window) {
             // INFO : Not working currently | causing the game to crash and burn
             // let material = shadow_shader_material(&screen).unwrap();
             // gl_use_material(&material);
-            draw_texture_ex(
-                &sprite.texture,
-                position.position.re - 32.0,
-                position.position.im - 32.0,
-                WHITE,
-                DrawTextureParams {
-                    dest_size: Some(vec2(64.0, 64.0)),
-                    ..Default::default()
-                },
-            );
+            let _ = sprite.draw(&position);
             // gl_use_default_material();
         });
 }

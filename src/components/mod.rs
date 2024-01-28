@@ -121,13 +121,7 @@ pub struct Sprite {
 }
 
 impl Sprite {
-    pub async fn new() -> Self {
-        // TODO : Put this thing away
-        let texture = load_texture("./resources/textures/remilia-scarlet/1.png")
-            .await
-            .unwrap()
-            .into();
-
+    pub fn new(texture: Arc<Texture2D>) -> Self {
         Self { texture }
     }
 
@@ -139,5 +133,21 @@ impl Sprite {
     #[must_use]
     pub fn width(&self) -> f32 {
         self.texture.width()
+    }
+
+    #[must_use]
+    pub fn draw(&self, position: &Position) {
+        let size = vec2(64.0, 64.0);
+        draw_texture_ex(
+            &self.texture,
+            position.position.re - size.x / 2.0,
+            position.position.im - size.y / 2.0,
+            WHITE,
+            DrawTextureParams {
+                // TODO : Make sure it looks good on any screens
+                dest_size: Some(size),
+                ..Default::default()
+            },
+        );
     }
 }
