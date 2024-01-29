@@ -9,6 +9,7 @@ pub mod math;
 pub mod score;
 pub mod shaders;
 pub mod system;
+pub mod time;
 pub mod ui;
 pub mod utils;
 pub mod window;

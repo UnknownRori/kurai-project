@@ -1,5 +1,6 @@
-use std::{sync::Arc, time::Instant};
+use std::{collections::VecDeque, sync::Arc};
 
+use crate::time::Instant;
 use macroquad::prelude::*;
 use num_complex::Complex;
 
@@ -79,7 +80,7 @@ impl From<Complex<f32>> for Velocity {
 
 #[derive(Debug, Clone, Copy)]
 pub struct CanShoot {
-    pub fire_rate: f32,
+    pub fire_rate: f64,
     pub last_shoot: Instant, // INFO : This is not work for wasm
     pub bullet_speed: f32,
 }
@@ -96,7 +97,7 @@ impl Default for CanShoot {
 
 impl CanShoot {
     #[must_use]
-    pub fn new(firerate: f32, speed: f32) -> Self {
+    pub fn new(firerate: f64, speed: f32) -> Self {
         Self {
             fire_rate: firerate,
             bullet_speed: speed,
@@ -105,8 +106,8 @@ impl CanShoot {
     }
 
     #[must_use]
-    pub fn can_fire(&self) -> bool {
-        self.last_shoot.elapsed().as_secs_f32() >= 1.0 / self.fire_rate
+    pub fn can_fire(&self, time_frame: f64) -> bool {
+        self.last_shoot.elapsed(time_frame) >= 1.0 / self.fire_rate
     }
 
     #[must_use]
@@ -151,3 +152,8 @@ impl Sprite {
         );
     }
 }
+
+// #[derive(Debug)]
+// pub struct Waypoints {
+// waypoints: VecDeque<impl>
+// }

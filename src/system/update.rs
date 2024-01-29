@@ -24,11 +24,13 @@ pub fn enemy_shoot_normal_fairy(world: &mut World) {
         .collect::<Vec<_>>();
 
     if let Some(player_pos) = player_pos.first() {
+        let time_frame = get_time();
+
         let enemy = world
             .query::<NormalFairyEntity>()
             .iter()
             .par_bridge()
-            .filter(|(_, (_, _, _, can_shoot, _, _, _))| can_shoot.can_fire())
+            .filter(move |(_, (_, _, _, can_shoot, _, _, _))| can_shoot.can_fire(time_frame))
             .map(|(entity, (_, pos, _, can_shoot, _, _, _))| (entity, *pos, *can_shoot))
             .collect::<Vec<_>>();
 
