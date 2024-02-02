@@ -7,12 +7,25 @@ pub trait CartesianCoordinate<T> {
 }
 
 impl<T> CartesianCoordinate<T> for Complex<T> {
+    #[must_use]
     fn x(&self) -> &T {
         &self.re
     }
 
+    #[must_use]
     fn y(&self) -> &T {
         &self.im
+    }
+}
+
+pub trait Clamp {
+    #[must_use]
+    fn clamp(&self, min: Self, max: Self) -> Self;
+}
+
+impl Clamp for Complex<f32> {
+    fn clamp(&self, min: Self, max: Self) -> Self {
+        Complex::new(self.re.clamp(min.re, max.re), self.im.clamp(min.im, max.im))
     }
 }
 
@@ -22,16 +35,19 @@ pub trait ToVec2 {
 }
 
 pub trait ToComplex {
+    #[must_use]
     fn to_compx(&self) -> Complex<f32>;
 }
 
 impl ToComplex for Vec2 {
+    #[must_use]
     fn to_compx(&self) -> Complex<f32> {
         Complex::new(self.x, self.y)
     }
 }
 
 impl ToVec2 for Complex<f32> {
+    #[must_use]
     fn to_vec2(&self) -> Vec2 {
         vec2(self.re, self.im)
     }
