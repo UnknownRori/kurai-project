@@ -140,6 +140,6 @@ pub fn update_player_move(world: &World, controls: &Controls, screen: &Window) {
             position.position += new_pos * get_frame_time();
             position.position = position
                 .position
-                .clamp(Complex::new(-0.01, -0.01), Complex::new(1.01, 1.01));
+                .clamp(Complex::new(0.05, 0.05), Complex::new(0.95, 0.95));
         });
 }
