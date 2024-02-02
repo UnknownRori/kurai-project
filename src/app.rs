@@ -30,9 +30,9 @@ impl App {
         let score_data = ScoreData::default();
         assets_manager
             .register_texture_batch(&[
-                ("stage_ui", "./resources/ui/stage-background.png"),
                 ("remilia0", "./resources/textures/remilia-scarlet/1.png"),
                 ("fairy0", "./resources/textures/fairy/fairy0001.png"),
+                ("hud", "./resources/ui/hud.png"),
             ])
             .await
             .unwrap();
@@ -45,7 +45,7 @@ impl App {
         );
         let _ = spawn_enemy(
             &mut world,
-            Position::from_array([100.0, 100.0]),
+            Position::from_array([0.2, 0.1]),
             assets_manager
                 .get_texture("fairy0")
                 .expect("There is no Fairy Texture"),
@@ -63,6 +63,7 @@ impl App {
 
     /// This is where the update happen
     pub fn update(&mut self) {
+        self.window.update();
         update_system(&mut self.world, &self.controls, &self.window);
     }
 
@@ -76,5 +77,13 @@ impl App {
         draw_entity_number(&self.window, self.world.len());
         draw_fps(&self.window, 32.0, WHITE);
         draw_version(&self.window);
+
+        draw_rectangle(
+            self.window.playable_window().get_start().x,
+            self.window.playable_window().get_start().y,
+            self.window.playable_window().size().x,
+            self.window.playable_window().size().y,
+            Color::new(255f32, 0f32, 0f32, 0.5),
+        );
     }
 }

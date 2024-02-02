@@ -1,6 +1,6 @@
 use std::{collections::VecDeque, sync::Arc};
 
-use crate::time::Instant;
+use crate::{math::ToVec2, time::Instant, window::Window};
 use macroquad::prelude::*;
 use num_complex::Complex;
 
@@ -32,7 +32,7 @@ pub struct EnemyBullet;
 
 impl Default for Movable {
     fn default() -> Self {
-        Self { move_speed: 20.0 }
+        Self { move_speed: 0.01 }
     }
 }
 
@@ -89,7 +89,7 @@ impl Default for CanShoot {
     fn default() -> Self {
         Self {
             fire_rate: 1.0,
-            bullet_speed: 20.0,
+            bullet_speed: 0.1,
             last_shoot: Instant::now(),
         }
     }
@@ -137,16 +137,21 @@ impl Sprite {
     }
 
     #[must_use]
-    pub fn draw(&self, position: &Position) {
-        let size = vec2(64.0, 64.0);
+    pub fn draw(&self, position: &Position, screen: &Window) {
+        let size = vec2(0.1, 0.1);
+        let pos = position.position.to_vec2() - size / 2.0;
+        let real_pos: Vec2 =
+            pos * (*screen.playable_window().size()) + (*screen.playable_window().get_start());
+        let real_size = size * (*screen.playable_window().size());
+
         draw_texture_ex(
             &self.texture,
-            position.position.re - size.x / 2.0,
-            position.position.im - size.y / 2.0,
+            real_pos.x,
+            real_pos.y,
             WHITE,
             DrawTextureParams {
                 // TODO : Make sure it looks good on any screens
-                dest_size: Some(size),
+                dest_size: Some(real_size),
                 ..Default::default()
             },
         );

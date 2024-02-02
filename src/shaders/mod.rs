@@ -18,7 +18,7 @@ pub fn shadow_shader_material(screen: &Window) -> Result<Material, color_eyre::R
         },
     )?;
 
-    let screen_size = (*screen.get_width(), *screen.get_height());
+    let screen_size = screen.screen();
     material.set_uniform("screen_size", screen_size);
 
     Ok(material)

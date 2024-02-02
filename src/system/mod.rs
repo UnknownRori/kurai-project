@@ -27,8 +27,8 @@ pub fn update_system(world: &mut World, controls: &Controls, screen: &Window) {
 }
 
 pub fn update_draw(world: &World, _controls: &Controls, screen: &Window) {
-    update_render_player_bullet(world);
+    update_render_player_bullet(world, screen);
     update_render_player(world, screen);
-    update_render_enemy(world);
-    update_render_normal_fairy_bullet(world);
+    update_render_enemy(world, screen);
+    update_render_normal_fairy_bullet(world, screen);
 }

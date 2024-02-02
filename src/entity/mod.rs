@@ -54,7 +54,7 @@ pub async fn spawn_enemy(world: &mut World, pos: Position, texture: Arc<Texture2
         Enemy,
         pos,
         Movable::new(200.0),
-        CanShoot::new(1.0, 500.0),
+        CanShoot::new(1.0, 1.5),
         TargetPlayer,
         SingleShoot,
         Sprite::new(texture),
@@ -65,10 +65,9 @@ pub fn spawn_player(world: &mut World, texture: Arc<Texture2D>) -> Entity {
     world.spawn((
         Player,
         Controllable,
-        Movable::new(300.0),
-        // Position::from_array([200.0, 450.0]), // TODO : Make starting position to middle bottom
-        Position::from_array([200.0, 450.0]), // TODO : Make starting position to middle bottom
-        CanShoot::new(5.0, 1000.0),
+        Movable::new(1.0),
+        Position::from_array([0.5, 0.8]),
+        CanShoot::new(40.0, 1.5),
         Sprite::new(texture),
     ))
 }

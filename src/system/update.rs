@@ -59,11 +59,14 @@ pub fn player_shoot(world: &mut World, controls: &Controls) {
         .query::<PlayerEntity>()
         .iter()
         .par_bridge()
-        .map(|(_, (_, _, _, pos, can_shoot, sprite))| (*pos, *can_shoot, sprite.clone()))
+        .map(|(entity, (_, _, _, pos, can_shoot, sprite))| {
+            (entity, *pos, *can_shoot, sprite.clone())
+        })
         .collect::<Vec<_>>();
 
-    for (pos, can_shoot, sprite) in &player_entity {
-        if controls.is_down(&Action::Attack) {
+    let time = get_time();
+    for (entity, pos, can_shoot, sprite) in player_entity {
+        if controls.is_down(&Action::Attack) && can_shoot.can_fire(time) {
             let pos = pos.position + Complex::new(0.0, 0.0);
 
             spawn_player_bullet(
@@ -71,6 +74,11 @@ pub fn player_shoot(world: &mut World, controls: &Controls) {
                 &pos.into(),
                 Complex::new(0.0, -can_shoot.bullet_speed),
             );
+
+            let _ = world
+                .get::<&mut CanShoot>(entity)
+                .unwrap()
+                .update_cooldown();
         }
     }
 }
@@ -82,10 +90,10 @@ pub fn update_delete_bullet_offscreen(world: &mut World, screen: &Window) {
         .iter()
         .par_bridge()
         .filter(|(_, (pos, _, _))| {
-            pos.position.im > *screen.get_height()
-                || pos.position.im < 0.0
-                || pos.position.re < 0.0
-                || pos.position.re > *screen.get_width()
+            pos.position.re <= 0.0
+                || pos.position.re >= 1.0
+                || pos.position.im <= 0.0
+                || pos.position.im >= 1.0
         })
         .map(|(id, _)| id)
         .collect::<Vec<_>>();
@@ -99,6 +107,9 @@ pub fn update_move_bullet(world: &mut World, _screen: &Window) {
     world.query_mut::<BulletEntity>().into_iter().for_each(
         |(_, (position, moveable, velocity))| {
             position.position += velocity.velocity * get_frame_time();
+            position.position = position
+                .position
+                .clamp(Complex::new(0.0, 0.0), Complex::new(1.00, 1.00));
         },
     );
 }
@@ -127,13 +138,8 @@ pub fn update_player_move(world: &World, controls: &Controls, screen: &Window) {
             }
 
             position.position += new_pos * get_frame_time();
-            position.position.re = position
+            position.position = position
                 .position
-                .re
-                .clamp(-32.0, screen.get_playable_window().get_end_width() - 32.0);
-            position.position.im = position
-                .position
-                .im
-                .clamp(-32.0, *screen.get_playable_window().get_end_height() - 32.0);
+                .clamp(Complex::new(-0.01, -0.01), Complex::new(1.01, 1.01));
         });
 }
