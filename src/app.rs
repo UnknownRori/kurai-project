@@ -49,8 +49,7 @@ impl App {
             assets_manager
                 .get_texture("fairy0")
                 .expect("There is no Fairy Texture"),
-        )
-        .await;
+        );
 
         Self {
             window,

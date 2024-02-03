@@ -49,7 +49,7 @@ pub fn spawn_generic_bullet(
     todo!()
 }
 
-pub async fn spawn_enemy(world: &mut World, pos: Position, texture: Arc<Texture2D>) -> Entity {
+pub fn spawn_enemy(world: &mut World, pos: Position, texture: Arc<Texture2D>) -> Entity {
     world.spawn((
         Enemy,
         pos,
