@@ -1,0 +1,39 @@
+name: Web Build
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Install wasm toolchain
+      run: rustup target add wasm32-unknown-unknown
+    - name: Build
+      run: cargo build --target wasm32-unknown-unknown --release --verbose
+    - name: Create Dist folder
+      run: mkdir dist
+    - name: Move js file to dist
+      run: cp ./js ./dist -r
+    - name: Move resource folder
+      run: cp ./resources ./dist -r
+    - name: Move index.html
+      run: cp ./index.html ./dist
+    - name: Move wasm file to dist
+      run: cp target/wasm32-unknown-unknown/release/scarlet-project.wasm ./dist
+
+    - name: Upload a Build Artifact
+      uses: actions/upload-artifact@v4.3.0
+      with:
+        name: Web Artifact
+        path: ./dist
+          
