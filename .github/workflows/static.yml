@@ -2,10 +2,10 @@
 name: Deploy static content to Pages
 
 on:
-  workflow_run:
-    workflows: [ "Web Build" ]
-    branches: [ master ]
-    types: [ completed ]
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
 
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
