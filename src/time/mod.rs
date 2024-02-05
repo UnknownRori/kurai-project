@@ -6,6 +6,11 @@ pub struct Instant {
 }
 
 impl Instant {
+    pub fn new(time: f64) -> Self {
+        Self { time }
+    }
+
+    /// Cannot be used between thread
     pub fn now() -> Self {
         Self { time: get_time() }
     }
