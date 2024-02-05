@@ -8,6 +8,7 @@ pub mod entity;
 pub mod math;
 pub mod score;
 pub mod shaders;
+pub mod stage;
 pub mod system;
 pub mod time;
 pub mod ui;

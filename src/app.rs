@@ -1,8 +1,7 @@
 use crate::{
     assets::AssetsManager,
-    components::Position,
+    components::{Movement, MovementQueue, Position},
     controls::Controls,
-    drawable::Drawable,
     entity::{spawn_enemy, spawn_player},
     score::ScoreData,
     system::{update_draw, update_system},
@@ -12,6 +11,7 @@ use crate::{
 
 use hecs::World;
 use macroquad::prelude::*;
+use num_complex::Complex;
 
 pub struct App {
     window: Window,
@@ -43,12 +43,16 @@ impl App {
                 .get_texture("remilia0")
                 .expect("There is no Remilia Texture"),
         );
+
+        let pos = vec![Movement::new(Complex::new(0.1, 0.5), 0.0, false)];
+        let movement = MovementQueue::new(2f64, pos);
         let _ = spawn_enemy(
             &mut world,
-            Position::from_array([0.2, 0.1]),
+            Position::from_array([1.0, 0.1]),
             assets_manager
                 .get_texture("fairy0")
                 .expect("There is no Fairy Texture"),
+            movement,
         );
 
         Self {
@@ -63,7 +67,13 @@ impl App {
     /// This is where the update happen
     pub fn update(&mut self) {
         self.window.update();
-        update_system(&mut self.world, &self.controls, &self.window);
+        update_system(
+            &mut self.world,
+            &self.controls,
+            &self.window,
+            get_frame_time(),
+            get_time(),
+        );
     }
 
     /// This is where the draw happen

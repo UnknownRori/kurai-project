@@ -1,11 +1,12 @@
-use std::time::Instant;
+use crate::time::Instant;
 
 use hecs::World;
 use macroquad::prelude::*;
 use num_complex::Complex;
 use rayon::prelude::*;
 
-use crate::components::CanShoot;
+use crate::components::{CanShoot, Enemy, Position};
+use crate::entity::EnemyMovableEntity;
 use crate::math::*;
 
 use crate::{
@@ -15,7 +16,7 @@ use crate::{
     window::Window,
 };
 
-pub fn enemy_shoot_normal_fairy(world: &mut World) {
+pub fn enemy_shoot_normal_fairy(world: &mut World, delta: f32, time: f64) {
     let player_pos = world
         .query::<PlayerEntity>()
         .iter()
@@ -24,14 +25,12 @@ pub fn enemy_shoot_normal_fairy(world: &mut World) {
         .collect::<Vec<_>>();
 
     if let Some(player_pos) = player_pos.first() {
-        let time_frame = get_time();
-
         let enemy = world
             .query::<NormalFairyEntity>()
             .iter()
             .par_bridge()
-            .filter(move |(_, (_, _, _, can_shoot, _, _, _))| can_shoot.can_fire(time_frame))
-            .map(|(entity, (_, pos, _, can_shoot, _, _, _))| (entity, *pos, *can_shoot))
+            .filter(move |(_, (_, _, _, can_shoot, _, _, _, _))| can_shoot.can_fire(time))
+            .map(|(entity, (_, pos, _, can_shoot, _, _, _, _))| (entity, *pos, *can_shoot))
             .collect::<Vec<_>>();
 
         for (entity, pos, can_shoot) in enemy {
@@ -53,7 +52,29 @@ pub fn enemy_shoot_normal_fairy(world: &mut World) {
     };
 }
 
-pub fn player_shoot(world: &mut World, controls: &Controls) {
+pub fn enemy_movement_update(world: &mut World, delta: f32, time: f64) {
+    world
+        .query::<EnemyMovableEntity>()
+        .iter()
+        .par_bridge()
+        .for_each(|(_, (_, pos, moveable, movement_queue))| {
+            if let Some(current_queue) = movement_queue.target_move.get_mut(0) {
+                if current_queue.start.is_none() {
+                    current_queue.start = Some(Instant::new(time))
+                }
+
+                let distance = (pos.position - current_queue.target).norm();
+                if distance > 0.1 {
+                    let direction =
+                        (current_queue.target - pos.position).normalize() * moveable.move_speed * delta;
+
+                    pos.position += direction
+                }
+            }
+        });
+}
+
+pub fn player_shoot(world: &mut World, controls: &Controls, _: f32, time: f64) {
     // TODO : Make sure remove the clone since it's not efficient
     let player_entity = world
         .query::<PlayerEntity>()
@@ -64,7 +85,6 @@ pub fn player_shoot(world: &mut World, controls: &Controls) {
         })
         .collect::<Vec<_>>();
 
-    let time = get_time();
     for (entity, pos, can_shoot, sprite) in player_entity {
         if controls.is_down(&Action::Attack) && can_shoot.can_fire(time) {
             let pos = pos.position + Complex::new(0.0, 0.0);
@@ -83,7 +103,7 @@ pub fn player_shoot(world: &mut World, controls: &Controls) {
     }
 }
 
-pub fn update_delete_bullet_offscreen(world: &mut World, screen: &Window) {
+pub fn update_delete_bullet_offscreen(world: &mut World, screen: &Window, _: f32, _: f64) {
     // TODO : Fix this later
     let out_of_bound_bullet = world
         .query::<BulletEntity>()
@@ -103,10 +123,10 @@ pub fn update_delete_bullet_offscreen(world: &mut World, screen: &Window) {
     }
 }
 
-pub fn update_move_bullet(world: &mut World, _screen: &Window) {
+pub fn update_move_bullet(world: &mut World, _screen: &Window, delta: f32, _: f64) {
     world.query_mut::<BulletEntity>().into_iter().for_each(
         |(_, (position, moveable, velocity))| {
-            position.position += velocity.velocity * get_frame_time();
+            position.position += velocity.velocity * delta;
             position.position = position
                 .position
                 .clamp(Complex::new(0.0, 0.0), Complex::new(1.00, 1.00));
@@ -114,7 +134,7 @@ pub fn update_move_bullet(world: &mut World, _screen: &Window) {
     );
 }
 
-pub fn update_player_move(world: &World, controls: &Controls, screen: &Window) {
+pub fn update_player_move(world: &World, controls: &Controls, screen: &Window, _: f32, _: f64) {
     world
         .query::<PlayerEntity>()
         .iter()

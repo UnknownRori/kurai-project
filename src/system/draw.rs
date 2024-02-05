@@ -21,7 +21,7 @@ pub fn update_render_enemy(world: &World, screen: &Window) {
     world
         .query::<NormalFairyEntity>()
         .iter()
-        .for_each(|(_, (_, pos, _, _, _, _, sprite))| {
+        .for_each(|(_, (_, pos, _, _, _, _, sprite, _))| {
             sprite.draw(&pos, screen);
         });
 }

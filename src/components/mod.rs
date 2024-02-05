@@ -1,4 +1,4 @@
-use std::{collections::VecDeque, sync::Arc};
+use std::sync::Arc;
 
 use crate::{math::ToVec2, time::Instant, window::Window};
 use macroquad::prelude::*;
@@ -81,7 +81,7 @@ impl From<Complex<f32>> for Velocity {
 #[derive(Debug, Clone, Copy)]
 pub struct CanShoot {
     pub fire_rate: f64,
-    pub last_shoot: Instant, // INFO : This is not work for wasm
+    pub last_shoot: Instant,
     pub bullet_speed: f32,
 }
 
@@ -158,7 +158,40 @@ impl Sprite {
     }
 }
 
-// #[derive(Debug)]
-// pub struct Waypoints {
-// waypoints: VecDeque<impl>
-// }
+#[derive(Debug)]
+pub struct Movement {
+    pub target: Complex<f32>,
+    pub wait: f64,
+    pub start: Option<Instant>, // INFO : Only used when it's smooth
+    pub smooth: bool,
+}
+
+#[derive(Debug)]
+pub struct MovementQueue {
+    pub start: Instant,
+    pub target_move: Vec<Movement>,
+}
+
+impl Movement {
+    pub fn new(target: Complex<f32>, wait: f64, smooth: bool) -> Self {
+        Self {
+            target,
+            wait,
+            start: None,
+            smooth,
+        }
+    }
+
+    fn start(&mut self, delta: f64) {
+        self.start = Some(Instant::new(delta));
+    }
+}
+
+impl MovementQueue {
+    pub fn new(wait: f64, target_move: Vec<Movement>) -> Self {
+        Self {
+            start: Instant::now(),
+            target_move,
+        }
+    }
+}

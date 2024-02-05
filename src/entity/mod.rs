@@ -7,8 +7,8 @@ use macroquad::texture::Texture2D;
 use num_complex::Complex;
 
 use crate::components::{
-    CanShoot, Controllable, Enemy, EnemyBullet, Movable, Player, PlayerBullet, Position,
-    SingleShoot, Sprite, TargetPlayer, Velocity,
+    CanShoot, Controllable, Enemy, EnemyBullet, Movable, MovementQueue, Player, PlayerBullet,
+    Position, SingleShoot, Sprite, TargetPlayer, Velocity,
 };
 
 pub type NormalFairyEntity<'a> = (
@@ -19,6 +19,7 @@ pub type NormalFairyEntity<'a> = (
     &'a TargetPlayer,
     &'a SingleShoot,
     &'a Sprite,
+    &'a MovementQueue,
 );
 
 pub type PlayerEntity<'a> = (
@@ -36,6 +37,13 @@ pub type PlayerBulletEntity<'a> = (
     &'a Movable,
     &'a Velocity,
 );
+
+pub type EnemyMovableEntity<'a> = (
+    &'a Enemy,
+    &'a mut Position,
+    &'a Movable,
+    &'a mut MovementQueue,
+);
 pub type NormalFairyBulletEntity<'a> =
     (&'a EnemyBullet, &'a mut Position, &'a Movable, &'a Velocity);
 pub type BulletEntity<'a> = (&'a mut Position, &'a Movable, &'a Velocity);
@@ -49,15 +57,21 @@ pub fn spawn_generic_bullet(
     todo!()
 }
 
-pub fn spawn_enemy(world: &mut World, pos: Position, texture: Arc<Texture2D>) -> Entity {
+pub fn spawn_enemy(
+    world: &mut World,
+    pos: Position,
+    texture: Arc<Texture2D>,
+    movement: MovementQueue,
+) -> Entity {
     world.spawn((
         Enemy,
         pos,
-        Movable::new(200.0),
+        Movable::new(0.2),
         CanShoot::new(1.0, 1.5),
         TargetPlayer,
         SingleShoot,
         Sprite::new(texture),
+        movement,
     ))
 }
 
