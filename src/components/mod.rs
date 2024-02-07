@@ -1,4 +1,4 @@
-use std::sync::Arc;
+use std::{collections::VecDeque, sync::Arc};
 
 use crate::{math::ToVec2, time::Instant, window::Window};
 use macroquad::prelude::*;
@@ -169,7 +169,7 @@ pub struct Movement {
 #[derive(Debug)]
 pub struct MovementQueue {
     pub start: Instant,
-    pub target_move: Vec<Movement>,
+    pub target_move: VecDeque<Movement>,
 }
 
 impl Movement {
@@ -188,10 +188,14 @@ impl Movement {
 }
 
 impl MovementQueue {
-    pub fn new(wait: f64, target_move: Vec<Movement>) -> Self {
+    pub fn new(target_move: Vec<Movement>) -> Self {
         Self {
             start: Instant::now(),
-            target_move,
+            target_move: target_move.into(),
         }
+    }
+
+    pub fn pop(&mut self) {
+        self.target_move.pop_front();
     }
 }

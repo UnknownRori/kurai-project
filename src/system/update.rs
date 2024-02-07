@@ -64,11 +64,15 @@ pub fn enemy_movement_update(world: &mut World, delta: f32, time: f64) {
                 }
 
                 let distance = (pos.position - current_queue.target).norm();
-                if distance > 0.1 {
-                    let direction =
-                        (current_queue.target - pos.position).normalize() * moveable.move_speed * delta;
+                let tolerance = 0.001;
+                if distance > tolerance {
+                    let direction = (current_queue.target - pos.position).normalize()
+                        * moveable.move_speed
+                        * delta;
 
                     pos.position += direction
+                } else {
+                    movement_queue.pop();
                 }
             }
         });

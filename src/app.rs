@@ -46,8 +46,11 @@ impl App {
                 .expect("There is no Remilia Texture"),
         );
 
-        let pos = vec![Movement::new(Complex::new(0.1, 0.5), 0.0, false)];
-        let movement = MovementQueue::new(2f64, pos);
+        let pos = vec![
+            Movement::new(Complex::new(0.1, 0.5), 2.0, false),
+            Movement::new(Complex::new(0.5, 0.0), 0.0, true),
+        ];
+        let movement = MovementQueue::new(pos);
         let _ = spawn_enemy(
             &mut world,
             Position::from_array([1.0, 0.1]),
