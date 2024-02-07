@@ -66,7 +66,7 @@ pub fn spawn_enemy(
     world.spawn((
         Enemy,
         pos,
-        Movable::new(0.2),
+        Movable::new(0.2, 0.4),
         CanShoot::new(1.0, 1.5),
         TargetPlayer,
         SingleShoot,
@@ -79,7 +79,7 @@ pub fn spawn_player(world: &mut World, texture: Arc<Texture2D>) -> Entity {
     world.spawn((
         Player,
         Controllable,
-        Movable::new(1.0),
+        Movable::new(1.0, 1.0),
         Position::from_array([0.5, 0.8]),
         CanShoot::new(40.0, 1.5),
         Sprite::new(texture),

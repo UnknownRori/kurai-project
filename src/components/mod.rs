@@ -1,5 +1,6 @@
 use std::{collections::VecDeque, sync::Arc};
 
+use crate::math::*;
 use crate::{math::ToVec2, time::Instant, window::Window};
 use macroquad::prelude::*;
 use num_complex::Complex;
@@ -19,6 +20,7 @@ pub struct Controllable;
 #[derive(Debug)]
 pub struct Movable {
     pub move_speed: f32,
+    pub max_speed: f32,
 }
 
 #[derive(Debug)]
@@ -32,14 +34,20 @@ pub struct EnemyBullet;
 
 impl Default for Movable {
     fn default() -> Self {
-        Self { move_speed: 0.01 }
+        Self {
+            move_speed: 0.01,
+            max_speed: 0.05,
+        }
     }
 }
 
 impl Movable {
     #[must_use]
-    pub const fn new(move_speed: f32) -> Self {
-        Self { move_speed }
+    pub const fn new(move_speed: f32, max_speed: f32) -> Self {
+        Self {
+            move_speed,
+            max_speed,
+        }
     }
 }
 
@@ -163,6 +171,7 @@ pub struct Movement {
     pub target: Complex<f32>,
     pub wait: f64,
     pub start: Option<Instant>, // INFO : Only used when it's smooth
+    pub done: Option<Instant>,  // INFO : Only used when it's smooth
     pub smooth: bool,
 }
 
@@ -178,12 +187,17 @@ impl Movement {
             target,
             wait,
             start: None,
+            done: None,
             smooth,
         }
     }
 
-    fn start(&mut self, delta: f64) {
+    pub fn start(&mut self, delta: f64) {
         self.start = Some(Instant::new(delta));
+    }
+
+    pub fn dir(&self, current_pos: &Complex<f32>, move_speed: f32, delta: f32) -> Complex<f32> {
+        (self.target - current_pos).normalize() * move_speed * delta
     }
 }
 
