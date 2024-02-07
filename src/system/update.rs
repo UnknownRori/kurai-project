@@ -21,6 +21,12 @@ pub fn enemy_shoot_normal_fairy(world: &mut World, delta: f32, time: f64) {
         .query::<PlayerEntity>()
         .iter()
         .par_bridge()
+        .filter(|(_, (_, _, _, pos, _, _))| {
+            pos.position.re >= 0.100
+                || pos.position.re <= 0.900
+                || pos.position.im >= 0.100
+                || pos.position.im <= 0.900
+        })
         .map(|(_, (_, _, _, pos, _, _))| (*pos))
         .collect::<Vec<_>>();
 
@@ -64,7 +70,7 @@ pub fn enemy_movement_update(world: &mut World, delta: f32, time: f64) {
                 }
 
                 let distance = (pos.position - current_queue.target).norm();
-                let tolerance = 0.001;
+                let tolerance = 0.005;
                 if distance > tolerance {
                     pos.position += current_queue.dir(&pos.position, moveable.move_speed, delta);
                 } else {
