@@ -2,7 +2,10 @@ use hecs::World;
 use macroquad::prelude::*;
 
 use crate::{
-    entity::{NormalFairyBulletEntity, NormalFairyEntity, PlayerBulletEntity, PlayerEntity},
+    entity::{
+        DrawableEnemyEntity, NormalFairyBulletEntity, NormalFairyEntity, PlayerBulletEntity,
+        PlayerEntity,
+    },
     math::NormalizationVector2,
     window::Window,
 };
@@ -19,9 +22,9 @@ pub fn update_render_player_bullet(world: &World, screen: &Window) {
 
 pub fn update_render_enemy(world: &World, screen: &Window) {
     world
-        .query::<NormalFairyEntity>()
+        .query::<DrawableEnemyEntity>()
         .iter()
-        .for_each(|(_, (_, pos, _, _, _, _, sprite, _))| {
+        .for_each(|(_, (_, pos, sprite))| {
             sprite.draw(&pos, screen);
         });
 }

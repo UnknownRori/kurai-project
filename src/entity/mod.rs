@@ -44,6 +44,7 @@ pub type EnemyMovableEntity<'a> = (
     &'a Movable,
     &'a mut MovementQueue,
 );
+pub type DrawableEnemyEntity<'a> = (&'a Enemy, &'a Position, &'a Sprite);
 pub type NormalFairyBulletEntity<'a> =
     (&'a EnemyBullet, &'a mut Position, &'a Movable, &'a Velocity);
 pub type BulletEntity<'a> = (&'a mut Position, &'a Movable, &'a Velocity);
