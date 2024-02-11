@@ -21,12 +21,6 @@ pub fn enemy_shoot_normal_fairy(world: &mut World, delta: f32, time: f64) {
         .query::<PlayerEntity>()
         .iter()
         .par_bridge()
-        .filter(|(_, (_, _, _, pos, _, _))| {
-            pos.position.re >= 0.100
-                || pos.position.re <= 0.900
-                || pos.position.im >= 0.100
-                || pos.position.im <= 0.900
-        })
         .map(|(_, (_, _, _, pos, _, _))| (*pos))
         .collect::<Vec<_>>();
 
@@ -35,7 +29,11 @@ pub fn enemy_shoot_normal_fairy(world: &mut World, delta: f32, time: f64) {
             .query::<NormalFairyEntity>()
             .iter()
             .par_bridge()
-            .filter(move |(_, (_, _, _, can_shoot, _, _, _, _))| can_shoot.can_fire(time))
+            .filter(move |(_, (_, pos, _, can_shoot, _, _, _, _))| {
+                can_shoot.can_fire(time)
+                    && ((pos.position.re >= 0.050 && pos.position.re <= 0.950)
+                        && (pos.position.im >= 0.050 && pos.position.im <= 0.950))
+            })
             .map(|(entity, (_, pos, _, can_shoot, _, _, _, _))| (entity, *pos, *can_shoot))
             .collect::<Vec<_>>();
 
