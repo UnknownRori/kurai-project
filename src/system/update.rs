@@ -148,21 +148,26 @@ pub fn update_player_move(world: &World, controls: &Controls, screen: &Window, _
         .iter()
         .for_each(|(_, (_, _, moveable, position, _, _))| {
             let mut new_pos = Complex::new(0.0, 0.0);
+            let move_speed = if controls.is_down(&Action::Focus) {
+                moveable.move_speed / 2.
+            } else {
+                moveable.move_speed
+            };
 
             if controls.is_down(&Action::Left) {
-                new_pos += Complex::new(-moveable.move_speed, 0.0);
+                new_pos += Complex::new(-move_speed, 0.0);
             }
 
             if controls.is_down(&Action::Right) {
-                new_pos += Complex::new(moveable.move_speed, 0.0);
+                new_pos += Complex::new(move_speed, 0.0);
             }
 
             if controls.is_down(&Action::Up) {
-                new_pos += Complex::new(0.0, -moveable.move_speed);
+                new_pos += Complex::new(0.0, -move_speed);
             }
 
             if controls.is_down(&Action::Down) {
-                new_pos += Complex::new(0.0, moveable.move_speed);
+                new_pos += Complex::new(0.0, move_speed);
             }
 
             position.position += new_pos * get_frame_time();
