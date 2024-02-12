@@ -3,6 +3,7 @@ use crate::{
     components::{Movement, MovementQueue, Position},
     controls::Controls,
     entity::{spawn_enemy, spawn_player},
+    math::NormalizationVector2,
     score::ScoreData,
     system::{update_draw, update_system},
     ui::{draw_entity_number, draw_fps, draw_version, StageUI},
@@ -19,6 +20,7 @@ pub struct App {
     world: World,
     score_data: ScoreData,
     assets_manager: AssetsManager,
+    debug_mode: bool,
 }
 
 impl App {
@@ -66,6 +68,7 @@ impl App {
             world,
             score_data,
             assets_manager,
+            debug_mode: false,
         }
     }
 
@@ -117,6 +120,23 @@ impl App {
         draw_entity_number(&self.window, self.world.len());
         draw_fps(&self.window, 32.0, WHITE);
         draw_version(&self.window);
+
+        // TODO : Move this to engine
+        if is_key_down(KeyCode::F1) {
+            self.debug_mode = true;
+        }
+        // TODO : This too
+        if self.debug_mode {
+            if is_mouse_button_down(MouseButton::Left) {
+                let pos = mouse_position();
+                let normalized_play = (vec2(pos.0, pos.1)
+                    - *self.window.playable_window().get_start())
+                .normalize_from_vec2(*self.window.playable_window().size());
+                tracing::info!("{}", *self.window.playable_window().get_start());
+                tracing::info!("Raw Pos : {}:{}", pos.0, pos.1);
+                tracing::info!("Normalized Pos : {}", normalized_play);
+            }
+        }
 
         // draw_rectangle(
         //     self.window.playable_window().get_start().x,
