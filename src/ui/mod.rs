@@ -21,16 +21,54 @@ fn draw_scoreboard(window: &Window, score_data: &ScoreData, assets_manager: &Ass
         },
     );
 
-    // let score_pos = vec2(0.1, 0.2) * score_board + (*window.playable_window().get_end());
-    // draw_text("Score", score_pos.x, 0.0 + 52.0, 32.0, WHITE);
-    //
-    // draw_text(
-    //     format!("{:012}", score_data.score).as_str(),
-    //     score_pos.x + (*window.game_window().get_start()).x,
-    //     80.0,
-    //     32.0,
-    //     WHITE,
-    // );
+    // TODO : Make this something more shorter, for loop or something
+    draw_text(
+        "Score",
+        window.playable_window().get_start().x + window.playable_window().size().x + 12.0,
+        window.game_window().get_start().y + 52.0,
+        28.0,
+        WHITE,
+    );
+
+    draw_text(
+        format!("{:012}", score_data.score).as_str(),
+        window.playable_window().get_start().x + window.playable_window().size().x + 12.0,
+        window.game_window().get_start().y + 72.0,
+        32.0,
+        WHITE,
+    );
+
+    draw_text(
+        "Life",
+        window.playable_window().get_start().x + window.playable_window().size().x + 12.0,
+        window.game_window().get_start().y + 112.0,
+        28.0,
+        WHITE,
+    );
+
+    draw_text(
+        format!("{}", score_data.life).as_str(),
+        window.playable_window().get_start().x + window.playable_window().size().x + 12.0,
+        window.game_window().get_start().y + 136.0,
+        32.0,
+        WHITE,
+    );
+
+    draw_text(
+        "Graze",
+        window.playable_window().get_start().x + window.playable_window().size().x + 12.0,
+        window.game_window().get_start().y + 162.0,
+        28.0,
+        WHITE,
+    );
+
+    draw_text(
+        format!("{:04}", score_data.graze).as_str(),
+        window.playable_window().get_start().x + window.playable_window().size().x + 12.0,
+        window.game_window().get_start().y + 186.0,
+        32.0,
+        WHITE,
+    );
 
     draw_game_name(&window);
 }
