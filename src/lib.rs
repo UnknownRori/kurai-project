@@ -4,6 +4,7 @@ pub mod components;
 pub mod constant;
 pub mod controls;
 pub mod drawable;
+pub mod engine;
 pub mod entity;
 pub mod math;
 pub mod score;
