@@ -1,7 +1,7 @@
 use macroquad::{
-    input::{is_key_down, is_mouse_button_down, mouse_position},
+    input::{is_key_pressed, mouse_position},
     math::vec2,
-    miniquad::{KeyCode, MouseButton},
+    miniquad::KeyCode,
     ui::Ui,
 };
 
@@ -20,8 +20,8 @@ impl<'a> Debugger {
     }
 
     pub fn update(&mut self, window: &Window) {
-        if is_key_down(KeyCode::F1) {
-            self.debug_mode = true;
+        if is_key_pressed(KeyCode::F1) {
+            self.debug_mode = !self.debug_mode;
         }
     }
 
