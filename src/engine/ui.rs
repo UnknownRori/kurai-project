@@ -30,7 +30,7 @@ impl TabbedWidget {
                     .collect::<Vec<_>>();
 
                 let tab_widget_selected =
-                    Tabbar::new(hash!(), vec2(self.size.x - 8., 24.), &tabs_name).ui(ui);
+                    Tabbar::new(hash!(), vec2(self.size.x - 8., 12.), &tabs_name).ui(ui);
                 match self.tabs.get_mut(
                     tab_widget_selected
                         .to_usize()

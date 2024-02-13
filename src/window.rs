@@ -3,7 +3,7 @@ use crate::constant::{
 };
 use macroquad::{miniquad::conf::Platform, prelude::*};
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub struct PlayableWindow {
     start: Vec2,
     end: Vec2,
