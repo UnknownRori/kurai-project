@@ -86,6 +86,24 @@ impl From<Complex<f32>> for Velocity {
     }
 }
 
+#[derive(Debug)]
+pub struct Hitpoints {}
+
+#[derive(Debug)]
+pub struct Hitbox {
+    radius: f32, // Normalized value from size of sprite
+}
+
+impl Hitbox {
+    pub fn new(radius: f32) -> Self {
+        Self { radius }
+    }
+
+    pub fn is_intersect(current_pos: &Position, target_pos: &Position, target_hitbox: &Hitbox) {
+        // TODO : Do some algorithm
+    }
+}
+
 #[derive(Debug, Clone, Copy)]
 pub struct CanShoot {
     pub fire_rate: f64,
