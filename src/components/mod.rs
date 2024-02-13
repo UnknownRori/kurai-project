@@ -89,7 +89,7 @@ impl From<Complex<f32>> for Velocity {
 #[derive(Debug, Clone, Copy)]
 pub struct CanShoot {
     pub fire_rate: f64,
-    pub last_shoot: Instant,
+    pub last_shoot: Option<Instant>,
     pub bullet_speed: f32,
 }
 
@@ -98,7 +98,7 @@ impl Default for CanShoot {
         Self {
             fire_rate: 1.0,
             bullet_speed: 0.1,
-            last_shoot: Instant::now(),
+            last_shoot: None,
         }
     }
 }
@@ -109,18 +109,22 @@ impl CanShoot {
         Self {
             fire_rate: firerate,
             bullet_speed: speed,
-            last_shoot: Instant::now(),
+            last_shoot: None,
         }
     }
 
     #[must_use]
     pub fn can_fire(&self, time_frame: f64) -> bool {
-        self.last_shoot.elapsed(time_frame) >= 1.0 / self.fire_rate
+        if self.last_shoot.is_none() {
+            return true;
+        }
+
+        self.last_shoot.unwrap().elapsed(time_frame) >= 1.0 / self.fire_rate
     }
 
     #[must_use]
     pub fn update_cooldown(&mut self) {
-        self.last_shoot = Instant::now();
+        self.last_shoot = Some(Instant::now());
     }
 }
 
