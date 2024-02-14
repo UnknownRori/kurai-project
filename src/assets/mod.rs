@@ -1,72 +1,104 @@
 use std::{collections::HashMap, sync::Arc};
 
-use color_eyre::eyre::{eyre, Ok};
+use color_eyre::eyre::Ok;
 use macroquad::{
     audio::{load_sound, Sound},
+    file::load_file,
+    material::{load_material, Material, MaterialParams},
+    miniquad::ShaderSource,
     texture::{load_texture, Texture2D},
 };
 
-#[derive(Default)]
-pub struct AssetsManager {
-    texture_collection: HashMap<String, Arc<Texture2D>>,
-    sfx_collection: HashMap<String, Arc<Sound>>,
+pub trait AssetsHandler {
+    type Output;
+
+    async fn register(&mut self, name: &str, path: &str) -> Result<(), color_eyre::Report>;
+    async fn batch(&mut self, batch: &[(&str, &str)]) -> Result<(), color_eyre::Report> {
+        for (name, path) in batch {
+            self.register(name, path).await?;
+        }
+
+        Ok(())
+    }
+    fn get(&self, name: &str) -> Option<Self::Output>;
 }
 
-impl AssetsManager {
-    pub async fn register_texture(
-        &mut self,
-        name: &str,
-        file_name: &str,
-    ) -> Result<(), color_eyre::Report> {
-        let texture = load_texture(file_name).await?;
+#[derive(Default)]
+pub struct TextureHandler(HashMap<String, Arc<Texture2D>>);
+#[derive(Default)]
+pub struct SfxHandler(HashMap<String, Arc<Sound>>);
+#[derive(Default)]
+pub struct ShaderHandler(HashMap<String, Arc<Material>>);
 
-        match self
-            .texture_collection
-            .insert(name.to_owned(), texture.into())
-        {
-            Some(_) => Err(eyre!("Cannot store texture with the same name!")),
-            None => Ok(()),
-        }
-    }
+impl AssetsHandler for TextureHandler {
+    type Output = Arc<Texture2D>;
 
-    pub async fn register_sfx(
-        &mut self,
-        name: &str,
-        file_name: &str,
-    ) -> Result<(), color_eyre::Report> {
-        let sfx = load_sound(file_name).await?;
-
-        match self.sfx_collection.insert(name.to_owned(), sfx.into()) {
-            Some(_) => Err(eyre!("Cannot store sfx with the same name!")),
-            None => Ok(()),
-        }
-    }
-
-    pub async fn register_texture_batch(
-        &mut self,
-        batch: &[(&str, &str)],
-    ) -> Result<(), color_eyre::Report> {
-        for a in batch {
-            self.register_texture(a.0, a.1).await?;
-        }
+    async fn register(&mut self, name: &str, path: &str) -> Result<(), color_eyre::Report> {
+        let texture = load_texture(path).await?;
+        self.0.insert(name.to_owned(), Arc::new(texture));
         Ok(())
     }
 
-    pub async fn register_sfx_batch(
-        &mut self,
-        batch: &[(&str, &str)],
-    ) -> Result<(), color_eyre::Report> {
-        for a in batch {
-            self.register_sfx(a.0, a.1).await?;
-        }
+    fn get(&self, name: &str) -> Option<Self::Output> {
+        self.0.get(name).map(|a| Arc::clone(&a))
+    }
+}
+
+impl AssetsHandler for SfxHandler {
+    type Output = Arc<Sound>;
+
+    async fn register(&mut self, name: &str, path: &str) -> Result<(), color_eyre::Report> {
+        let sound = load_sound(path).await?;
+        self.0.insert(name.to_owned(), Arc::new(sound));
         Ok(())
     }
 
-    pub fn get_texture(&self, name: &str) -> Option<Arc<Texture2D>> {
-        self.texture_collection.get(name).map(|a| Arc::clone(a))
+    fn get(&self, name: &str) -> Option<Self::Output> {
+        self.0.get(name).map(|a| Arc::clone(&a))
+    }
+}
+
+impl ShaderHandler {
+    async fn register(
+        &mut self,
+        name: &str,
+        vertex_path: &str,
+        fragment_path: &str,
+        params: MaterialParams,
+    ) -> Result<(), color_eyre::Report> {
+        let vertex = String::from_utf8(load_file(vertex_path).await?)?;
+        let fragment = String::from_utf8(load_file(fragment_path).await?)?;
+        let material = load_material(
+            ShaderSource::Glsl {
+                vertex: &vertex,
+                fragment: &fragment,
+            },
+            params,
+        )?;
+
+        self.0.insert(name.to_owned(), Arc::new(material));
+        Ok(())
     }
 
-    pub fn get_sfx(&self, name: &str) -> Option<Arc<Sound>> {
-        self.sfx_collection.get(name).map(|a| Arc::clone(a))
+    async fn batch(
+        &mut self,
+        batch: Vec<(&str, &str, &str, MaterialParams)>,
+    ) -> Result<(), color_eyre::Report> {
+        for (name, vertex, fragment, params) in batch {
+            self.register(name, vertex, fragment, params).await?;
+        }
+
+        Ok(())
     }
+
+    fn get(&self, name: &str) -> Option<Arc<Material>> {
+        self.0.get(name).map(|a| Arc::clone(&a))
+    }
+}
+
+#[derive(Default)]
+pub struct AssetsManager {
+    pub textures: TextureHandler,
+    pub sfx: SfxHandler,
+    pub shaders: ShaderHandler,
 }

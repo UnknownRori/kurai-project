@@ -1,9 +1,8 @@
 use crate::{
-    assets::AssetsManager,
+    assets::{AssetsHandler, AssetsManager},
     components::{Movement, MovementQueue, Position},
     controls::Controls,
     entity::{spawn_enemy, spawn_player},
-    math::NormalizationVector2,
     score::ScoreData,
     system::{update_draw, update_system},
     ui::{draw_entity_number, draw_fps, draw_version, StageUI},
@@ -31,7 +30,8 @@ impl App {
         let mut assets_manager = AssetsManager::default();
         let score_data = ScoreData::default();
         assets_manager
-            .register_texture_batch(&[
+            .textures
+            .batch(&[
                 ("remilia0", "./resources/textures/remilia-scarlet/1.png"),
                 ("fairy0", "./resources/textures/fairy/fairy0001.png"),
                 ("hud", "./resources/ui/hud.png"),
@@ -44,7 +44,8 @@ impl App {
         let _ = spawn_player(
             &mut world,
             assets_manager
-                .get_texture("remilia0")
+                .textures
+                .get("remilia0")
                 .expect("There is no Remilia Texture"),
         );
 
@@ -57,13 +58,14 @@ impl App {
             &mut world,
             Position::from_array([1.0, 0.1]),
             assets_manager
-                .get_texture("fairy0")
+                .textures
+                .get("fairy0")
                 .expect("There is no Fairy Texture"),
             movement,
         );
 
         // TODO : Put this into Engine part
-        let mut debugger = crate::engine::debug::Debugger::new();
+        let debugger = crate::engine::debug::Debugger::new();
 
         Self {
             window,
@@ -94,8 +96,8 @@ impl App {
         // TODO : This stupid things should live in Stage Struct
         let offset = vec2(0.001, 0.001) * self.window.playable_window().size().clone()
             + self.window.playable_window().get_start().clone();
-        let texture = self.assets_manager.get_texture("stage1").unwrap();
-        let mask = self.assets_manager.get_texture("mask").unwrap();
+        let texture = self.assets_manager.textures.get("stage1").unwrap();
+        let mask = self.assets_manager.textures.get("mask").unwrap();
         draw_texture_ex(
             &mask,
             offset.x,
