@@ -1,3 +1,4 @@
+use crate::assets::{AssetsHandler, AssetsManager};
 use crate::time::Instant;
 
 use hecs::World;
@@ -5,8 +6,8 @@ use macroquad::prelude::*;
 use num_complex::Complex;
 use rayon::prelude::*;
 
-use crate::components::{CanShoot, Enemy, Position};
-use crate::entity::EnemyMovableEntity;
+use crate::components::{CanShoot, Enemy, Hitbox, Position};
+use crate::entity::{spawn_generic_bullet, EnemyMovableEntity};
 use crate::math::*;
 
 use crate::{
@@ -16,7 +17,12 @@ use crate::{
     window::Window,
 };
 
-pub fn enemy_shoot_normal_fairy(world: &mut World, delta: f32, time: f64) {
+pub fn enemy_shoot_normal_fairy(
+    world: &mut World,
+    assets_manager: &AssetsManager,
+    delta: f32,
+    time: f64,
+) {
     let player_pos = world
         .query::<PlayerEntity>()
         .iter()
@@ -29,24 +35,20 @@ pub fn enemy_shoot_normal_fairy(world: &mut World, delta: f32, time: f64) {
             .query::<NormalFairyEntity>()
             .iter()
             .par_bridge()
-            .filter(move |(_, (_, pos, _, can_shoot, _, _, _, _))| {
+            .filter(move |(_, (_, pos, _, can_shoot, _, _, _, _, _))| {
                 can_shoot.can_fire(time)
                     && ((pos.position.re >= 0.050 && pos.position.re <= 0.950)
                         && (pos.position.im >= 0.050 && pos.position.im <= 0.950))
             })
-            .map(|(entity, (_, pos, _, can_shoot, _, _, _, _))| (entity, *pos, *can_shoot))
+            .map(|(entity, (_, pos, _, can_shoot, _, _, _, _, _))| (entity, *pos, *can_shoot))
             .collect::<Vec<_>>();
 
         for (entity, pos, can_shoot) in enemy {
-            let direction =
-                (player_pos.position - pos.position).normalize() * can_shoot.bullet_speed;
-
-            world.spawn((
-                EnemyBullet,
-                pos.clone(),
-                Movable::default(),
-                Velocity::from(direction),
-            ));
+            let texture = assets_manager
+                .textures
+                .get("bullet0")
+                .expect("No generic bullet texture!");
+            spawn_generic_bullet(world, &pos, player_pos, can_shoot.bullet_speed, texture);
 
             let _ = world
                 .get::<&mut CanShoot>(entity)
@@ -117,7 +119,7 @@ pub fn update_delete_bullet_offscreen(world: &mut World, screen: &Window, _: f32
         .query::<BulletEntity>()
         .iter()
         .par_bridge()
-        .filter(|(_, (pos, _, _))| {
+        .filter(|(_, (pos, _, _, _, _))| {
             pos.position.re <= 0.0
                 || pos.position.re >= 1.0
                 || pos.position.im <= 0.0
@@ -133,7 +135,7 @@ pub fn update_delete_bullet_offscreen(world: &mut World, screen: &Window, _: f32
 
 pub fn update_move_bullet(world: &mut World, _screen: &Window, delta: f32, _: f64) {
     world.query_mut::<BulletEntity>().into_iter().for_each(
-        |(_, (position, moveable, velocity))| {
+        |(_, (position, moveable, velocity, _, _))| {
             position.position += velocity.velocity * delta;
             position.position = position
                 .position

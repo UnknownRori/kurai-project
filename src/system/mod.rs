@@ -4,7 +4,7 @@ mod update;
 use hecs::World;
 use macroquad::time::get_time;
 
-use crate::{controls::Controls, window::Window};
+use crate::{assets::AssetsManager, controls::Controls, score::ScoreData, window::Window};
 
 use self::{
     draw::{
@@ -24,13 +24,15 @@ pub fn update_system(
     screen: &Window,
     delta: f32,
     time: f64,
+    score: &mut ScoreData,
+    assets_manager: &AssetsManager,
 ) {
     update_delete_bullet_offscreen(world, screen, delta, time);
 
     update_player_move(world, controls, screen, delta, time);
     update_move_bullet(world, screen, delta, time);
     player_shoot(world, controls, delta, time);
-    enemy_shoot_normal_fairy(world, delta, time);
+    enemy_shoot_normal_fairy(world, assets_manager, delta, time);
     enemy_movement_update(world, delta, time);
 }
 

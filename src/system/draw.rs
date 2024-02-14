@@ -4,16 +4,13 @@ use macroquad::prelude::*;
 use crate::{
     components::{Hitbox, Position},
     controls::{Action, Controls},
-    entity::{
-        DrawableEnemyEntity, NormalFairyBulletEntity, NormalFairyEntity, PlayerBulletEntity,
-        PlayerEntity,
-    },
-    math::{NormalizationComplexf32, NormalizationVector2, ToVec2},
+    entity::{DrawableEnemyEntity, NormalFairyBulletEntity, PlayerBulletEntity, PlayerEntity},
+    math::NormalizationVector2,
     window::Window,
 };
 
 pub fn update_render_player_bullet(world: &World, screen: &Window) {
-    for (_, (_, position, _, _)) in &mut world.query::<PlayerBulletEntity>() {
+    for (_, (_, position, _, _, _)) in &mut world.query::<PlayerBulletEntity>() {
         let pos = position
             .position
             .reset_from_vec2(*screen.playable_window().size())
@@ -35,12 +32,8 @@ pub fn update_render_normal_fairy_bullet(world: &World, screen: &Window) {
     world
         .query::<NormalFairyBulletEntity>()
         .iter()
-        .for_each(|(_, (_, pos, _, _))| {
-            let pos = pos
-                .position
-                .reset_from_vec2(*screen.playable_window().size())
-                + (*screen.playable_window().get_start());
-            draw_circle(pos.x, pos.y, 5.0, RED)
+        .for_each(|(_, (_, pos, _, _, _, sprite))| {
+            sprite.draw(pos, screen);
         });
 }
 

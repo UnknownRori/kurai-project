@@ -6,9 +6,12 @@ use hecs::{Entity, World};
 use macroquad::texture::Texture2D;
 use num_complex::Complex;
 
-use crate::components::{
-    CanShoot, Controllable, Enemy, EnemyBullet, Hitbox, Movable, MovementQueue, Player,
-    PlayerBullet, Position, SingleShoot, Sprite, TargetPlayer, Velocity,
+use crate::{
+    components::{
+        CanShoot, Controllable, Enemy, EnemyBullet, Hitbox, Movable, MovementQueue, Player,
+        PlayerBullet, Position, SingleShoot, Sprite, TargetPlayer, Velocity,
+    },
+    math::ExtendedComplexNumber,
 };
 
 pub type NormalFairyEntity<'a> = (
@@ -20,6 +23,7 @@ pub type NormalFairyEntity<'a> = (
     &'a SingleShoot,
     &'a Sprite,
     &'a MovementQueue,
+    &'a Hitbox,
 );
 
 pub type PlayerEntity<'a> = (
@@ -37,6 +41,7 @@ pub type PlayerBulletEntity<'a> = (
     &'a mut Position,
     &'a Movable,
     &'a Velocity,
+    &'a Hitbox,
 );
 
 pub type EnemyMovableEntity<'a> = (
@@ -46,17 +51,39 @@ pub type EnemyMovableEntity<'a> = (
     &'a mut MovementQueue,
 );
 pub type DrawableEnemyEntity<'a> = (&'a Enemy, &'a Position, &'a Sprite);
-pub type NormalFairyBulletEntity<'a> =
-    (&'a EnemyBullet, &'a mut Position, &'a Movable, &'a Velocity);
-pub type BulletEntity<'a> = (&'a mut Position, &'a Movable, &'a Velocity);
+pub type NormalFairyBulletEntity<'a> = (
+    &'a EnemyBullet,
+    &'a mut Position,
+    &'a Movable,
+    &'a Velocity,
+    &'a Hitbox,
+    &'a Sprite,
+);
+pub type BulletEntity<'a> = (
+    &'a mut Position,
+    &'a Movable,
+    &'a Velocity,
+    &'a Hitbox,
+    &'a Sprite,
+);
 
 pub fn spawn_generic_bullet(
     world: &mut World,
     current: &Position,
     target: &Position,
-    velocity: Complex<f32>,
+    speed: f32,
+    texture: Arc<Texture2D>,
 ) -> Entity {
-    todo!()
+    let direction = (target.position - current.position).normalize() * speed;
+
+    world.spawn((
+        EnemyBullet,
+        current.clone(),
+        Movable::default(),
+        Velocity::from(direction),
+        Hitbox::new(0.008),
+        Sprite::new(texture),
+    ))
 }
 
 pub fn spawn_enemy(
@@ -74,6 +101,7 @@ pub fn spawn_enemy(
         SingleShoot,
         Sprite::new(texture),
         movement,
+        Hitbox::new(0.02),
     ))
 }
 
@@ -100,6 +128,7 @@ pub fn spawn_player_bullet(
         *position,
         Movable::default(),
         Velocity::from(velocity),
+        Hitbox::new(0.008),
     );
     world.spawn(component)
 }

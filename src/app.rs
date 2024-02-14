@@ -37,6 +37,10 @@ impl App {
                 ("hud", "./resources/ui/hud.png"),
                 ("stage1", "./resources/background/stage-1.png"),
                 ("mask", "./resources/ui/playable-mask.png"),
+                (
+                    "bullet0",
+                    "./resources/textures/projectiles/generic-bullet.png",
+                ),
             ])
             .await
             .unwrap();
@@ -86,6 +90,8 @@ impl App {
             &self.window,
             get_frame_time(),
             get_time(),
+            &mut self.score_data,
+            &self.assets_manager,
         );
     }
 
