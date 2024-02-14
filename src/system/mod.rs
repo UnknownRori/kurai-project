@@ -8,7 +8,7 @@ use crate::{controls::Controls, window::Window};
 
 use self::{
     draw::{
-        update_render_enemy, update_render_normal_fairy_bullet, update_render_player,
+        draw_hitbox, update_render_enemy, update_render_normal_fairy_bullet, update_render_player,
         update_render_player_bullet,
     },
     update::{
@@ -34,9 +34,10 @@ pub fn update_system(
     enemy_movement_update(world, delta, time);
 }
 
-pub fn update_draw(world: &World, _controls: &Controls, screen: &Window) {
+pub fn update_draw(world: &World, controls: &Controls, screen: &Window) {
     update_render_player_bullet(world, screen);
-    update_render_player(world, screen);
+    update_render_player(world, screen, controls);
     update_render_enemy(world, screen);
     update_render_normal_fairy_bullet(world, screen);
+    draw_hitbox(world, screen);
 }

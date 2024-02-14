@@ -91,7 +91,7 @@ pub struct Hitpoints {}
 
 #[derive(Debug)]
 pub struct Hitbox {
-    radius: f32, // Normalized value from size of sprite
+    pub radius: f32, // Normalized value from size of sprite
 }
 
 impl Hitbox {
@@ -100,7 +100,15 @@ impl Hitbox {
     }
 
     pub fn is_intersect(current_pos: &Position, target_pos: &Position, target_hitbox: &Hitbox) {
-        // TODO : Do some algorithm
+        todo!()
+    }
+
+    pub fn draw(&self, position: &Position, screen: &Window) {
+        let pos = position.position.to_vec2();
+        let real_pos: Vec2 = pos.reset_from_vec2(*screen.playable_window().size())
+            + *screen.playable_window().get_start();
+        let size = self.radius * screen.playable_window().size().y;
+        draw_circle(real_pos.x, real_pos.y, size, RED);
     }
 }
 
@@ -170,9 +178,9 @@ impl Sprite {
     pub fn draw(&self, position: &Position, screen: &Window) {
         let size = vec2(0.1, 0.1);
         let pos = position.position.to_vec2() - size / 2.0;
-        let real_pos: Vec2 =
-            pos * (*screen.playable_window().size()) + (*screen.playable_window().get_start());
-        let real_size = size * (*screen.playable_window().size());
+        let real_pos: Vec2 = pos.reset_from_vec2(*screen.playable_window().size())
+            + *screen.playable_window().get_start();
+        let real_size = size.reset_from_vec2(*screen.playable_window().size());
 
         draw_texture_ex(
             &self.texture,

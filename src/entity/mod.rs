@@ -7,8 +7,8 @@ use macroquad::texture::Texture2D;
 use num_complex::Complex;
 
 use crate::components::{
-    CanShoot, Controllable, Enemy, EnemyBullet, Movable, MovementQueue, Player, PlayerBullet,
-    Position, SingleShoot, Sprite, TargetPlayer, Velocity,
+    CanShoot, Controllable, Enemy, EnemyBullet, Hitbox, Movable, MovementQueue, Player,
+    PlayerBullet, Position, SingleShoot, Sprite, TargetPlayer, Velocity,
 };
 
 pub type NormalFairyEntity<'a> = (
@@ -29,6 +29,7 @@ pub type PlayerEntity<'a> = (
     &'a mut Position,
     &'a CanShoot,
     &'a Sprite,
+    &'a Hitbox,
 );
 
 pub type PlayerBulletEntity<'a> = (
@@ -84,6 +85,7 @@ pub fn spawn_player(world: &mut World, texture: Arc<Texture2D>) -> Entity {
         Position::from_array([0.5, 0.8]),
         CanShoot::new(40.0, 1.5),
         Sprite::new(texture),
+        Hitbox::new(0.008),
     ))
 }
 

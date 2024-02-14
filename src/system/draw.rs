@@ -2,11 +2,13 @@ use hecs::World;
 use macroquad::prelude::*;
 
 use crate::{
+    components::{Hitbox, Position},
+    controls::{Action, Controls},
     entity::{
         DrawableEnemyEntity, NormalFairyBulletEntity, NormalFairyEntity, PlayerBulletEntity,
         PlayerEntity,
     },
-    math::NormalizationVector2,
+    math::{NormalizationComplexf32, NormalizationVector2, ToVec2},
     window::Window,
 };
 
@@ -42,15 +44,23 @@ pub fn update_render_normal_fairy_bullet(world: &World, screen: &Window) {
         });
 }
 
-pub fn update_render_player(world: &World, screen: &Window) {
+pub fn draw_hitbox(world: &World, screen: &Window) {
     world
-        .query::<PlayerEntity>()
+        .query::<(&Position, &Hitbox)>()
         .iter()
-        .for_each(|(_, (_, _, _, position, _, sprite))| {
-            // INFO : Not working currently | causing the game to crash and burn
-            // let material = shadow_shader_material(&screen).unwrap();
-            // gl_use_material(&material);
-            let _ = sprite.draw(&position, screen);
-            // gl_use_default_material();
+        .for_each(|(_, (position, hitbox))| {
+            hitbox.draw(position, screen);
         });
+}
+
+pub fn update_render_player(world: &World, screen: &Window, controls: &Controls) {
+    world.query::<PlayerEntity>().iter().for_each(
+        |(_, (player, _, _, position, _, sprite, hitbox))| {
+            let _ = sprite.draw(&position, screen);
+
+            if controls.is_down(&Action::Focus) {
+                hitbox.draw(position, screen);
+            }
+        },
+    );
 }

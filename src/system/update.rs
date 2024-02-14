@@ -21,7 +21,7 @@ pub fn enemy_shoot_normal_fairy(world: &mut World, delta: f32, time: f64) {
         .query::<PlayerEntity>()
         .iter()
         .par_bridge()
-        .map(|(_, (_, _, _, pos, _, _))| (*pos))
+        .map(|(_, (_, _, _, pos, _, _, _))| (*pos))
         .collect::<Vec<_>>();
 
     if let Some(player_pos) = player_pos.first() {
@@ -88,7 +88,7 @@ pub fn player_shoot(world: &mut World, controls: &Controls, _: f32, time: f64) {
         .query::<PlayerEntity>()
         .iter()
         .par_bridge()
-        .map(|(entity, (_, _, _, pos, can_shoot, sprite))| {
+        .map(|(entity, (_, _, _, pos, can_shoot, sprite, _))| {
             (entity, *pos, *can_shoot, sprite.clone())
         })
         .collect::<Vec<_>>();
@@ -146,7 +146,7 @@ pub fn update_player_move(world: &World, controls: &Controls, screen: &Window, _
     world
         .query::<PlayerEntity>()
         .iter()
-        .for_each(|(_, (_, _, moveable, position, _, _))| {
+        .for_each(|(_, (_, _, moveable, position, _, _, _))| {
             let mut new_pos = Complex::new(0.0, 0.0);
             let move_speed = if controls.is_down(&Action::Focus) {
                 moveable.move_speed / 2.
