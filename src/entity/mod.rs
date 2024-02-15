@@ -131,7 +131,7 @@ pub fn spawn_player_bullet(
         Movable::default(),
         Velocity::from(velocity),
         Hitbox::new(0.008),
-        Sprite::new(texture, vec2(0.08, 0.08)),
+        Sprite::new(texture, vec2(0.1, 0.1)),
     );
     world.spawn(component)
 }

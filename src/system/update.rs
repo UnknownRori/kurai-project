@@ -107,7 +107,7 @@ pub fn player_shoot(
             // TODO : Use proper player texture
             let texture = assets_manager
                 .textures
-                .get("bullet0")
+                .get("remi-bullet-0")
                 .expect("Generic bullet is not found");
             spawn_player_bullet(
                 world,

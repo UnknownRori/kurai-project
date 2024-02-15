@@ -41,6 +41,10 @@ impl App {
                     "bullet0",
                     "./resources/textures/projectiles/generic-bullet.png",
                 ),
+                (
+                    "remi-bullet-0",
+                    "./resources/textures/projectiles/remi-bullet.png",
+                ),
             ])
             .await
             .unwrap();
