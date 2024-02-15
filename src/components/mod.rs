@@ -96,7 +96,21 @@ impl From<Complex<f32>> for Velocity {
 }
 
 #[derive(Debug)]
-pub struct Hitpoints {}
+pub struct Hitpoint {
+    pub hp: f32,
+    pub max_hp: f32,
+    pub invulnerable: bool, // INFO : Phase for invulnerable stuff
+}
+
+impl Hitpoint {
+    pub fn new(hp: f32) -> Self {
+        Self {
+            hp,
+            max_hp: hp,
+            invulnerable: false,
+        }
+    }
+}
 
 #[derive(Debug, Copy, Clone)]
 pub struct Hitbox {

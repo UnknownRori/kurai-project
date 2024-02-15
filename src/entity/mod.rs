@@ -8,8 +8,8 @@ use num_complex::Complex;
 
 use crate::{
     components::{
-        CanShoot, Controllable, Enemy, EnemyBullet, Hitbox, Movable, MovementQueue, Player,
-        PlayerBullet, Position, SingleShoot, Sprite, TargetPlayer, Velocity,
+        CanShoot, Controllable, Enemy, EnemyBullet, Hitbox, Hitpoint, Movable, MovementQueue,
+        Player, PlayerBullet, Position, SingleShoot, Sprite, TargetPlayer, Velocity,
     },
     math::ExtendedComplexNumber,
 };
@@ -24,6 +24,7 @@ pub type NormalFairyEntity<'a> = (
     &'a Sprite,
     &'a MovementQueue,
     &'a Hitbox,
+    &'a mut Hitpoint,
 );
 
 pub type PlayerEntity<'a> = (
@@ -94,6 +95,7 @@ pub fn spawn_enemy(
     pos: Position,
     texture: Arc<Texture2D>,
     movement: MovementQueue,
+    hitpoint: Hitpoint,
 ) -> Entity {
     world.spawn((
         Enemy,
@@ -105,6 +107,7 @@ pub fn spawn_enemy(
         Sprite::new(texture, vec2(0.1, 0.1)),
         movement,
         Hitbox::new(0.02),
+        hitpoint,
     ))
 }
 

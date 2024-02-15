@@ -5,7 +5,6 @@ use crate::{
     components::{Hitbox, Position},
     controls::{Action, Controls},
     entity::{DrawableEnemyEntity, NormalFairyBulletEntity, PlayerBulletEntity, PlayerEntity},
-    math::NormalizationVector2,
     window::Window,
 };
 

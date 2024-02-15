@@ -1,6 +1,6 @@
 use crate::{
     assets::{AssetsHandler, AssetsManager},
-    components::{Movement, MovementQueue, Position},
+    components::{Hitpoint, Movement, MovementQueue, Position},
     controls::Controls,
     entity::{spawn_enemy, spawn_player},
     score::ScoreData,
@@ -70,6 +70,7 @@ impl App {
                 .get("fairy0")
                 .expect("There is no Fairy Texture"),
             movement,
+            Hitpoint::new(10.0),
         );
 
         // TODO : Put this into Engine part
