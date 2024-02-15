@@ -60,6 +60,8 @@ pub type NormalFairyBulletEntity<'a> = (
     &'a Hitbox,
     &'a Sprite,
 );
+
+pub type EnemyBulletEntity<'a> = (&'a EnemyBullet, &'a mut Position, &'a Hitbox);
 pub type BulletEntity<'a> = (
     &'a mut Position,
     &'a Movable,
@@ -78,7 +80,7 @@ pub fn spawn_generic_bullet(
     let direction = (target.position - current.position).normalize() * speed;
 
     world.spawn((
-        EnemyBullet,
+        EnemyBullet::default(),
         current.clone(),
         Movable::default(),
         Velocity::from(direction),

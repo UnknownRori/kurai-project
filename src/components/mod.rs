@@ -29,8 +29,20 @@ pub struct TargetPlayer;
 #[derive(Debug)]
 pub struct SingleShoot;
 
-#[derive(Debug)]
-pub struct EnemyBullet;
+#[derive(Default, Debug, Clone, Copy)]
+pub struct EnemyBullet {
+    graze: bool,
+}
+
+impl EnemyBullet {
+    pub fn is_grazed(&self) -> bool {
+        self.graze
+    }
+
+    pub fn grazed(&mut self) {
+        self.graze = true;
+    }
+}
 
 impl Default for Movable {
     fn default() -> Self {
@@ -50,9 +62,6 @@ impl Movable {
         }
     }
 }
-
-#[derive(Debug)]
-pub struct DummyDraw;
 
 #[derive(Debug, Clone, Copy, Default)]
 pub struct Position {
@@ -110,6 +119,20 @@ impl Hitbox {
             .to_vec2()
             .distance_squared(target_pos.position.to_vec2());
         let sum_of_radii_squared = (self.radius + target_hitbox.radius).powi(2);
+        distance_squared <= sum_of_radii_squared
+    }
+
+    pub fn near(
+        &self,
+        current_pos: &Position,
+        target_pos: &Position,
+        target_hitbox: &Hitbox,
+    ) -> bool {
+        let distance_squared = current_pos
+            .position
+            .to_vec2()
+            .distance_squared(target_pos.position.to_vec2());
+        let sum_of_radii_squared = (self.radius + 0.05 + target_hitbox.radius).powi(2);
         distance_squared <= sum_of_radii_squared
     }
 

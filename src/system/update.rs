@@ -135,14 +135,30 @@ pub fn update_collision_detection_enemy_bullet_to_player(world: &mut World, scor
         .query::<(&EnemyBullet, &Position, &Hitbox)>()
         .iter()
         .par_bridge()
-        .map(|(entity, (_, pos, hitbox))| (entity.clone(), pos.clone(), hitbox.clone()))
+        .map(|(entity, (enemy_bullet, pos, hitbox))| {
+            (
+                entity.clone(),
+                enemy_bullet.clone(),
+                pos.clone(),
+                hitbox.clone(),
+            )
+        })
         .collect::<Vec<_>>();
 
     for (player_pos, player_hitbox) in player_entity {
-        for (enemy_entity, enemy_pos, enemy_hitbox) in &enemy_bullet {
+        for (enemy_entity, enemy_bullet, enemy_pos, enemy_hitbox) in &enemy_bullet {
             if player_hitbox.is_intersect(&player_pos, &enemy_pos, &enemy_hitbox) {
                 world.despawn(*enemy_entity).unwrap();
                 score.life -= 1;
+                score.graze -= 1; // TODO : Make this something more interesting
+            } else if player_hitbox.near(&player_pos, &enemy_pos, &enemy_hitbox)
+                && !enemy_bullet.is_grazed()
+            {
+                score.graze += 1;
+                world
+                    .get::<&mut EnemyBullet>(*enemy_entity)
+                    .unwrap()
+                    .grazed();
             }
         }
     }
