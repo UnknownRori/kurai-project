@@ -3,7 +3,7 @@ pub mod remilia_scarlet;
 use std::sync::Arc;
 
 use hecs::{Entity, World};
-use macroquad::texture::Texture2D;
+use macroquad::{math::vec2, texture::Texture2D};
 use num_complex::Complex;
 
 use crate::{
@@ -82,7 +82,7 @@ pub fn spawn_generic_bullet(
         Movable::default(),
         Velocity::from(direction),
         Hitbox::new(0.008),
-        Sprite::new(texture),
+        Sprite::new(texture, vec2(0.05, 0.05)),
     ))
 }
 
@@ -99,7 +99,7 @@ pub fn spawn_enemy(
         CanShoot::new(1.0, 1.5),
         TargetPlayer,
         SingleShoot,
-        Sprite::new(texture),
+        Sprite::new(texture, vec2(0.1, 0.1)),
         movement,
         Hitbox::new(0.02),
     ))
@@ -112,7 +112,7 @@ pub fn spawn_player(world: &mut World, texture: Arc<Texture2D>) -> Entity {
         Movable::new(1.0, 1.0),
         Position::from_array([0.5, 0.8]),
         CanShoot::new(40.0, 1.5),
-        Sprite::new(texture),
+        Sprite::new(texture, vec2(0.1, 0.1)),
         Hitbox::new(0.008),
     ))
 }

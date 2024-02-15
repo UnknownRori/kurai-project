@@ -1,10 +1,10 @@
 pub struct ScoreData {
-    pub graze: u32,
-    pub score: u32,
+    pub graze: i32,
+    pub score: i32,
     pub power: f32,
-    pub value: u32,
-    pub life: u8,
-    pub spell: u8,
+    pub value: i32,
+    pub life: i8,
+    pub spell: i8,
 }
 
 impl Default for ScoreData {

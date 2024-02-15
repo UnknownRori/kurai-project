@@ -1,4 +1,5 @@
 use crate::assets::{AssetsHandler, AssetsManager};
+use crate::score::ScoreData;
 use crate::time::Instant;
 
 use hecs::World;
@@ -6,7 +7,7 @@ use macroquad::prelude::*;
 use num_complex::Complex;
 use rayon::prelude::*;
 
-use crate::components::{CanShoot, Enemy, Hitbox, Position};
+use crate::components::{CanShoot, Enemy, Hitbox, Player, Position};
 use crate::entity::{spawn_generic_bullet, EnemyMovableEntity};
 use crate::math::*;
 
@@ -109,6 +110,30 @@ pub fn player_shoot(world: &mut World, controls: &Controls, _: f32, time: f64) {
                 .get::<&mut CanShoot>(entity)
                 .unwrap()
                 .update_cooldown();
+        }
+    }
+}
+
+pub fn update_collision_detection_enemy_bullet_to_player(world: &mut World, score: &mut ScoreData) {
+    let player_entity = world
+        .query::<(&Player, &Position, &Hitbox)>()
+        .iter()
+        .map(|(_, (_, pos, hitbox))| (*pos, hitbox.clone()))
+        .collect::<Vec<_>>();
+
+    let enemy_bullet = world
+        .query::<(&EnemyBullet, &Position, &Hitbox)>()
+        .iter()
+        .par_bridge()
+        .map(|(entity, (_, pos, hitbox))| (entity.clone(), pos.clone(), hitbox.clone()))
+        .collect::<Vec<_>>();
+
+    for (player_pos, player_hitbox) in player_entity {
+        for (enemy_entity, enemy_pos, enemy_hitbox) in &enemy_bullet {
+            if player_hitbox.is_intersect(&player_pos, &enemy_pos, &enemy_hitbox) {
+                world.despawn(*enemy_entity).unwrap();
+                score.life -= 1;
+            }
         }
     }
 }
