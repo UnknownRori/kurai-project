@@ -10,12 +10,8 @@ use crate::{
 };
 
 pub fn update_render_player_bullet(world: &World, screen: &Window) {
-    for (_, (_, position, _, _, _)) in &mut world.query::<PlayerBulletEntity>() {
-        let pos = position
-            .position
-            .reset_from_vec2(*screen.playable_window().size())
-            + (*screen.playable_window().get_start());
-        draw_circle(pos.x, pos.y, 5.0, GRAY);
+    for (_, (_, position, _, _, _, sprite)) in &mut world.query::<PlayerBulletEntity>() {
+        sprite.draw(&position, screen);
     }
 }
 

@@ -42,6 +42,7 @@ pub type PlayerBulletEntity<'a> = (
     &'a Movable,
     &'a Velocity,
     &'a Hitbox,
+    &'a Sprite,
 );
 
 pub type EnemyMovableEntity<'a> = (
@@ -120,6 +121,7 @@ pub fn spawn_player(world: &mut World, texture: Arc<Texture2D>) -> Entity {
 pub fn spawn_player_bullet(
     world: &mut World,
     position: &Position,
+    texture: Arc<Texture2D>,
     velocity: Complex<f32>,
 ) -> Entity {
     // TODO : Refactor this later
@@ -129,6 +131,7 @@ pub fn spawn_player_bullet(
         Movable::default(),
         Velocity::from(velocity),
         Hitbox::new(0.008),
+        Sprite::new(texture, vec2(0.08, 0.08)),
     );
     world.spawn(component)
 }

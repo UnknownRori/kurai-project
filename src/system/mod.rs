@@ -32,7 +32,7 @@ pub fn update_system(
 
     update_player_move(world, controls, screen, delta, time);
     update_move_bullet(world, screen, delta, time);
-    player_shoot(world, controls, delta, time);
+    player_shoot(world, assets_manager, controls, delta, time);
     enemy_shoot_normal_fairy(world, assets_manager, delta, time);
     enemy_movement_update(world, delta, time);
     update_collision_detection_enemy_bullet_to_player(world, score);

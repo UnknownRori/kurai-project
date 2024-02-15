@@ -85,24 +85,34 @@ pub fn enemy_movement_update(world: &mut World, delta: f32, time: f64) {
         });
 }
 
-pub fn player_shoot(world: &mut World, controls: &Controls, _: f32, time: f64) {
+pub fn player_shoot(
+    world: &mut World,
+    assets_manager: &AssetsManager,
+    controls: &Controls,
+    _: f32,
+    time: f64,
+) {
     // TODO : Make sure remove the clone since it's not efficient
     let player_entity = world
         .query::<PlayerEntity>()
         .iter()
         .par_bridge()
-        .map(|(entity, (_, _, _, pos, can_shoot, sprite, _))| {
-            (entity, *pos, *can_shoot, sprite.clone())
-        })
+        .map(|(entity, (_, _, _, pos, can_shoot, _, _))| (entity, *pos, *can_shoot))
         .collect::<Vec<_>>();
 
-    for (entity, pos, can_shoot, sprite) in player_entity {
+    for (entity, pos, can_shoot) in player_entity {
         if controls.is_down(&Action::Attack) && can_shoot.can_fire(time) {
             let pos = pos.position + Complex::new(0.0, 0.0);
 
+            // TODO : Use proper player texture
+            let texture = assets_manager
+                .textures
+                .get("bullet0")
+                .expect("Generic bullet is not found");
             spawn_player_bullet(
                 world,
                 &pos.into(),
+                texture,
                 Complex::new(0.0, -can_shoot.bullet_speed),
             );
 
@@ -159,14 +169,15 @@ pub fn update_delete_bullet_offscreen(world: &mut World, screen: &Window, _: f32
 }
 
 pub fn update_move_bullet(world: &mut World, _screen: &Window, delta: f32, _: f64) {
-    world.query_mut::<BulletEntity>().into_iter().for_each(
-        |(_, (position, moveable, velocity, _, _))| {
+    world
+        .query_mut::<BulletEntity>()
+        .into_iter()
+        .for_each(|(_, (position, _, velocity, _, _))| {
             position.position += velocity.velocity * delta;
             position.position = position
                 .position
                 .clamp(Complex::new(0.0, 0.0), Complex::new(1.00, 1.00));
-        },
-    );
+        });
 }
 
 pub fn update_player_move(world: &World, controls: &Controls, screen: &Window, _: f32, _: f64) {
