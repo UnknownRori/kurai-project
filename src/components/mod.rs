@@ -110,6 +110,11 @@ impl Hitpoint {
             invulnerable: false,
         }
     }
+
+    pub fn damage(&mut self, damage: f32) -> bool {
+        self.hp -= damage;
+        self.hp <= 0.0
+    }
 }
 
 #[derive(Debug, Copy, Clone)]

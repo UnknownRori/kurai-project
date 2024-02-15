@@ -13,7 +13,8 @@ use self::{
     },
     update::{
         enemy_movement_update, enemy_shoot_normal_fairy, player_shoot,
-        update_collision_detection_enemy_bullet_to_player, update_delete_bullet_offscreen,
+        update_collision_detection_enemy_bullet_to_player,
+        update_collision_detection_player_bullet_to_enemy, update_delete_bullet_offscreen,
         update_move_bullet, update_player_move,
     },
 };
@@ -36,6 +37,7 @@ pub fn update_system(
     enemy_shoot_normal_fairy(world, assets_manager, delta, time);
     enemy_movement_update(world, delta, time);
     update_collision_detection_enemy_bullet_to_player(world, score);
+    update_collision_detection_player_bullet_to_enemy(world, score)
 }
 
 pub fn update_draw(world: &World, controls: &Controls, screen: &Window) {

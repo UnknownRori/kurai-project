@@ -7,7 +7,7 @@ use macroquad::prelude::*;
 use num_complex::Complex;
 use rayon::prelude::*;
 
-use crate::components::{CanShoot, Enemy, Hitbox, Player, Position};
+use crate::components::{CanShoot, Enemy, Hitbox, Hitpoint, Player, PlayerBullet, Position};
 use crate::entity::{spawn_generic_bullet, EnemyMovableEntity};
 use crate::math::*;
 
@@ -159,6 +159,39 @@ pub fn update_collision_detection_enemy_bullet_to_player(world: &mut World, scor
                     .get::<&mut EnemyBullet>(*enemy_entity)
                     .unwrap()
                     .grazed();
+            }
+        }
+    }
+}
+
+pub fn update_collision_detection_player_bullet_to_enemy(world: &mut World, score: &mut ScoreData) {
+    let enemies = world
+        .query::<(&Enemy, &Position, &Hitbox, &Hitpoint)>()
+        .iter()
+        .map(|(entity, (_, pos, hitbox, _))| (entity.clone(), *pos, hitbox.clone()))
+        .collect::<Vec<_>>();
+
+    let player_bullets = world
+        .query::<(&PlayerBullet, &Position, &Hitbox)>()
+        .iter()
+        .par_bridge()
+        .map(|(entity, (_, pos, hitbox))| (entity.clone(), pos.clone(), hitbox.clone()))
+        .collect::<Vec<_>>();
+
+    for (enemy_entity, position, hitbox) in enemies {
+        for (player_bullet, bullet_position, bullet_hitbox) in &player_bullets {
+            if hitbox.is_intersect(&position, &bullet_position, &bullet_hitbox) {
+                // TODO : Based on player damage
+                if world
+                    .get::<&mut Hitpoint>(enemy_entity)
+                    .unwrap()
+                    .damage(0.5)
+                {
+                    // TODO : put scoring system somewhere else
+                    score.score += 10;
+                    world.despawn(enemy_entity).unwrap();
+                }
+                world.despawn(*player_bullet).unwrap();
             }
         }
     }
