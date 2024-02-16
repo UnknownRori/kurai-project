@@ -2,8 +2,10 @@ use crate::{
     assets::{AssetsHandler, AssetsManager},
     components::{Hitpoint, Movement, MovementQueue, Position},
     controls::Controls,
+    engine::stage::StageManager,
     entity::{spawn_enemy, spawn_player},
     score::ScoreData,
+    stage::stage_demo,
     system::{update_draw, update_system},
     ui::{draw_entity_number, draw_fps, draw_version, StageUI},
     window::Window,
@@ -13,69 +15,29 @@ use hecs::World;
 use macroquad::prelude::*;
 use num_complex::Complex;
 
-pub struct App {
+pub struct App<'a> {
     window: Window,
     controls: Controls,
     world: World,
     score_data: ScoreData,
     assets_manager: AssetsManager,
     debugger: crate::engine::debug::Debugger,
+    stage_manager: StageManager<'a>,
 }
 
-impl App {
+impl App<'_> {
     /// Initialize Game state
     #[must_use]
     pub async fn new(window: Window, controls: Controls) -> Self {
-        let mut world = World::new();
+        let world = World::new();
         let mut assets_manager = AssetsManager::default();
         let score_data = ScoreData::default();
-        assets_manager
-            .textures
-            .batch(&[
-                ("remilia0", "./resources/textures/remilia-scarlet/1.png"),
-                ("fairy0", "./resources/textures/fairy/fairy0001.png"),
-                ("hud", "./resources/ui/hud.png"),
-                ("stage1", "./resources/background/stage-1.png"),
-                ("mask", "./resources/ui/playable-mask.png"),
-                (
-                    "bullet0",
-                    "./resources/textures/projectiles/generic-bullet.png",
-                ),
-                (
-                    "remi-bullet-0",
-                    "./resources/textures/projectiles/remi-bullet.png",
-                ),
-            ])
-            .await
-            .unwrap();
-
-        let _ = spawn_player(
-            &mut world,
-            assets_manager
-                .textures
-                .get("remilia0")
-                .expect("There is no Remilia Texture"),
-        );
-
-        let pos = vec![
-            Movement::new(Complex::new(0.1, 0.5), 2.0, false),
-            Movement::new(Complex::new(0.5, 0.0), 0.0, true),
-        ];
-        let movement = MovementQueue::new(pos);
-        let _ = spawn_enemy(
-            &mut world,
-            Position::from_array([1.0, 0.1]),
-            assets_manager
-                .textures
-                .get("fairy0")
-                .expect("There is no Fairy Texture"),
-            movement,
-            Hitpoint::new(10.0),
-        );
+        let mut stage_manager = StageManager::new(vec![stage_demo()]);
 
         // TODO : Put this into Engine part
         let debugger = crate::engine::debug::Debugger::new();
 
+        stage_manager.preload(&mut assets_manager).await;
         Self {
             window,
             controls,
@@ -83,18 +45,24 @@ impl App {
             score_data,
             assets_manager,
             debugger,
+            stage_manager,
         }
     }
 
     /// This is where the update happen
     pub fn update(&mut self) {
+        let time = get_time();
         self.window.update();
+        self.stage_manager
+            .update(time, &mut self.world, &self.assets_manager);
+
+        self.debugger.update(&self.window);
         update_system(
             &mut self.world,
             &self.controls,
             &self.window,
             get_frame_time(),
-            get_time(),
+            time,
             &mut self.score_data,
             &self.assets_manager,
         );
@@ -104,39 +72,13 @@ impl App {
     pub async fn draw(&mut self) {
         clear_background(BLACK);
 
-        // TODO : This stupid things should live in Stage Struct
-        let offset = vec2(0.001, 0.001) * self.window.playable_window().size().clone()
-            + self.window.playable_window().get_start().clone();
-        let texture = self.assets_manager.textures.get("stage1").unwrap();
-        let mask = self.assets_manager.textures.get("mask").unwrap();
-        draw_texture_ex(
-            &mask,
-            offset.x,
-            offset.y,
-            WHITE,
-            DrawTextureParams {
-                dest_size: Some(self.window.playable_window().size().clone()),
-                ..Default::default()
-            },
-        );
-        draw_texture_ex(
-            &texture,
-            offset.x,
-            offset.y,
-            // WHITE,
-            Color::new(1f32, 1f32, 1f32, 0.5),
-            DrawTextureParams {
-                dest_size: Some(self.window.playable_window().size().clone()),
-                ..Default::default()
-            },
-        );
+        self.stage_manager.draw(&self.window, &self.assets_manager);
         update_draw(&self.world, &self.controls, &self.window);
         StageUI::draw(&self.window, &self.score_data, &self.assets_manager).await;
 
         draw_entity_number(&self.window, self.world.len());
         draw_fps(&self.window, 32.0, WHITE);
         draw_version(&self.window);
-        self.debugger.update(&self.window);
         self.debugger.draw(&self.window);
         // draw_rectangle(
         //     self.window.playable_window().get_start().x,

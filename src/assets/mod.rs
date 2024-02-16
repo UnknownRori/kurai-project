@@ -59,7 +59,7 @@ impl AssetsHandler for SfxHandler {
 }
 
 impl ShaderHandler {
-    async fn register(
+    pub async fn register(
         &mut self,
         name: &str,
         vertex_path: &str,
@@ -80,7 +80,7 @@ impl ShaderHandler {
         Ok(())
     }
 
-    async fn batch(
+    pub async fn batch(
         &mut self,
         batch: Vec<(&str, &str, &str, MaterialParams)>,
     ) -> Result<(), color_eyre::Report> {
@@ -91,7 +91,7 @@ impl ShaderHandler {
         Ok(())
     }
 
-    fn get(&self, name: &str) -> Option<Arc<Material>> {
+    pub fn get(&self, name: &str) -> Option<Arc<Material>> {
         self.0.get(name).map(|a| Arc::clone(&a))
     }
 }
