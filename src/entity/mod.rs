@@ -85,8 +85,8 @@ pub fn spawn_generic_bullet(
         current.clone(),
         Movable::default(),
         Velocity::from(direction),
-        Hitbox::new(0.008),
-        Sprite::new(texture, vec2(0.05, 0.05)),
+        Hitbox::new(0.004),
+        Sprite::new(texture, vec2(0.03, 0.03)),
     ))
 }
 
@@ -96,12 +96,13 @@ pub fn spawn_enemy(
     texture: Arc<Texture2D>,
     movement: MovementQueue,
     hitpoint: Hitpoint,
+    fire_rate: f64,
 ) -> Entity {
     world.spawn((
         Enemy,
         pos,
         Movable::new(0.2, 0.4),
-        CanShoot::new(1.0, 1.5),
+        CanShoot::new(fire_rate, 1.0), // TODO : Make this dynamic
         TargetPlayer,
         SingleShoot,
         Sprite::new(texture, vec2(0.1, 0.1)),
