@@ -33,12 +33,12 @@ pub fn update_render_normal_fairy_bullet(world: &World, screen: &Window) {
 }
 
 pub fn draw_hitbox(world: &World, screen: &Window) {
-    world
-        .query::<(&Position, &Hitbox)>()
-        .iter()
-        .for_each(|(_, (position, hitbox))| {
-            hitbox.draw(position, screen);
-        });
+    // world
+    // .query::<(&Position, &Hitbox)>()
+    // .iter()
+    // .for_each(|(_, (position, hitbox))| {
+    //     hitbox.draw(position, screen);
+    // });
 }
 
 pub fn update_render_player(world: &World, screen: &Window, controls: &Controls) {

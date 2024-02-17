@@ -40,12 +40,6 @@ impl Spawner {
         self.lists
             .iter_mut()
             .filter(|spawn_event| {
-                tracing::info!(
-                    "{} {} {}",
-                    self.start.unwrap() + spawn_event.start,
-                    spawn_event.start,
-                    time
-                );
                 !spawn_event.is_spawned && self.start.unwrap() + spawn_event.start < time
             })
             .for_each(|event| {
