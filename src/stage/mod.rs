@@ -186,6 +186,8 @@ pub fn stage_demo() -> Stage<'static> {
                 "remi-bullet-0",
                 "./resources/textures/projectiles/remi-bullet.png",
             ),
+            PreloadType::Sfx("generic-shoot", "./resources/sfx/generic-shoot.ogg"),
+            PreloadType::Sfx("player-shoot", "./resources/sfx/player-shoot.ogg"),
         ],
         spawner,
         |screen, assets_manager| {

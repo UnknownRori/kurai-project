@@ -3,6 +3,7 @@ use crate::score::ScoreData;
 use crate::time::Instant;
 
 use hecs::World;
+use macroquad::audio::{play_sound, play_sound_once};
 use macroquad::prelude::*;
 use num_complex::Complex;
 use rayon::prelude::*;
@@ -50,6 +51,8 @@ pub fn enemy_shoot_normal_fairy(
                 .get("bullet0")
                 .expect("No generic bullet texture!");
             spawn_generic_bullet(world, &pos, player_pos, can_shoot.bullet_speed, texture);
+            let sound = assets_manager.sfx.get("generic-shoot").unwrap();
+            play_sound_once(&*sound);
 
             let _ = world
                 .get::<&mut CanShoot>(entity)
@@ -115,6 +118,9 @@ pub fn player_shoot(
                 texture,
                 Complex::new(0.0, -can_shoot.bullet_speed),
             );
+
+            let sound = assets_manager.sfx.get("player-shoot").unwrap();
+            play_sound_once(&*sound);
 
             let _ = world
                 .get::<&mut CanShoot>(entity)
