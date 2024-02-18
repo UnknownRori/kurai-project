@@ -1,14 +1,20 @@
 use std::future::Future;
 
 use hecs::World;
-use macroquad::{material::MaterialParams, time::get_time};
+use macroquad::{
+    experimental::coroutines::{start_coroutine, stop_coroutine, wait_seconds},
+    material::MaterialParams,
+    math::vec2,
+    time::get_time,
+    window::next_frame,
+};
 
 use crate::{
     assets::{AssetsHandler, AssetsManager},
     window::Window,
 };
 
-use super::spawner::Spawner;
+use super::{loading::Loading, spawner::Spawner};
 
 // If only the API is much stable on async end
 // pub struct StageManager {
@@ -73,9 +79,13 @@ impl<'a> StageManager<'a> {
         self.stages.first_mut()
     }
 
-    pub async fn preload(&mut self, assets_manager: &mut AssetsManager) {
+    pub async fn preload(&mut self, assets_manager: &mut AssetsManager, screen: &Window) {
         let stage = self.get_mut_stage().unwrap();
+        let mut loading_screen =
+            Loading::new(stage.preloads.as_ref().unwrap().len(), vec2(0.4, 0.05));
         for preload_type in stage.preloads.take().unwrap() {
+            loading_screen.draw(screen.game_window()).await;
+            next_frame().await;
             match preload_type {
                 PreloadType::Sfx(name, path) => {
                     assets_manager.sfx.register(name, path).await.unwrap()

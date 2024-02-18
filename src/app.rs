@@ -37,7 +37,7 @@ impl App<'_> {
         // TODO : Put this into Engine part
         let debugger = crate::engine::debug::Debugger::new();
 
-        stage_manager.preload(&mut assets_manager).await;
+        stage_manager.preload(&mut assets_manager, &window).await;
         Self {
             window,
             controls,
