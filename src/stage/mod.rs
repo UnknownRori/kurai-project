@@ -1,8 +1,9 @@
+use hecs::World;
 use macroquad::prelude::*;
 use num_complex::Complex;
 
 use crate::{
-    assets::AssetsHandler,
+    assets::{AssetsHandler, AssetsManager},
     components::{Hitpoint, Movement, MovementQueue, Position},
     engine::{
         spawner::{SpawnEvent, Spawner},
@@ -95,7 +96,7 @@ pub fn stage_demo() -> Stage<'static> {
                 0.4,
             );
         }),
-        SpawnEvent::new(5.0, |world, assets_manager| {
+        SpawnEvent::new(7.0, |world, assets_manager| {
             let pos = vec![
                 Movement::new(Complex::new(0.0, 0.2), 0.0, false),
                 Movement::new(Complex::new(1.0, 0.35), 0.0, true),
@@ -113,7 +114,7 @@ pub fn stage_demo() -> Stage<'static> {
                 0.5,
             );
         }),
-        SpawnEvent::new(5.8, |world, assets_manager| {
+        SpawnEvent::new(7.8, |world, assets_manager| {
             let pos = vec![
                 Movement::new(Complex::new(0.0, 0.2), 0.0, false),
                 Movement::new(Complex::new(1.0, 0.35), 0.0, true),
@@ -131,7 +132,7 @@ pub fn stage_demo() -> Stage<'static> {
                 0.5,
             );
         }),
-        SpawnEvent::new(6.6, |world, assets_manager| {
+        SpawnEvent::new(8.6, |world, assets_manager| {
             let pos = vec![
                 Movement::new(Complex::new(0.0, 0.2), 0.0, false),
                 Movement::new(Complex::new(1.0, 0.35), 0.0, true),
@@ -149,7 +150,7 @@ pub fn stage_demo() -> Stage<'static> {
                 0.5,
             );
         }),
-        SpawnEvent::new(7.4, |world, assets_manager| {
+        SpawnEvent::new(9.4, |world, assets_manager| {
             let pos = vec![
                 Movement::new(Complex::new(0.0, 0.2), 0.0, false),
                 Movement::new(Complex::new(1.0, 0.35), 0.0, true),
