@@ -286,7 +286,7 @@ impl Sprite {
     }
 
     #[must_use]
-    pub fn draw(&self, position: &Position, screen: &Window) {
+    pub fn draw(&self, position: &Position, screen: &Window, opacity: f32) {
         let pos = position.position.to_vec2() - self.size / 2.0;
         let real_pos: Vec2 = pos.reset_from_vec2(*screen.playable_window().size())
             + *screen.playable_window().get_start();
@@ -296,7 +296,7 @@ impl Sprite {
             &self.texture,
             real_pos.x,
             real_pos.y,
-            WHITE,
+            Color::new(1., 1., 1., opacity),
             DrawTextureParams {
                 // TODO : Make sure it looks good on any screens
                 rotation: -self.rotation,

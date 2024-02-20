@@ -10,7 +10,7 @@ use crate::{
 
 pub fn update_render_player_bullet(world: &World, screen: &Window) {
     for (_, (_, position, _, _, _, sprite)) in &mut world.query::<PlayerBulletEntity>() {
-        sprite.draw(&position, screen);
+        sprite.draw(&position, screen, 1.);
     }
 }
 
@@ -19,7 +19,7 @@ pub fn update_render_enemy(world: &World, screen: &Window) {
         .query::<DrawableEnemyEntity>()
         .iter()
         .for_each(|(_, (_, pos, sprite))| {
-            sprite.draw(&pos, screen);
+            sprite.draw(&pos, screen, 1.);
         });
 }
 
@@ -28,7 +28,7 @@ pub fn update_render_normal_fairy_bullet(world: &World, screen: &Window) {
         .query::<NormalFairyBulletEntity>()
         .iter()
         .for_each(|(_, (_, pos, _, _, _, sprite))| {
-            sprite.draw(pos, screen);
+            sprite.draw(pos, screen, 1.);
         });
 }
 
@@ -47,12 +47,14 @@ pub fn update_render_player(world: &World, screen: &Window, controls: &Controls,
             if let Some(blink) = blink {
                 blink.timer += 1.0 * delta;
                 if blink.timer >= blink.speed_blink {
-                    sprite.draw(&position, screen);
+                    sprite.draw(&position, screen, 1.);
                     blink.timer = 0.;
                     blink.speed_blink /= blink.blink_decrease_ratio;
+                } else {
+                    sprite.draw(&position, screen, 0.2);
                 }
             } else {
-                sprite.draw(&position, screen);
+                sprite.draw(&position, screen, 1.);
             }
 
             if controls.is_down(&Action::Focus) {
