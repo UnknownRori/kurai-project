@@ -177,7 +177,15 @@ pub fn stage_demo() -> Stage<'static> {
             PreloadType::Texture("remilia0", "./resources/textures/remilia-scarlet/1.png"),
             PreloadType::Texture("fairy0", "./resources/textures/fairy/fairy0001.png"),
             PreloadType::Texture("hud", "./resources/ui/hud.png"),
-            PreloadType::Texture("stage1", "./resources/background/stage-1.png"),
+            PreloadType::Texture("stage1-bg-fog", "./resources/background/stage1-bg-fog.png"),
+            PreloadType::Texture(
+                "stage1-bg-water1",
+                "./resources/background/stage1-bg-water1.png",
+            ),
+            PreloadType::Texture(
+                "stage1-bg-water2",
+                "./resources/background/stage1-bg-water2.png",
+            ),
             PreloadType::Texture("mask", "./resources/ui/playable-mask.png"),
             PreloadType::Texture(
                 "bullet-red",
@@ -195,6 +203,10 @@ pub fn stage_demo() -> Stage<'static> {
                 "remi-bullet-0",
                 "./resources/textures/projectiles/remi-bullet.png",
             ),
+            PreloadType::Texture(
+                "remi-bullet-0",
+                "./resources/textures/projectiles/remi-bullet.png",
+            ),
             PreloadType::Sfx("generic-shoot", "./resources/sfx/generic-shoot.ogg"),
             PreloadType::Sfx("player-shoot", "./resources/sfx/player-shoot.ogg"),
         ],
@@ -202,7 +214,8 @@ pub fn stage_demo() -> Stage<'static> {
         |screen, assets_manager| {
             let offset = vec2(0.001, 0.001) * screen.playable_window().size().clone()
                 + screen.playable_window().get_start().clone();
-            let texture = assets_manager.textures.get("stage1").unwrap();
+            let stage1_bg1 = assets_manager.textures.get("stage1-bg-water1").unwrap();
+            let stage1_fog = assets_manager.textures.get("stage1-bg-fog").unwrap();
             let mask = assets_manager.textures.get("mask").unwrap();
             draw_texture_ex(
                 &mask,
@@ -215,13 +228,27 @@ pub fn stage_demo() -> Stage<'static> {
                 },
             );
             draw_texture_ex(
-                &texture,
+                &stage1_bg1,
                 offset.x,
                 offset.y,
                 // WHITE,
                 Color::new(1f32, 1f32, 1f32, 0.5),
                 DrawTextureParams {
                     dest_size: Some(screen.playable_window().size().clone()),
+                    ..Default::default()
+                },
+            );
+
+            let mut fog_half = screen.playable_window().size().clone();
+            fog_half.y /= 1.35;
+            draw_texture_ex(
+                &stage1_fog,
+                offset.x,
+                offset.y,
+                // WHITE,
+                Color::new(1f32, 1f32, 1f32, 0.8),
+                DrawTextureParams {
+                    dest_size: Some(fog_half),
                     ..Default::default()
                 },
             );
