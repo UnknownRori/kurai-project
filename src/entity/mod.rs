@@ -119,7 +119,7 @@ pub fn spawn_player(world: &mut World, texture: Arc<Texture2D>) -> Entity {
         Controllable,
         Movable::new(1.0, 1.0),
         Position::from_array([0.5, 0.8]),
-        CanShoot::new(40.0, 1.5),
+        CanShoot::new(20.0, 2.5),
         Sprite::new(texture, vec2(0.1, 0.1), 0.),
         Hitbox::new(0.008),
     ))
@@ -137,8 +137,8 @@ pub fn spawn_player_bullet(
         *position,
         Movable::default(),
         Velocity::from(velocity),
-        Hitbox::new(0.008),
-        Sprite::new(texture, vec2(0.1, 0.1), 0.),
+        Hitbox::new(0.010),
+        Sprite::new(texture, vec2(0.15, 0.15), 0.),
     );
     world.spawn(component)
 }

@@ -38,7 +38,7 @@ pub fn stage_demo() -> Stage<'static> {
                     .get("fairy0")
                     .expect("There is no Fairy Texture"),
                 movement,
-                Hitpoint::new(5.0),
+                Hitpoint::new(2.5),
                 0.4,
             );
         }),
@@ -56,7 +56,7 @@ pub fn stage_demo() -> Stage<'static> {
                     .get("fairy0")
                     .expect("There is no Fairy Texture"),
                 movement,
-                Hitpoint::new(5.0),
+                Hitpoint::new(2.5),
                 0.4,
             );
         }),
@@ -74,7 +74,7 @@ pub fn stage_demo() -> Stage<'static> {
                     .get("fairy0")
                     .expect("There is no Fairy Texture"),
                 movement,
-                Hitpoint::new(5.0),
+                Hitpoint::new(2.5),
                 0.4,
             );
         }),
@@ -92,7 +92,7 @@ pub fn stage_demo() -> Stage<'static> {
                     .get("fairy0")
                     .expect("There is no Fairy Texture"),
                 movement,
-                Hitpoint::new(5.0),
+                Hitpoint::new(2.5),
                 0.4,
             );
         }),
@@ -110,7 +110,7 @@ pub fn stage_demo() -> Stage<'static> {
                     .get("fairy0")
                     .expect("There is no Fairy Texture"),
                 movement,
-                Hitpoint::new(5.0),
+                Hitpoint::new(2.5),
                 0.5,
             );
         }),
@@ -128,7 +128,7 @@ pub fn stage_demo() -> Stage<'static> {
                     .get("fairy0")
                     .expect("There is no Fairy Texture"),
                 movement,
-                Hitpoint::new(5.0),
+                Hitpoint::new(2.5),
                 0.5,
             );
         }),
@@ -146,7 +146,7 @@ pub fn stage_demo() -> Stage<'static> {
                     .get("fairy0")
                     .expect("There is no Fairy Texture"),
                 movement,
-                Hitpoint::new(5.0),
+                Hitpoint::new(2.5),
                 0.5,
             );
         }),
@@ -164,7 +164,7 @@ pub fn stage_demo() -> Stage<'static> {
                     .get("fairy0")
                     .expect("There is no Fairy Texture"),
                 movement,
-                Hitpoint::new(5.0),
+                Hitpoint::new(2.5),
                 0.5,
             );
         }),
