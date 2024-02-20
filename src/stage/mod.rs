@@ -211,7 +211,7 @@ pub fn stage_demo() -> Stage<'static> {
             PreloadType::Sfx("player-shoot", "./resources/sfx/player-shoot.ogg"),
         ],
         spawner,
-        |screen, assets_manager| {
+        |_, screen, assets_manager| {
             let offset = vec2(0.001, 0.001) * screen.playable_window().size().clone()
                 + screen.playable_window().get_start().clone();
             let stage1_bg1 = assets_manager.textures.get("stage1-bg-water1").unwrap();
@@ -246,7 +246,7 @@ pub fn stage_demo() -> Stage<'static> {
                 offset.x,
                 offset.y,
                 // WHITE,
-                Color::new(1f32, 1f32, 1f32, 0.8),
+                Color::new(1f32, 1f32, 1f32, 0.3),
                 DrawTextureParams {
                     dest_size: Some(fog_half),
                     ..Default::default()

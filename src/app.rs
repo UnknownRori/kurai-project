@@ -72,7 +72,9 @@ impl App<'_> {
     pub async fn draw(&mut self) {
         clear_background(BLACK);
 
-        self.stage_manager.draw(&self.window, &self.assets_manager);
+        let time = get_time();
+        self.stage_manager
+            .draw(time, &self.window, &self.assets_manager);
         update_draw(&self.world, &self.controls, &self.window);
         StageUI::draw(&self.window, &self.score_data, &self.assets_manager).await;
 

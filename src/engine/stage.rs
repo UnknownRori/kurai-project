@@ -39,7 +39,7 @@ pub struct Stage<'a> {
     stage_number: String,
     start: Option<f64>,
     preloads: Option<Vec<PreloadType<'a>>>,
-    background: Box<dyn Fn(&Window, &AssetsManager)>,
+    background: Box<dyn Fn(f64, &Window, &AssetsManager)>,
     spawner: Spawner,
 }
 
@@ -49,7 +49,7 @@ impl<'a> Stage<'a> {
         stage_number: &str,
         preloads: Vec<PreloadType<'a>>,
         spawner: Spawner,
-        background: impl Fn(&Window, &AssetsManager) + 'static,
+        background: impl Fn(f64, &Window, &AssetsManager) + 'static,
     ) -> Self {
         Self {
             title: title.to_string(),
@@ -110,8 +110,8 @@ impl<'a> StageManager<'a> {
         stage.spawner.update(time, world, assets_manager)
     }
 
-    pub fn draw(&self, screen: &Window, assets_manager: &AssetsManager) {
+    pub fn draw(&self, time: f64, screen: &Window, assets_manager: &AssetsManager) {
         let stage = self.get_stage().unwrap();
-        (stage.background)(screen, assets_manager);
+        (stage.background)(time, screen, assets_manager);
     }
 }
