@@ -8,8 +8,8 @@ use num_complex::Complex;
 use rayon::prelude::*;
 
 use crate::components::{
-    CanShoot, Death, DeathBlinkingAnimation, Enemy, Hitbox, Hitpoint, Player, PlayerBullet,
-    Position,
+    CanShoot, Controllable, Death, DeathBlinkingAnimation, Enemy, Hitbox, Hitpoint, Player,
+    PlayerBullet, Position,
 };
 use crate::entity::EnemyMovableEntity;
 use crate::math::*;
@@ -171,6 +171,8 @@ pub fn update_collision_detection_enemy_bullet_to_player(world: &mut World, scor
                     world
                         .insert(player_entity, (Death, DeathBlinkingAnimation::default()))
                         .unwrap();
+                    let mut pos = world.get::<&mut Position>(player_entity).unwrap();
+                    *pos = Position::from_array([0.5, 0.8]);
                 }
             } else if player_hitbox.near(&player_pos, &enemy_pos, &enemy_hitbox)
                 && !enemy_bullet.is_grazed()
@@ -188,10 +190,10 @@ pub fn update_collision_detection_enemy_bullet_to_player(world: &mut World, scor
 
 pub fn blink_death_entity(world: &mut World) {
     let done_animate = world
-        .query::<(&Death, &DeathBlinkingAnimation)>()
+        .query::<(&Player, &Death, &DeathBlinkingAnimation)>()
         .iter()
-        .filter(|(_, (_, blink))| blink.done())
-        .map(|(entity, (_, _))| (entity))
+        .filter(|(_, (_, _, blink))| blink.done())
+        .map(|(entity, (_, _, _))| (entity))
         .collect::<Vec<_>>();
 
     for entity in done_animate {
