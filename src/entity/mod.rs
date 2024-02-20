@@ -4,14 +4,14 @@ use std::sync::Arc;
 
 use hecs::{Entity, World};
 use macroquad::{math::vec2, texture::Texture2D};
-use num_complex::Complex;
+use num_complex::{Complex, ComplexFloat};
 
 use crate::{
     components::{
         CanShoot, Controllable, Enemy, EnemyBullet, Hitbox, Hitpoint, Movable, MovementQueue,
         Player, PlayerBullet, Position, SingleShoot, Sprite, TargetPlayer, Velocity,
     },
-    math::ExtendedComplexNumber,
+    math::{ExtendedComplexNumber, ToVec2},
 };
 
 pub type NormalFairyEntity<'a> = (
@@ -79,6 +79,7 @@ pub fn spawn_generic_bullet(
     texture: Arc<Texture2D>,
 ) -> Entity {
     let direction = (target.position - current.position).normalize() * speed;
+    let rot = direction.conj().arg() - std::f32::consts::FRAC_PI_2;
 
     world.spawn((
         EnemyBullet::default(),
@@ -86,7 +87,7 @@ pub fn spawn_generic_bullet(
         Movable::default(),
         Velocity::from(direction),
         Hitbox::new(0.004),
-        Sprite::new(texture, vec2(0.03, 0.03)),
+        Sprite::new(texture, vec2(0.03, 0.03), rot),
     ))
 }
 
@@ -105,7 +106,7 @@ pub fn spawn_enemy(
         CanShoot::new(fire_rate, 1.0), // TODO : Make this dynamic
         TargetPlayer,
         SingleShoot,
-        Sprite::new(texture, vec2(0.1, 0.1)),
+        Sprite::new(texture, vec2(0.1, 0.1), 0.),
         movement,
         Hitbox::new(0.02),
         hitpoint,
@@ -119,7 +120,7 @@ pub fn spawn_player(world: &mut World, texture: Arc<Texture2D>) -> Entity {
         Movable::new(1.0, 1.0),
         Position::from_array([0.5, 0.8]),
         CanShoot::new(40.0, 1.5),
-        Sprite::new(texture, vec2(0.1, 0.1)),
+        Sprite::new(texture, vec2(0.1, 0.1), 0.),
         Hitbox::new(0.008),
     ))
 }
@@ -137,7 +138,7 @@ pub fn spawn_player_bullet(
         Movable::default(),
         Velocity::from(velocity),
         Hitbox::new(0.008),
-        Sprite::new(texture, vec2(0.1, 0.1)),
+        Sprite::new(texture, vec2(0.1, 0.1), 0.),
     );
     world.spawn(component)
 }

@@ -210,11 +210,16 @@ impl CanShoot {
 pub struct Sprite {
     pub texture: Arc<Texture2D>,
     pub size: Vec2,
+    pub rotation: f32,
 }
 
 impl Sprite {
-    pub fn new(texture: Arc<Texture2D>, size: Vec2) -> Self {
-        Self { texture, size }
+    pub fn new(texture: Arc<Texture2D>, size: Vec2, rotation: f32) -> Self {
+        Self {
+            texture,
+            size,
+            rotation,
+        }
     }
 
     #[must_use]
@@ -241,6 +246,7 @@ impl Sprite {
             WHITE,
             DrawTextureParams {
                 // TODO : Make sure it looks good on any screens
+                rotation: -self.rotation,
                 dest_size: Some(real_size),
                 ..Default::default()
             },
