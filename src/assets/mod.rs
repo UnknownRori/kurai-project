@@ -5,7 +5,7 @@ use macroquad::{
     audio::{load_sound, Sound},
     file::load_file,
     material::{load_material, Material, MaterialParams},
-    miniquad::ShaderSource,
+    miniquad::{FilterMode, ShaderSource},
     texture::{load_texture, Texture2D},
 };
 
@@ -35,6 +35,7 @@ impl AssetsHandler for TextureHandler {
 
     async fn register(&mut self, name: &str, path: &str) -> Result<(), color_eyre::Report> {
         let texture = load_texture(path).await?;
+        texture.set_filter(FilterMode::Nearest);
         self.0.insert(name.to_owned(), Arc::new(texture));
         Ok(())
     }
