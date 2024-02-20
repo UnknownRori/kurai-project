@@ -1,21 +1,20 @@
-use crate::assets::{AssetsHandler, AssetsManager};
+use crate::assets::AssetsManager;
 use crate::score::ScoreData;
 use crate::time::Instant;
 
 use hecs::World;
-use macroquad::audio::{play_sound, play_sound_once, PlaySoundParams};
 use macroquad::prelude::*;
 use num_complex::Complex;
 use rayon::prelude::*;
 
 use crate::components::{CanShoot, Enemy, Hitbox, Hitpoint, Player, PlayerBullet, Position};
-use crate::entity::{spawn_generic_bullet, EnemyMovableEntity};
+use crate::entity::EnemyMovableEntity;
 use crate::math::*;
 
 use crate::{
-    components::{EnemyBullet, Movable, Velocity},
+    components::EnemyBullet,
     controls::{Action, Controls},
-    entity::{spawn_player_bullet, BulletEntity, NormalFairyEntity, PlayerEntity},
+    entity::{BulletEntity, NormalFairyEntity, PlayerEntity},
     window::Window,
 };
 
