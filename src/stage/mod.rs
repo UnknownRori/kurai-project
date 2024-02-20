@@ -180,8 +180,16 @@ pub fn stage_demo() -> Stage<'static> {
             PreloadType::Texture("stage1", "./resources/background/stage-1.png"),
             PreloadType::Texture("mask", "./resources/ui/playable-mask.png"),
             PreloadType::Texture(
-                "bullet0",
-                "./resources/textures/projectiles/generic-bullet.png",
+                "bullet-red",
+                "./resources/textures/projectiles/generic-bullet-red.png",
+            ),
+            PreloadType::Texture(
+                "bullet-blue",
+                "./resources/textures/projectiles/generic-bullet-blue.png",
+            ),
+            PreloadType::Texture(
+                "bullet-green",
+                "./resources/textures/projectiles/generic-bullet-green.png",
             ),
             PreloadType::Texture(
                 "remi-bullet-0",

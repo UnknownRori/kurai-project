@@ -48,7 +48,7 @@ pub fn enemy_shoot_normal_fairy(
         for (entity, pos, can_shoot) in enemy {
             let texture = assets_manager
                 .textures
-                .get("bullet0")
+                .get("bullet-red")
                 .expect("No generic bullet texture!");
             spawn_generic_bullet(world, &pos, player_pos, can_shoot.bullet_speed, texture);
             let sound = assets_manager.sfx.get("generic-shoot").unwrap();
