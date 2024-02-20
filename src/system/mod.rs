@@ -12,7 +12,7 @@ use self::{
         update_render_player_bullet,
     },
     update::{
-        enemy_movement_update, enemy_shoot_normal_fairy, player_shoot,
+        blink_death_entity, enemy_movement_update, enemy_shoot_normal_fairy, player_shoot,
         update_collision_detection_enemy_bullet_to_player,
         update_collision_detection_player_bullet_to_enemy, update_delete_bullet_offscreen,
         update_move_bullet, update_player_move,
@@ -37,12 +37,14 @@ pub fn update_system(
     enemy_shoot_normal_fairy(world, assets_manager, delta, time);
     enemy_movement_update(world, delta, time);
     update_collision_detection_enemy_bullet_to_player(world, score);
-    update_collision_detection_player_bullet_to_enemy(world, score)
+    update_collision_detection_player_bullet_to_enemy(world, score);
+
+    blink_death_entity(world);
 }
 
-pub fn update_draw(world: &World, controls: &Controls, screen: &Window) {
+pub fn update_draw(world: &World, controls: &Controls, screen: &Window, time: f64, delta: f32) {
     update_render_player_bullet(world, screen);
-    update_render_player(world, screen, controls);
+    update_render_player(world, screen, controls, delta);
     update_render_enemy(world, screen);
     update_render_normal_fairy_bullet(world, screen);
     draw_hitbox(world, screen);

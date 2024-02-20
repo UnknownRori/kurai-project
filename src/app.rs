@@ -73,9 +73,10 @@ impl App<'_> {
         clear_background(BLACK);
 
         let time = get_time();
+        let delta = get_frame_time();
         self.stage_manager
             .draw(time, &self.window, &self.assets_manager);
-        update_draw(&self.world, &self.controls, &self.window);
+        update_draw(&self.world, &self.controls, &self.window, time, delta);
         StageUI::draw(&self.window, &self.score_data, &self.assets_manager).await;
 
         draw_entity_number(&self.window, self.world.len());

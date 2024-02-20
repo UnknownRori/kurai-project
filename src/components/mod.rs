@@ -1,6 +1,7 @@
 use std::{collections::VecDeque, sync::Arc};
 
 use crate::assets::{AssetsHandler, AssetsManager};
+use crate::constant::DONE_BLINKING;
 use crate::entity::spawn_generic_bullet;
 use crate::math::*;
 use crate::{math::ToVec2, time::Instant, window::Window};
@@ -36,6 +37,31 @@ pub struct SingleShoot;
 #[derive(Default, Debug, Clone, Copy)]
 pub struct EnemyBullet {
     graze: bool,
+}
+
+pub struct Death;
+
+#[derive(Copy, Clone)]
+pub struct DeathBlinkingAnimation {
+    pub timer: f32,
+    pub speed_blink: f32,
+    pub blink_decrease_ratio: f32,
+}
+
+impl Default for DeathBlinkingAnimation {
+    fn default() -> Self {
+        Self {
+            timer: 0.0,
+            speed_blink: 0.8,
+            blink_decrease_ratio: 1.5,
+        }
+    }
+}
+
+impl DeathBlinkingAnimation {
+    pub fn done(&self) -> bool {
+        self.speed_blink <= DONE_BLINKING
+    }
 }
 
 impl EnemyBullet {

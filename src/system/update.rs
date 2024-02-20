@@ -7,7 +7,10 @@ use macroquad::prelude::*;
 use num_complex::Complex;
 use rayon::prelude::*;
 
-use crate::components::{CanShoot, Enemy, Hitbox, Hitpoint, Player, PlayerBullet, Position};
+use crate::components::{
+    CanShoot, Death, DeathBlinkingAnimation, Enemy, Hitbox, Hitpoint, Player, PlayerBullet,
+    Position,
+};
 use crate::entity::EnemyMovableEntity;
 use crate::math::*;
 
@@ -28,7 +31,7 @@ pub fn enemy_shoot_normal_fairy(
         .query::<PlayerEntity>()
         .iter()
         .par_bridge()
-        .map(|(_, (_, _, _, pos, _, _, _))| (*pos))
+        .map(|(_, (_, _, _, pos, _, _, _, _, _))| (*pos))
         .collect::<Vec<_>>();
 
     if let Some(player_pos) = player_pos.first() {
@@ -101,7 +104,7 @@ pub fn player_shoot(
         .query::<PlayerEntity>()
         .iter()
         .par_bridge()
-        .map(|(entity, (_, _, _, pos, can_shoot, _, _))| (entity, *pos, can_shoot.clone()))
+        .map(|(entity, (_, _, _, pos, can_shoot, _, _, _, _))| (entity, *pos, can_shoot.clone()))
         .collect::<Vec<_>>();
 
     for (entity, pos, can_shoot) in player_entity {
@@ -125,9 +128,23 @@ pub fn player_shoot(
 
 pub fn update_collision_detection_enemy_bullet_to_player(world: &mut World, score: &mut ScoreData) {
     let player_entity = world
-        .query::<(&Player, &Position, &Hitbox)>()
+        .query::<(
+            &Player,
+            &Position,
+            &Hitbox,
+            Option<&Death>,
+            Option<&DeathBlinkingAnimation>,
+        )>()
         .iter()
-        .map(|(_, (_, pos, hitbox))| (*pos, hitbox.clone()))
+        .map(|(player_entity, (_, pos, hitbox, death, blink))| {
+            (
+                player_entity,
+                *pos,
+                hitbox.clone(),
+                death.is_some(),
+                blink.is_some(),
+            )
+        })
         .collect::<Vec<_>>();
 
     let enemy_bullet = world
@@ -144,14 +161,20 @@ pub fn update_collision_detection_enemy_bullet_to_player(world: &mut World, scor
         })
         .collect::<Vec<_>>();
 
-    for (player_pos, player_hitbox) in player_entity {
+    for (player_entity, player_pos, player_hitbox, player_death, player_blink) in player_entity {
         for (enemy_entity, enemy_bullet, enemy_pos, enemy_hitbox) in &enemy_bullet {
             if player_hitbox.is_intersect(&player_pos, &enemy_pos, &enemy_hitbox) {
-                world.despawn(*enemy_entity).unwrap();
-                score.life -= 1;
-                score.graze -= 1; // TODO : Make this something more interesting
+                if !player_death {
+                    world.despawn(*enemy_entity).unwrap();
+                    score.life -= 1;
+                    score.graze -= 1; // TODO : Make this something more interesting
+                    world
+                        .insert(player_entity, (Death, DeathBlinkingAnimation::default()))
+                        .unwrap();
+                }
             } else if player_hitbox.near(&player_pos, &enemy_pos, &enemy_hitbox)
                 && !enemy_bullet.is_grazed()
+                && !player_blink
             {
                 score.graze += 1;
                 world
@@ -160,6 +183,21 @@ pub fn update_collision_detection_enemy_bullet_to_player(world: &mut World, scor
                     .grazed();
             }
         }
+    }
+}
+
+pub fn blink_death_entity(world: &mut World) {
+    let done_animate = world
+        .query::<(&Death, &DeathBlinkingAnimation)>()
+        .iter()
+        .filter(|(_, (_, blink))| blink.done())
+        .map(|(entity, (_, _))| (entity))
+        .collect::<Vec<_>>();
+
+    for entity in done_animate {
+        world
+            .remove::<(Death, DeathBlinkingAnimation)>(entity)
+            .unwrap();
     }
 }
 
@@ -229,10 +267,8 @@ pub fn update_move_bullet(world: &mut World, _screen: &Window, delta: f32, _: f6
 }
 
 pub fn update_player_move(world: &World, controls: &Controls, screen: &Window, _: f32, _: f64) {
-    world
-        .query::<PlayerEntity>()
-        .iter()
-        .for_each(|(_, (_, _, moveable, position, _, _, _))| {
+    world.query::<PlayerEntity>().iter().for_each(
+        |(_, (_, _, moveable, position, _, _, _, _, _))| {
             let mut new_pos = Complex::new(0.0, 0.0);
             let move_speed = if controls.is_down(&Action::Focus) {
                 moveable.move_speed / 2.
@@ -260,5 +296,6 @@ pub fn update_player_move(world: &World, controls: &Controls, screen: &Window, _
             position.position = position
                 .position
                 .clamp(Complex::new(0.05, 0.05), Complex::new(0.95, 0.95));
-        });
+        },
+    );
 }

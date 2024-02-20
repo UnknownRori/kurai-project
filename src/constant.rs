@@ -7,3 +7,5 @@ pub const WINDOW_RESIZEABLE: bool = true;
 
 pub const GAME_NAME: &str = "Kurai Project";
 pub const GAME_VERSION: &str = "0.0 alpha";
+
+pub const DONE_BLINKING: f32 = 0.000001;

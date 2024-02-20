@@ -41,10 +41,19 @@ pub fn draw_hitbox(world: &World, screen: &Window) {
     // });
 }
 
-pub fn update_render_player(world: &World, screen: &Window, controls: &Controls) {
+pub fn update_render_player(world: &World, screen: &Window, controls: &Controls, delta: f32) {
     world.query::<PlayerEntity>().iter().for_each(
-        |(_, (player, _, _, position, _, sprite, hitbox))| {
-            let _ = sprite.draw(&position, screen);
+        |(_, (player, _, _, position, _, sprite, hitbox, _, blink))| {
+            if let Some(blink) = blink {
+                blink.timer += 1.0 * delta;
+                if blink.timer >= blink.speed_blink {
+                    sprite.draw(&position, screen);
+                    blink.timer = 0.;
+                    blink.speed_blink /= blink.blink_decrease_ratio;
+                }
+            } else {
+                sprite.draw(&position, screen);
+            }
 
             if controls.is_down(&Action::Focus) {
                 hitbox.draw(position, screen);

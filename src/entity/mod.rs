@@ -13,8 +13,9 @@ use num_complex::{Complex, ComplexFloat};
 use crate::{
     assets::AssetsHandler,
     components::{
-        CanShoot, Controllable, Enemy, EnemyBullet, Hitbox, Hitpoint, Movable, MovementQueue,
-        Player, PlayerBullet, Position, SingleShoot, Sprite, TargetPlayer, Velocity,
+        CanShoot, Controllable, Death, DeathBlinkingAnimation, Enemy, EnemyBullet, Hitbox,
+        Hitpoint, Movable, MovementQueue, Player, PlayerBullet, Position, SingleShoot, Sprite,
+        TargetPlayer, Velocity,
     },
     math::{ExtendedComplexNumber, ToVec2},
 };
@@ -40,6 +41,8 @@ pub type PlayerEntity<'a> = (
     &'a CanShoot,
     &'a Sprite,
     &'a Hitbox,
+    Option<&'a Death>,
+    Option<&'a mut DeathBlinkingAnimation>,
 );
 
 pub type PlayerBulletEntity<'a> = (
