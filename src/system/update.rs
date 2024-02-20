@@ -42,22 +42,18 @@ pub fn enemy_shoot_normal_fairy(
                     && ((pos.position.re >= 0.050 && pos.position.re <= 0.950)
                         && (pos.position.im >= 0.050 && pos.position.im <= 0.950))
             })
-            .map(|(entity, (_, pos, _, can_shoot, _, _, _, _, _, _))| (entity, *pos, *can_shoot))
+            .map(|(entity, (_, pos, _, can_shoot, _, _, _, _, _, _))| {
+                (entity, *pos, can_shoot.clone())
+            })
             .collect::<Vec<_>>();
 
         for (entity, pos, can_shoot) in enemy {
-            let texture = assets_manager
-                .textures
-                .get("bullet-red")
-                .expect("No generic bullet texture!");
-            spawn_generic_bullet(world, &pos, player_pos, can_shoot.bullet_speed, texture);
-            let sound = assets_manager.sfx.get("generic-shoot").unwrap();
-            play_sound(
-                &*sound,
-                PlaySoundParams {
-                    looped: false,
-                    volume: 0.5,
-                },
+            (can_shoot.shoot_fn)(
+                world,
+                &assets_manager,
+                &pos,
+                &player_pos,
+                can_shoot.bullet_speed,
             );
 
             let _ = world
@@ -106,32 +102,18 @@ pub fn player_shoot(
         .query::<PlayerEntity>()
         .iter()
         .par_bridge()
-        .map(|(entity, (_, _, _, pos, can_shoot, _, _))| (entity, *pos, *can_shoot))
+        .map(|(entity, (_, _, _, pos, can_shoot, _, _))| (entity, *pos, can_shoot.clone()))
         .collect::<Vec<_>>();
 
     for (entity, pos, can_shoot) in player_entity {
         if controls.is_down(&Action::Attack) && can_shoot.can_fire(time) {
             let pos = pos.position + Complex::new(0.0, 0.0);
-
-            // TODO : Use proper player texture
-            let texture = assets_manager
-                .textures
-                .get("remi-bullet-0")
-                .expect("Generic bullet is not found");
-            spawn_player_bullet(
+            (can_shoot.shoot_fn)(
                 world,
-                &pos.into(),
-                texture,
-                Complex::new(0.0, -can_shoot.bullet_speed),
-            );
-
-            let sound = assets_manager.sfx.get("player-shoot").unwrap();
-            play_sound(
-                &*sound,
-                PlaySoundParams {
-                    looped: false,
-                    volume: 0.5,
-                },
+                &assets_manager,
+                &Position::from(pos),
+                &Position::from(pos),
+                can_shoot.bullet_speed,
             );
 
             let _ = world

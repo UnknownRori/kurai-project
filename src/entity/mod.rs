@@ -3,10 +3,15 @@ pub mod remilia_scarlet;
 use std::sync::Arc;
 
 use hecs::{Entity, World};
-use macroquad::{math::vec2, texture::Texture2D};
+use macroquad::{
+    audio::{play_sound, PlaySoundParams},
+    math::vec2,
+    texture::Texture2D,
+};
 use num_complex::{Complex, ComplexFloat};
 
 use crate::{
+    assets::AssetsHandler,
     components::{
         CanShoot, Controllable, Enemy, EnemyBullet, Hitbox, Hitpoint, Movable, MovementQueue,
         Player, PlayerBullet, Position, SingleShoot, Sprite, TargetPlayer, Velocity,
@@ -103,7 +108,27 @@ pub fn spawn_enemy(
         Enemy,
         pos,
         Movable::new(0.2, 0.4),
-        CanShoot::new(fire_rate, 1.0), // TODO : Make this dynamic
+        CanShoot::new(
+            fire_rate,
+            1.0,
+            Arc::new(
+                |world, assets_manager, current_pos, player_pos, bullet_speed| {
+                    let texture = assets_manager
+                        .textures
+                        .get("bullet-red")
+                        .expect("No generic bullet texture!");
+                    spawn_generic_bullet(world, &current_pos, player_pos, bullet_speed, texture);
+                    let sound = assets_manager.sfx.get("generic-shoot").unwrap();
+                    play_sound(
+                        &*sound,
+                        PlaySoundParams {
+                            looped: false,
+                            volume: 0.5,
+                        },
+                    );
+                },
+            ),
+        ), // TODO : Make this dynamic
         TargetPlayer,
         SingleShoot,
         Sprite::new(texture, vec2(0.1, 0.1), 0.),
@@ -119,7 +144,36 @@ pub fn spawn_player(world: &mut World, texture: Arc<Texture2D>) -> Entity {
         Controllable,
         Movable::new(1.0, 1.0),
         Position::from_array([0.5, 0.8]),
-        CanShoot::new(20.0, 2.5),
+        CanShoot::new(
+            20.0,
+            2.5,
+            Arc::new(
+                |world, assets_manager, current_pos, player_pos, bullet_speed| {
+                    let pos = current_pos.position + Complex::new(0.0, 0.0);
+
+                    // TODO : Use proper player texture
+                    let texture = assets_manager
+                        .textures
+                        .get("remi-bullet-0")
+                        .expect("Generic bullet is not found");
+                    spawn_player_bullet(
+                        world,
+                        &pos.into(),
+                        texture,
+                        Complex::new(0.0, -bullet_speed),
+                    );
+
+                    let sound = assets_manager.sfx.get("player-shoot").unwrap();
+                    play_sound(
+                        &*sound,
+                        PlaySoundParams {
+                            looped: false,
+                            volume: 0.5,
+                        },
+                    );
+                },
+            ),
+        ),
         Sprite::new(texture, vec2(0.1, 0.1), 0.),
         Hitbox::new(0.008),
     ))

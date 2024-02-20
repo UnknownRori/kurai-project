@@ -1,7 +1,11 @@
 use std::{collections::VecDeque, sync::Arc};
 
+use crate::assets::{AssetsHandler, AssetsManager};
+use crate::entity::spawn_generic_bullet;
 use crate::math::*;
 use crate::{math::ToVec2, time::Instant, window::Window};
+use hecs::World;
+use macroquad::audio::{play_sound, PlaySoundParams};
 use macroquad::prelude::*;
 use num_complex::Complex;
 
@@ -164,11 +168,12 @@ impl Hitbox {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Clone)]
 pub struct CanShoot {
     pub fire_rate: f64,
     pub last_shoot: Option<Instant>,
     pub bullet_speed: f32,
+    pub shoot_fn: Arc<dyn Fn(&mut World, &AssetsManager, &Position, &Position, f32) + Send + Sync>,
 }
 
 impl Default for CanShoot {
@@ -177,17 +182,39 @@ impl Default for CanShoot {
             fire_rate: 1.0,
             bullet_speed: 0.1,
             last_shoot: None,
+            shoot_fn: Arc::new(
+                |world, assets_manager, current_pos, player_pos, bullet_speed| {
+                    let texture = assets_manager
+                        .textures
+                        .get("bullet-red")
+                        .expect("No generic bullet texture!");
+                    spawn_generic_bullet(world, &current_pos, player_pos, bullet_speed, texture);
+                    let sound = assets_manager.sfx.get("generic-shoot").unwrap();
+                    play_sound(
+                        &*sound,
+                        PlaySoundParams {
+                            looped: false,
+                            volume: 0.5,
+                        },
+                    );
+                },
+            ),
         }
     }
 }
 
 impl CanShoot {
     #[must_use]
-    pub fn new(firerate: f64, speed: f32) -> Self {
+    pub fn new(
+        firerate: f64,
+        speed: f32,
+        shoot_fn: Arc<dyn Fn(&mut World, &AssetsManager, &Position, &Position, f32) + Send + Sync>,
+    ) -> Self {
         Self {
             fire_rate: firerate,
             bullet_speed: speed,
             last_shoot: None,
+            shoot_fn,
         }
     }
 
