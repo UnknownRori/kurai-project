@@ -1,8 +1,9 @@
-use crate::assets::AssetsManager;
+use crate::assets::{AssetsHandler, AssetsManager};
 use crate::score::ScoreData;
 use crate::time::Instant;
 
 use hecs::World;
+use macroquad::audio::{play_sound, PlaySoundParams};
 use macroquad::prelude::*;
 use num_complex::Complex;
 use rayon::prelude::*;
@@ -126,7 +127,11 @@ pub fn player_shoot(
     }
 }
 
-pub fn update_collision_detection_enemy_bullet_to_player(world: &mut World, score: &mut ScoreData) {
+pub fn update_collision_detection_enemy_bullet_to_player(
+    world: &mut World,
+    assets_manager: &AssetsManager,
+    score: &mut ScoreData,
+) {
     let player_entity = world
         .query::<(
             &Player,
@@ -173,6 +178,15 @@ pub fn update_collision_detection_enemy_bullet_to_player(world: &mut World, scor
                         .unwrap();
                     let mut pos = world.get::<&mut Position>(player_entity).unwrap();
                     *pos = Position::from_array([0.5, 0.8]);
+
+                    let sound = assets_manager.sfx.get("player-death").unwrap();
+                    play_sound(
+                        &*sound,
+                        PlaySoundParams {
+                            looped: false,
+                            volume: 0.6,
+                        },
+                    );
                 }
             } else if player_hitbox.near(&player_pos, &enemy_pos, &enemy_hitbox)
                 && !enemy_bullet.is_grazed()

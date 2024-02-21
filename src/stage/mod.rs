@@ -209,6 +209,7 @@ pub fn stage_demo() -> Stage<'static> {
             ),
             PreloadType::Sfx("generic-shoot", "./resources/sfx/generic-shoot.ogg"),
             PreloadType::Sfx("player-shoot", "./resources/sfx/player-shoot.ogg"),
+            PreloadType::Sfx("player-death", "./resources/sfx/death.ogg"),
         ],
         spawner,
         |_, screen, assets_manager| {
