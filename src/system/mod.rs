@@ -29,8 +29,6 @@ pub fn update_system(
     score: &mut ScoreData,
     assets_manager: &AssetsManager,
 ) {
-    update_delete_bullet_offscreen(world, screen, delta, time);
-
     update_player_move(world, controls, screen, delta, time);
     update_move_bullet(world, screen, delta, time);
     player_shoot(world, assets_manager, controls, delta, time);
@@ -40,6 +38,8 @@ pub fn update_system(
     update_collision_detection_player_bullet_to_enemy(world, score);
 
     blink_death_entity(world);
+
+    update_delete_bullet_offscreen(world, screen, delta, time);
 }
 
 pub fn update_draw(world: &World, controls: &Controls, screen: &Window, time: f64, delta: f32) {

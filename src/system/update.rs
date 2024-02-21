@@ -244,7 +244,10 @@ pub fn update_collision_detection_player_bullet_to_enemy(world: &mut World, scor
                     score.score += 10;
                     world.despawn(enemy_entity).unwrap();
                 }
-                world.despawn(*player_bullet).unwrap();
+                match world.despawn(*player_bullet) {
+                    Ok(()) => {}
+                    Err(_) => tracing::error!("Unable despawn : {:#?}", player_bullet),
+                };
             }
         }
     }
