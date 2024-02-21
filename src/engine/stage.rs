@@ -2,6 +2,7 @@ use std::future::Future;
 
 use hecs::World;
 use macroquad::{
+    audio::play_sound_once,
     experimental::coroutines::{start_coroutine, stop_coroutine, wait_seconds},
     material::MaterialParams,
     math::vec2,
@@ -11,6 +12,7 @@ use macroquad::{
 
 use crate::{
     assets::{AssetsHandler, AssetsManager},
+    time::Instant,
     window::Window,
 };
 
@@ -32,14 +34,16 @@ pub enum PreloadType<'a> {
     Sfx(&'a str, &'a str),
     Texture(&'a str, &'a str),
     Shader(&'a str, &'a str, &'a str, MaterialParams),
+    Bgm(&'a str, &'a str),
 }
 
 pub struct Stage<'a> {
     title: String,
     stage_number: String,
-    start: Option<f64>,
+    start: Option<Instant>,
     preloads: Option<Vec<PreloadType<'a>>>,
     background: Box<dyn Fn(f64, &Window, &AssetsManager)>,
+    bgm: String, // TODO : Make this flexible and sensible
     spawner: Spawner,
 }
 
@@ -48,6 +52,7 @@ impl<'a> Stage<'a> {
         title: &str,
         stage_number: &str,
         preloads: Vec<PreloadType<'a>>,
+        bgm: String,
         spawner: Spawner,
         background: impl Fn(f64, &Window, &AssetsManager) + 'static,
     ) -> Self {
@@ -55,6 +60,7 @@ impl<'a> Stage<'a> {
             title: title.to_string(),
             stage_number: stage_number.to_string(),
             preloads: Some(preloads),
+            bgm,
             spawner,
             background: Box::new(background),
             start: None,
@@ -98,20 +104,26 @@ impl<'a> StageManager<'a> {
                     .register(name, vertex_path, fragment_path, params)
                     .await
                     .unwrap(),
+                PreloadType::Bgm(name, path) => {
+                    assets_manager.bgm.register(name, path).await.unwrap()
+                }
             };
         }
-        let time = get_time();
+        let time = Instant::now();
         stage.start = Some(time);
-        stage.spawner.start(time);
+        let sound = assets_manager.bgm.get(&stage.bgm).unwrap();
+        play_sound_once(&*sound);
     }
 
     pub fn update(&mut self, time: f64, world: &mut World, assets_manager: &AssetsManager) {
         let stage = self.get_mut_stage().unwrap();
-        stage.spawner.update(time, world, assets_manager)
+        stage
+            .spawner
+            .update(stage.start.unwrap().elapsed(time), world, assets_manager)
     }
 
     pub fn draw(&self, time: f64, screen: &Window, assets_manager: &AssetsManager) {
         let stage = self.get_stage().unwrap();
-        (stage.background)(time, screen, assets_manager);
+        (stage.background)(stage.start.unwrap().elapsed(time), screen, assets_manager);
     }
 }
