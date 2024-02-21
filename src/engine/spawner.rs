@@ -1,8 +1,13 @@
+use std::{
+    rc::Rc,
+    sync::{Arc, RwLock},
+};
+
 use hecs::{Entity, World};
 
 use crate::assets::AssetsManager;
 
-pub type SpawnerAction = Box<dyn FnMut(&mut World, &AssetsManager)>;
+pub type SpawnerAction = Arc<RwLock<dyn FnMut(&mut World, &AssetsManager)>>;
 
 pub struct SpawnEvent {
     pub start: f64,
@@ -14,7 +19,18 @@ impl SpawnEvent {
     pub fn new(start: f64, spawn_event: impl FnMut(&mut World, &AssetsManager) + 'static) -> Self {
         Self {
             start,
-            spawn_event: Box::new(spawn_event),
+            spawn_event: Arc::new(RwLock::new(spawn_event)),
+            is_spawned: false,
+        }
+    }
+
+    pub fn new2(
+        start: f64,
+        spawn_event: Arc<RwLock<dyn FnMut(&mut World, &AssetsManager)>>,
+    ) -> Self {
+        Self {
+            start,
+            spawn_event,
             is_spawned: false,
         }
     }
@@ -43,7 +59,8 @@ impl Spawner {
                 !spawn_event.is_spawned && self.start.unwrap() + spawn_event.start < time
             })
             .for_each(|event| {
-                (event.spawn_event)(world, assets_manager);
+                let mut a = event.spawn_event.write().unwrap();
+                (a)(world, assets_manager);
                 event.is_spawned = true;
             });
 

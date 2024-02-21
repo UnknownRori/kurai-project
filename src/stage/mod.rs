@@ -1,6 +1,12 @@
+use std::{
+    rc::Rc,
+    sync::{Arc, RwLock},
+};
+
 use hecs::World;
 use macroquad::prelude::*;
 use num_complex::Complex;
+use num_traits::ToPrimitive;
 
 use crate::{
     assets::{AssetsHandler, AssetsManager},
@@ -12,163 +18,78 @@ use crate::{
     entity::{spawn_enemy, spawn_player},
 };
 
+fn spawner_line(
+    start: f64,
+    delay_between: f64,
+    total: usize,
+    spawn_event: impl FnMut(&mut World, &AssetsManager) + 'static,
+) -> Vec<SpawnEvent> {
+    let spawn_event = Arc::new(RwLock::new(spawn_event));
+    let mut temp = Vec::with_capacity(total);
+
+    for i in 0..total {
+        let spawn_clone = Arc::clone(&spawn_event);
+        temp.push(SpawnEvent::new2(
+            start + (delay_between * i.to_f64().unwrap()),
+            spawn_clone,
+        ));
+    }
+    temp
+}
+
 pub fn stage_demo() -> Stage<'static> {
     // TODO : Refactor later
-    let spawner = Spawner::new(vec![
-        SpawnEvent::new(0.0, |world, assets_manager| {
-            spawn_player(
-                world,
-                assets_manager
-                    .textures
-                    .get("remilia0")
-                    .expect("There is no Remilia Texture"),
-            );
-        }),
-        SpawnEvent::new(2.0, |world, assets_manager| {
-            let pos = vec![
-                Movement::new(Complex::new(0.3, 0.5), 0.0, false),
-                Movement::new(Complex::new(0.0, 0.8), 0.0, true),
-            ];
-            let movement = MovementQueue::new(pos);
-            let _ = spawn_enemy(
-                world,
-                Position::from_array([0.3, -0.05]),
-                assets_manager
-                    .textures
-                    .get("fairy0")
-                    .expect("There is no Fairy Texture"),
-                movement,
-                Hitpoint::new(2.5),
-                0.4,
-            );
-        }),
-        SpawnEvent::new(3.0, |world, assets_manager| {
-            let pos = vec![
-                Movement::new(Complex::new(0.3, 0.5), 0.0, false),
-                Movement::new(Complex::new(0.0, 0.8), 0.0, true),
-            ];
-            let movement = MovementQueue::new(pos);
-            let _ = spawn_enemy(
-                world,
-                Position::from_array([0.3, -0.05]),
-                assets_manager
-                    .textures
-                    .get("fairy0")
-                    .expect("There is no Fairy Texture"),
-                movement,
-                Hitpoint::new(2.5),
-                0.4,
-            );
-        }),
-        SpawnEvent::new(2.5, |world, assets_manager| {
-            let pos = vec![
-                Movement::new(Complex::new(0.7, 0.5), 0.0, false),
-                Movement::new(Complex::new(1.0, 0.8), 0.0, true),
-            ];
-            let movement = MovementQueue::new(pos);
-            let _ = spawn_enemy(
-                world,
-                Position::from_array([0.7, -0.05]),
-                assets_manager
-                    .textures
-                    .get("fairy0")
-                    .expect("There is no Fairy Texture"),
-                movement,
-                Hitpoint::new(2.5),
-                0.4,
-            );
-        }),
-        SpawnEvent::new(3.5, |world, assets_manager| {
-            let pos = vec![
-                Movement::new(Complex::new(0.7, 0.5), 0.0, false),
-                Movement::new(Complex::new(1.0, 0.8), 0.0, true),
-            ];
-            let movement = MovementQueue::new(pos);
-            let _ = spawn_enemy(
-                world,
-                Position::from_array([0.7, -0.05]),
-                assets_manager
-                    .textures
-                    .get("fairy0")
-                    .expect("There is no Fairy Texture"),
-                movement,
-                Hitpoint::new(2.5),
-                0.4,
-            );
-        }),
-        SpawnEvent::new(7.0, |world, assets_manager| {
-            let pos = vec![
-                Movement::new(Complex::new(0.0, 0.2), 0.0, false),
-                Movement::new(Complex::new(1.0, 0.35), 0.0, true),
-            ];
-            let movement = MovementQueue::new(pos);
-            let _ = spawn_enemy(
-                world,
-                Position::from_array([-0.05, 0.2]),
-                assets_manager
-                    .textures
-                    .get("fairy0")
-                    .expect("There is no Fairy Texture"),
-                movement,
-                Hitpoint::new(2.5),
-                0.5,
-            );
-        }),
-        SpawnEvent::new(7.8, |world, assets_manager| {
-            let pos = vec![
-                Movement::new(Complex::new(0.0, 0.2), 0.0, false),
-                Movement::new(Complex::new(1.0, 0.35), 0.0, true),
-            ];
-            let movement = MovementQueue::new(pos);
-            let _ = spawn_enemy(
-                world,
-                Position::from_array([-0.05, 0.2]),
-                assets_manager
-                    .textures
-                    .get("fairy0")
-                    .expect("There is no Fairy Texture"),
-                movement,
-                Hitpoint::new(2.5),
-                0.5,
-            );
-        }),
-        SpawnEvent::new(8.6, |world, assets_manager| {
-            let pos = vec![
-                Movement::new(Complex::new(0.0, 0.2), 0.0, false),
-                Movement::new(Complex::new(1.0, 0.35), 0.0, true),
-            ];
-            let movement = MovementQueue::new(pos);
-            let _ = spawn_enemy(
-                world,
-                Position::from_array([-0.05, 0.2]),
-                assets_manager
-                    .textures
-                    .get("fairy0")
-                    .expect("There is no Fairy Texture"),
-                movement,
-                Hitpoint::new(2.5),
-                0.5,
-            );
-        }),
-        SpawnEvent::new(9.4, |world, assets_manager| {
-            let pos = vec![
-                Movement::new(Complex::new(0.0, 0.2), 0.0, false),
-                Movement::new(Complex::new(1.0, 0.35), 0.0, true),
-            ];
-            let movement = MovementQueue::new(pos);
-            let _ = spawn_enemy(
-                world,
-                Position::from_array([-0.05, 0.2]),
-                assets_manager
-                    .textures
-                    .get("fairy0")
-                    .expect("There is no Fairy Texture"),
-                movement,
-                Hitpoint::new(2.5),
-                0.5,
-            );
-        }),
-    ]);
+    let mut first_col = spawner_line(2., 1., 4, |world, assets_manager| {
+        let pos = vec![
+            Movement::new(Complex::new(0.3, 0.5), 0.0, false),
+            Movement::new(Complex::new(0.0, 0.8), 0.0, true),
+        ];
+        let movement = MovementQueue::new(pos);
+        let _ = spawn_enemy(
+            world,
+            Position::from_array([0.3, -0.05]),
+            assets_manager
+                .textures
+                .get("fairy0")
+                .expect("There is no Fairy Texture"),
+            movement,
+            Hitpoint::new(2.5),
+            0.4,
+        );
+    });
+    let mut second_col = spawner_line(7.0, 0.8, 3, |world, assets_manager| {
+        let pos = vec![
+            Movement::new(Complex::new(0.0, 0.2), 0.0, false),
+            Movement::new(Complex::new(1.0, 0.35), 0.0, true),
+        ];
+        let movement = MovementQueue::new(pos);
+        let _ = spawn_enemy(
+            world,
+            Position::from_array([-0.05, 0.2]),
+            assets_manager
+                .textures
+                .get("fairy0")
+                .expect("There is no Fairy Texture"),
+            movement,
+            Hitpoint::new(2.5),
+            0.5,
+        );
+    });
+
+    let mut timeline = vec![SpawnEvent::new(0.0, |world, assets_manager| {
+        spawn_player(
+            world,
+            assets_manager
+                .textures
+                .get("remilia0")
+                .expect("There is no Remilia Texture"),
+        );
+    })];
+
+    timeline.append(&mut first_col);
+    timeline.append(&mut second_col);
+
+    let spawner = Spawner::new(timeline);
 
     Stage::new(
         "Demo",
@@ -207,6 +128,8 @@ pub fn stage_demo() -> Stage<'static> {
                 "remi-bullet-0",
                 "./resources/textures/projectiles/remi-bullet.png",
             ),
+            PreloadType::Texture("value", "./resources/textures/items/point.png"),
+            PreloadType::Texture("power", "./resources/textures/items/power.png"),
             PreloadType::Sfx("generic-shoot", "./resources/sfx/generic-shoot.ogg"),
             PreloadType::Sfx("player-shoot", "./resources/sfx/player-shoot.ogg"),
             PreloadType::Sfx("player-death", "./resources/sfx/death.ogg"),
