@@ -7,6 +7,42 @@ use crate::window::Window;
 
 pub struct StageUI {}
 
+pub fn fill_outside_game_window(window: &Window) {
+    // INFO : Bottom
+    draw_rectangle(
+        0.,
+        window.game_window().get_end().y,
+        window.screen().x,
+        window.screen().y - window.game_window().get_end().y,
+        BLACK,
+    );
+    // INFO : TOP
+    draw_rectangle(
+        0.,
+        0.,
+        window.screen().x,
+        window.game_window().get_start().y,
+        BLACK,
+    );
+
+    // INFO : LEFT
+    draw_rectangle(
+        0.,
+        0.,
+        window.game_window().get_start().x,
+        window.game_window().get_end().y,
+        BLACK,
+    );
+    // INFO : RIGHT
+    draw_rectangle(
+        window.game_window().get_end().x,
+        0.,
+        window.screen().x - window.game_window().get_end().x,
+        window.game_window().get_end().y,
+        BLACK,
+    );
+}
+
 #[inline]
 fn draw_scoreboard(window: &Window, score_data: &ScoreData, assets_manager: &AssetsManager) {
     draw_texture_ex(
