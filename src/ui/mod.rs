@@ -20,52 +20,76 @@ fn draw_scoreboard(window: &Window, score_data: &ScoreData, assets_manager: &Ass
         },
     );
 
+    draw_rectangle(
+        window.playable_window().get_start().x + window.playable_window().size().x + 12.0,
+        window.game_window().get_start().y + 42.0,
+        window.game_window().size().x / 3.5,
+        90.,
+        Color::new(0., 0., 0., 0.5),
+    );
+
     // TODO : Make this something more shorter, for loop or something
     draw_text(
         "Score",
         window.playable_window().get_start().x + window.playable_window().size().x + 12.0,
-        window.game_window().get_start().y + 52.0,
-        28.0,
+        window.game_window().get_start().y + 62.0,
+        24.0,
         WHITE,
     );
 
     draw_text(
         format!("{:012}", score_data.score).as_str(),
-        window.playable_window().get_start().x + window.playable_window().size().x + 12.0,
-        window.game_window().get_start().y + 72.0,
-        32.0,
+        window.playable_window().get_start().x + window.playable_window().size().x + 72.0,
+        window.game_window().get_start().y + 62.0,
+        24.0,
         WHITE,
     );
 
     draw_text(
-        "Life",
+        "Value",
         window.playable_window().get_start().x + window.playable_window().size().x + 12.0,
-        window.game_window().get_start().y + 112.0,
-        28.0,
+        window.game_window().get_start().y + 94.0,
+        24.0,
         WHITE,
     );
 
     draw_text(
-        format!("{}", score_data.life).as_str(),
-        window.playable_window().get_start().x + window.playable_window().size().x + 12.0,
-        window.game_window().get_start().y + 136.0,
-        32.0,
+        format!("{:08}", score_data.value).as_str(),
+        window.playable_window().get_start().x + window.playable_window().size().x + 72.0,
+        window.game_window().get_start().y + 94.0,
+        24.0,
         WHITE,
     );
 
     draw_text(
         "Graze",
         window.playable_window().get_start().x + window.playable_window().size().x + 12.0,
-        window.game_window().get_start().y + 162.0,
-        28.0,
+        window.game_window().get_start().y + 124.0,
+        24.0,
         WHITE,
     );
 
     draw_text(
         format!("{:04}", score_data.graze).as_str(),
+        window.playable_window().get_start().x + window.playable_window().size().x + 72.0,
+        window.game_window().get_start().y + 124.0,
+        24.0,
+        WHITE,
+    );
+
+    draw_text(
+        "Life",
         window.playable_window().get_start().x + window.playable_window().size().x + 12.0,
-        window.game_window().get_start().y + 186.0,
-        32.0,
+        window.game_window().get_start().y + 184.0,
+        24.0,
+        WHITE,
+    );
+
+    draw_text(
+        format!("{}", score_data.life).as_str(),
+        window.playable_window().get_start().x + window.playable_window().size().x + 72.0,
+        window.game_window().get_start().y + 184.0,
+        24.0,
         WHITE,
     );
 }
