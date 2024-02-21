@@ -7,7 +7,7 @@ use crate::{
     score::ScoreData,
     stage::stage_demo,
     system::{update_draw, update_system},
-    ui::{draw_entity_number, draw_fps, draw_version, StageUI},
+    ui::{draw_entity_number, draw_fps, draw_version, fill_outside_game_window, StageUI},
     window::Window,
 };
 
@@ -83,6 +83,7 @@ impl App<'_> {
         draw_fps(&self.window, 32.0, WHITE);
         draw_version(&self.window);
         self.debugger.draw(&self.window);
+        fill_outside_game_window(&self.window);
         // draw_rectangle(
         //     self.window.playable_window().get_start().x,
         //     self.window.playable_window().get_start().y,
