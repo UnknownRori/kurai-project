@@ -1,6 +1,9 @@
 use std::sync::{Arc, RwLock};
 
-use keyframe::{keyframes, AnimationSequence, Keyframe};
+use keyframe::{
+    functions::{Hold, Linear, Step},
+    keyframes, AnimationSequence, Keyframe,
+};
 
 use hecs::World;
 use macroquad::prelude::*;
@@ -163,8 +166,8 @@ pub fn stage_demo() -> Stage<'static> {
             let offset = vec2(0.001, 0.001) * screen.playable_window().size().clone()
                 + screen.playable_window().get_start().clone();
 
-            let mut keyframe_bg1 = keyframes![(0.0, 0.0), (0.5, 1.0), (0.0, 2.0)];
-            let mut keyframe_bg2 = keyframes![(0.5, 0.0), (0.0, 1.0), (0.5, 2.0)];
+            let mut keyframe_bg1 = keyframes![(0.2, 0.0), (0.5, 1.0), (0.2, 2.0)];
+            let mut keyframe_bg2 = keyframes![(0.5, 0.0), (0.2, 1.0), (0.5, 2.0)];
             keyframe_bg1.advance_by(time % 2.0);
             keyframe_bg2.advance_by(time % 2.0);
 
@@ -182,11 +185,13 @@ pub fn stage_demo() -> Stage<'static> {
                     ..Default::default()
                 },
             );
+            // INFO : First bg
+            let bg1_y = offset.y - screen.playable_window().size().y
+                + ((time.to_f32().unwrap() % 19.5) * screen.playable_window().size().y / 9.75);
             draw_texture_ex(
                 &stage1_bg1,
                 offset.x,
-                offset.y,
-                // WHITE,
+                bg1_y,
                 Color::new(1f32, 1f32, 1f32, keyframe_bg1.now()),
                 DrawTextureParams {
                     dest_size: Some(screen.playable_window().size().clone()),
@@ -197,8 +202,33 @@ pub fn stage_demo() -> Stage<'static> {
             draw_texture_ex(
                 &stage1_bg2,
                 offset.x,
-                offset.y,
-                // WHITE,
+                bg1_y,
+                Color::new(1f32, 1f32, 1f32, keyframe_bg2.now()),
+                DrawTextureParams {
+                    dest_size: Some(screen.playable_window().size().clone()),
+                    ..Default::default()
+                },
+            );
+
+            // INFO : bg2
+            let bg2_y = offset.y - screen.playable_window().size().y
+                + (((time.to_f32().unwrap() + 9.75) % 19.5) * screen.playable_window().size().y
+                    / 9.75);
+            draw_texture_ex(
+                &stage1_bg1,
+                offset.x,
+                bg2_y,
+                Color::new(1f32, 1f32, 1f32, keyframe_bg1.now()),
+                DrawTextureParams {
+                    dest_size: Some(screen.playable_window().size().clone()),
+                    ..Default::default()
+                },
+            );
+
+            draw_texture_ex(
+                &stage1_bg2,
+                offset.x,
+                bg2_y,
                 Color::new(1f32, 1f32, 1f32, keyframe_bg2.now()),
                 DrawTextureParams {
                     dest_size: Some(screen.playable_window().size().clone()),
@@ -212,7 +242,6 @@ pub fn stage_demo() -> Stage<'static> {
                 &stage1_fog,
                 offset.x,
                 offset.y,
-                // WHITE,
                 Color::new(1f32, 1f32, 1f32, 0.3),
                 DrawTextureParams {
                     dest_size: Some(fog_half),
