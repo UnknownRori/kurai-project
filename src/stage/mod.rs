@@ -76,6 +76,25 @@ pub fn stage_demo() -> Stage<'static> {
         );
     });
 
+    let mut third_col = spawner_line(10., 1., 3, |world, assets_manager| {
+        let pos = vec![
+            Movement::new(Complex::new(1.0, 0.35), 0.0, true),
+            Movement::new(Complex::new(0.0, 0.2), 0.0, false),
+        ];
+        let movement = MovementQueue::new(pos);
+        let _ = spawn_enemy(
+            world,
+            Position::from_array([1.05, 0.2]),
+            assets_manager
+                .textures
+                .get("fairy0")
+                .expect("There is no Fairy Texture"),
+            movement,
+            Hitpoint::new(2.5),
+            0.5,
+        );
+    });
+
     let mut timeline = vec![SpawnEvent::new(0.0, |world, assets_manager| {
         spawn_player(
             world,
@@ -88,6 +107,7 @@ pub fn stage_demo() -> Stage<'static> {
 
     timeline.append(&mut first_col);
     timeline.append(&mut second_col);
+    timeline.append(&mut third_col);
 
     let spawner = Spawner::new(timeline);
 
