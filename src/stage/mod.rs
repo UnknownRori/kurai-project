@@ -1,7 +1,6 @@
-use std::{
-    rc::Rc,
-    sync::{Arc, RwLock},
-};
+use std::sync::{Arc, RwLock};
+
+use keyframe::{keyframes, AnimationSequence, Keyframe};
 
 use hecs::World;
 use macroquad::prelude::*;
@@ -155,10 +154,17 @@ pub fn stage_demo() -> Stage<'static> {
             PreloadType::Sfx("player-death", "./resources/sfx/death.ogg"),
         ],
         spawner,
-        |_, screen, assets_manager| {
+        |time, screen, assets_manager| {
             let offset = vec2(0.001, 0.001) * screen.playable_window().size().clone()
                 + screen.playable_window().get_start().clone();
+
+            let mut keyframe_bg1 = keyframes![(0.0, 0.0), (0.5, 1.0), (0.0, 2.0)];
+            let mut keyframe_bg2 = keyframes![(0.5, 0.0), (0.0, 1.0), (0.5, 2.0)];
+            keyframe_bg1.advance_by(time % 2.0);
+            keyframe_bg2.advance_by(time % 2.0);
+
             let stage1_bg1 = assets_manager.textures.get("stage1-bg-water1").unwrap();
+            let stage1_bg2 = assets_manager.textures.get("stage1-bg-water2").unwrap();
             let stage1_fog = assets_manager.textures.get("stage1-bg-fog").unwrap();
             let mask = assets_manager.textures.get("mask").unwrap();
             draw_texture_ex(
@@ -176,7 +182,19 @@ pub fn stage_demo() -> Stage<'static> {
                 offset.x,
                 offset.y,
                 // WHITE,
-                Color::new(1f32, 1f32, 1f32, 0.5),
+                Color::new(1f32, 1f32, 1f32, keyframe_bg1.now()),
+                DrawTextureParams {
+                    dest_size: Some(screen.playable_window().size().clone()),
+                    ..Default::default()
+                },
+            );
+
+            draw_texture_ex(
+                &stage1_bg2,
+                offset.x,
+                offset.y,
+                // WHITE,
+                Color::new(1f32, 1f32, 1f32, keyframe_bg2.now()),
                 DrawTextureParams {
                     dest_size: Some(screen.playable_window().size().clone()),
                     ..Default::default()
