@@ -1,11 +1,9 @@
 use crate::{
-    assets::{AssetsHandler, AssetsManager},
-    components::{Hitpoint, Movement, MovementQueue, Position},
+    assets::AssetsManager,
     controls::Controls,
     engine::stage::StageManager,
-    entity::{spawn_enemy, spawn_player},
     score::ScoreData,
-    stage::stage_demo,
+    stage::stage1::stage_1,
     system::{update_draw, update_system},
     ui::{draw_entity_number, draw_fps, draw_version, fill_outside_game_window, StageUI},
     window::Window,
@@ -13,7 +11,6 @@ use crate::{
 
 use hecs::World;
 use macroquad::prelude::*;
-use num_complex::Complex;
 
 pub struct App<'a> {
     window: Window,
@@ -32,7 +29,7 @@ impl App<'_> {
         let world = World::new();
         let mut assets_manager = AssetsManager::default();
         let score_data = ScoreData::default();
-        let mut stage_manager = StageManager::new(vec![stage_demo()]);
+        let mut stage_manager = StageManager::new(vec![stage_1()]);
 
         // TODO : Put this into Engine part
         let debugger = crate::engine::debug::Debugger::new();
