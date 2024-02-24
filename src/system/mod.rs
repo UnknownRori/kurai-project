@@ -42,9 +42,16 @@ pub fn update_system(
     update_delete_bullet_offscreen(world, screen, delta, time);
 }
 
-pub fn update_draw(world: &World, controls: &Controls, screen: &Window, time: f64, delta: f32) {
+pub fn update_draw(
+    world: &World,
+    controls: &Controls,
+    screen: &Window,
+    time: f64,
+    delta: f32,
+    assets_manager: &AssetsManager,
+) {
     update_render_player_bullet(world, screen);
-    update_render_player(world, screen, controls, delta);
+    update_render_player(world, assets_manager, screen, controls, delta, time);
     update_render_enemy(world, screen);
     update_render_normal_fairy_bullet(world, screen);
     draw_hitbox(world, screen);
