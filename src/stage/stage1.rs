@@ -132,6 +132,7 @@ pub fn stage_1() -> Stage<'static> {
             PreloadType::Sfx("generic-shoot", "./resources/sfx/generic-shoot.ogg"),
             PreloadType::Sfx("player-shoot", "./resources/sfx/player-shoot.ogg"),
             PreloadType::Sfx("player-death", "./resources/sfx/death.ogg"),
+            PreloadType::Sfx("graze", "./resources/sfx/graze.ogg"),
             PreloadType::Bgm(
                 "title-screen",
                 "./resources/music/Mysterious Crimson Dream.ogg",

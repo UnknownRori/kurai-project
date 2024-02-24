@@ -188,15 +188,23 @@ pub fn update_collision_detection_enemy_bullet_to_player(
                         },
                     );
                 }
-            } else if player_hitbox.near(&player_pos, &enemy_pos, &enemy_hitbox)
-                && !enemy_bullet.is_grazed()
-                && !player_blink
-            {
-                score.graze += 1;
-                world
-                    .get::<&mut EnemyBullet>(*enemy_entity)
-                    .unwrap()
-                    .grazed();
+            } else if player_hitbox.near(&player_pos, &enemy_pos, &enemy_hitbox) && !player_blink {
+                let sfx = assets_manager.sfx.get("graze").unwrap(); // TODO : put this somewhere
+                play_sound(
+                    &*sfx,
+                    PlaySoundParams {
+                        looped: false,
+                        volume: 0.3,
+                    },
+                );
+
+                if !enemy_bullet.is_grazed() {
+                    score.graze += 1;
+                    world
+                        .get::<&mut EnemyBullet>(*enemy_entity)
+                        .unwrap()
+                        .grazed();
+                }
             }
         }
     }
