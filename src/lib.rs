@@ -3,6 +3,7 @@ pub mod assets;
 pub mod components;
 pub mod constant;
 pub mod controls;
+pub mod difficulty;
 pub mod engine;
 pub mod entity;
 pub mod math;

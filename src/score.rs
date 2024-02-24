@@ -1,3 +1,5 @@
+use crate::difficulty::Difficulty;
+
 pub struct ScoreData {
     pub graze: i32,
     pub score: i32,
@@ -5,6 +7,7 @@ pub struct ScoreData {
     pub value: i32,
     pub life: i8,
     pub spell: i8,
+    pub difficulty: Difficulty,
 }
 
 impl Default for ScoreData {
@@ -16,6 +19,7 @@ impl Default for ScoreData {
             value: 10000,
             life: 3,
             spell: 3,
+            difficulty: Difficulty::Normal,
         }
     }
 }
