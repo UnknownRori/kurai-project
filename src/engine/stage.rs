@@ -42,7 +42,7 @@ pub struct Stage<'a> {
     stage_number: String,
     start: Option<Instant>,
     preloads: Option<Vec<PreloadType<'a>>>,
-    background: Box<dyn Fn(f64, &Window, &AssetsManager)>,
+    background: fn(f64, &Window, &AssetsManager),
     bgm: String, // TODO : Make this flexible and sensible
     spawner: Spawner,
 }
@@ -54,7 +54,7 @@ impl<'a> Stage<'a> {
         preloads: Vec<PreloadType<'a>>,
         bgm: String,
         spawner: Spawner,
-        background: impl Fn(f64, &Window, &AssetsManager) + 'static,
+        background: fn(f64, &Window, &AssetsManager),
     ) -> Self {
         Self {
             title: title.to_string(),
@@ -62,7 +62,7 @@ impl<'a> Stage<'a> {
             preloads: Some(preloads),
             bgm,
             spawner,
-            background: Box::new(background),
+            background,
             start: None,
         }
     }

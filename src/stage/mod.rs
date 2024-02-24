@@ -1,9 +1,6 @@
 use std::sync::{Arc, RwLock};
 
-use keyframe::{
-    functions::{Hold, Linear, Step},
-    keyframes, AnimationSequence, Keyframe,
-};
+use keyframe::{keyframes, AnimationSequence};
 
 use hecs::World;
 use macroquad::prelude::*;
