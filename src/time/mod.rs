@@ -15,6 +15,12 @@ impl Instant {
         Self { time: get_time() }
     }
 
+    pub fn pause_offset(&self, pause_start_time: &Self) -> Self {
+        Self {
+            time: self.time - pause_start_time.time,
+        }
+    }
+
     pub fn elapsed(&self, time_frame: f64) -> f64 {
         // INFO : It's dumb but it work
         time_frame - &self.time

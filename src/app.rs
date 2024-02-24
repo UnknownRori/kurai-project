@@ -2,6 +2,7 @@ use crate::{
     assets::AssetsManager,
     controls::Controls,
     engine::stage::StageManager,
+    pause::Pause,
     score::ScoreData,
     stage::stage1::stage_1,
     system::{update_draw, update_system},
@@ -20,6 +21,7 @@ pub struct App<'a> {
     assets_manager: AssetsManager,
     debugger: crate::engine::debug::Debugger,
     stage_manager: StageManager<'a>,
+    pause: Pause,
 }
 
 impl App<'_> {
@@ -43,6 +45,7 @@ impl App<'_> {
             assets_manager,
             debugger,
             stage_manager,
+            pause: Pause::new(),
         }
     }
 

@@ -7,6 +7,7 @@ pub mod difficulty;
 pub mod engine;
 pub mod entity;
 pub mod math;
+pub mod pause;
 pub mod score;
 pub mod stage;
 pub mod system;
