@@ -126,6 +126,7 @@ pub fn stage_1() -> Stage<'static> {
                 "remi-bullet-0",
                 "./resources/textures/projectiles/remi-bullet.png",
             ),
+            PreloadType::Texture("focus", "./resources/textures/parts/focus.png"),
             // PreloadType::Texture("value", "./resources/textures/items/point.png"),
             // PreloadType::Texture("power", "./resources/textures/items/power.png"),
             PreloadType::Sfx("generic-shoot", "./resources/sfx/generic-shoot.ogg"),
