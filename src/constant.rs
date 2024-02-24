@@ -1,6 +1,6 @@
 // Default Width and Height, Do not use this under any circumstance
-pub const WIDTH: f32 = 800.0;
-pub const HEIGHT: f32 = 600.0;
+pub const WIDTH: f32 = 900f32;
+pub const HEIGHT: f32 = 675f32;
 pub const FULLSCREEN: bool = false;
 pub const DESIRED_ASPECT_RATIO: f32 = 4.0 / 3.0;
 pub const WINDOW_RESIZEABLE: bool = true;
