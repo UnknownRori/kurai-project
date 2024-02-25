@@ -4,7 +4,9 @@ mod update;
 use hecs::World;
 use macroquad::time::get_time;
 
-use crate::{assets::AssetsManager, controls::Controls, score::ScoreData, window::Window};
+use crate::{
+    assets::AssetsManager, controls::Controls, pause::Pause, score::ScoreData, window::Window,
+};
 
 use self::{
     draw::{
@@ -28,6 +30,7 @@ pub fn update_system(
     time: f64,
     score: &mut ScoreData,
     assets_manager: &AssetsManager,
+    pause: &Pause,
 ) {
     update_player_move(world, controls, screen, delta, time);
     update_move_bullet(world, screen, delta, time);
