@@ -52,20 +52,24 @@ impl App<'_> {
     /// This is where the update happen
     pub fn update(&mut self) {
         let time = get_time();
-        self.window.update();
-        self.stage_manager
-            .update(time, &mut self.world, &self.assets_manager);
-
+        self.pause.update(time, &self.controls);
         self.debugger.update(&self.window);
-        update_system(
-            &mut self.world,
-            &self.controls,
-            &self.window,
-            get_frame_time(),
-            time,
-            &mut self.score_data,
-            &self.assets_manager,
-        );
+        self.window.update();
+        if !self.pause.is_paused() {
+            self.stage_manager
+                .update(time, &mut self.world, &self.assets_manager);
+
+            update_system(
+                &mut self.world,
+                &self.controls,
+                &self.window,
+                get_frame_time(),
+                time,
+                &mut self.score_data,
+                &self.assets_manager,
+                &self.pause,
+            );
+        }
     }
 
     /// This is where the draw happen
@@ -89,8 +93,12 @@ impl App<'_> {
         draw_entity_number(&self.window, self.world.len());
         draw_fps(&self.window, 32.0, WHITE);
         draw_version(&self.window);
+
+        self.pause.draw(time, delta, &self.window);
+
         self.debugger.draw(&self.window);
         fill_outside_game_window(&self.window);
+
         // draw_rectangle(
         //     self.window.playable_window().get_start().x,
         //     self.window.playable_window().get_start().y,
