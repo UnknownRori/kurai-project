@@ -25,6 +25,7 @@ incremental = true
 opt-level = 3
 
 [dependencies]
+async-trait = "0.1.77"
 color-eyre = "0.6.2"
 hecs = "0.10.4"
 keyframe = "1.1.1"
