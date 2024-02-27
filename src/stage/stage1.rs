@@ -27,7 +27,7 @@ impl Stage1Background {
     pub fn new(assets_manager: &AssetsManager) -> Box<dyn StageBackground> {
         let atlas = assets_manager.textures.get("stage1").unwrap();
         let bg_animation =
-            BackgroundAtlasAnimation::new(&atlas, 8, vec2(900., 1100.), 50, 20., 1., true);
+            BackgroundAtlasAnimation::new(&atlas, 11, vec2(900., 1100.), 100, 20., 0., true);
 
         Box::new(Self {
             atlas,

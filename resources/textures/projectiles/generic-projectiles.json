@@ -1,0 +1,18 @@
+{
+	"frames":[
+		{"filename":"generic-circle-red","frame":{"x":0,"y":0,"w":256,"h":256},"rotated":"false","trimmed":"false","spriteSourceSize":{"x":0,"y":0,"w":256,"h":256},"sourceSize":{"w":256,"h":256}},
+		{"filename":"generic-circle-green","frame":{"x":257,"y":0,"w":256,"h":256},"rotated":"false","trimmed":"false","spriteSourceSize":{"x":0,"y":0,"w":256,"h":256},"sourceSize":{"w":256,"h":256}},
+		{"filename":"generic-circle-blue","frame":{"x":0,"y":257,"w":256,"h":256},"rotated":"false","trimmed":"false","spriteSourceSize":{"x":0,"y":0,"w":256,"h":256},"sourceSize":{"w":256,"h":256}},
+		{"filename":"generic-bullet-red","frame":{"x":257,"y":257,"w":256,"h":256},"rotated":"false","trimmed":"false","spriteSourceSize":{"x":0,"y":0,"w":256,"h":256},"sourceSize":{"w":256,"h":256}},
+		{"filename":"generic-bullet-green","frame":{"x":0,"y":514,"w":256,"h":256},"rotated":"false","trimmed":"false","spriteSourceSize":{"x":0,"y":0,"w":256,"h":256},"sourceSize":{"w":256,"h":256}},
+		{"filename":"generic-bullet-blue","frame":{"x":257,"y":514,"w":256,"h":256},"rotated":"false","trimmed":"false","spriteSourceSize":{"x":0,"y":0,"w":256,"h":256},"sourceSize":{"w":256,"h":256}}
+	],
+	"meta":{
+		"app":"https://github.com/BdR76/GimpSpriteAtlas/",
+		"version":"GIMP SpriteAtlas plug-in v0.2",
+		"author":"Bas de Reuver",
+		"image":"generic-projectiles.png",
+		"size":{"w":513,"h":770},
+		"scale":1
+	}
+}
