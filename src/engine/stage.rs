@@ -37,12 +37,18 @@ pub enum PreloadType<'a> {
     Bgm(&'a str, &'a str),
 }
 
+pub trait StageBackground {
+    fn draw(&self, _time: f64, _delta: f32, _screen: &Window);
+    fn update(&mut self, _time: f64, _delta: f32);
+}
+
 pub struct Stage<'a> {
     title: String,
     stage_number: String,
     start: Option<Instant>,
     preloads: Option<Vec<PreloadType<'a>>>,
-    background: fn(f64, &Window, &AssetsManager),
+    background: Option<Box<dyn StageBackground>>,
+    background_init: fn(&AssetsManager) -> Box<dyn StageBackground>,
     bgm: String, // TODO : Make this flexible and sensible
     spawner: Spawner,
 }
@@ -54,7 +60,7 @@ impl<'a> Stage<'a> {
         preloads: Vec<PreloadType<'a>>,
         bgm: String,
         spawner: Spawner,
-        background: fn(f64, &Window, &AssetsManager),
+        background_init: fn(&AssetsManager) -> Box<dyn StageBackground>,
     ) -> Self {
         Self {
             title: title.to_string(),
@@ -62,7 +68,8 @@ impl<'a> Stage<'a> {
             preloads: Some(preloads),
             bgm,
             spawner,
-            background,
+            background_init,
+            background: None,
             start: None,
         }
     }
@@ -111,19 +118,27 @@ impl<'a> StageManager<'a> {
         }
         let time = Instant::now();
         stage.start = Some(time);
+        stage.background = (stage.background_init)(assets_manager).into();
         let sound = assets_manager.bgm.get(&stage.bgm).unwrap();
         play_sound_once(&*sound);
     }
 
-    pub fn update(&mut self, time: f64, world: &mut World, assets_manager: &AssetsManager) {
+    pub fn update(
+        &mut self,
+        time: f64,
+        delta: f32,
+        world: &mut World,
+        assets_manager: &AssetsManager,
+    ) {
         let stage = self.get_mut_stage().unwrap();
+        stage.background.as_mut().unwrap().update(time, delta);
         stage
             .spawner
             .update(stage.start.unwrap().elapsed(time), world, assets_manager)
     }
 
-    pub fn draw(&self, time: f64, screen: &Window, assets_manager: &AssetsManager) {
+    pub fn draw(&self, time: f64, delta: f32, screen: &Window, assets_manager: &AssetsManager) {
         let stage = self.get_stage().unwrap();
-        (stage.background)(stage.start.unwrap().elapsed(time), screen, assets_manager);
+        stage.background.as_ref().unwrap().draw(time, delta, screen);
     }
 }

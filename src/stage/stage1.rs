@@ -1,3 +1,5 @@
+use std::sync::Arc;
+
 use super::utils::spawner_line;
 use keyframe::{keyframes, AnimationSequence};
 
@@ -6,14 +8,56 @@ use num_complex::Complex;
 use num_traits::ToPrimitive;
 
 use crate::{
-    assets::AssetsHandler,
+    assets::{AssetsHandler, AssetsManager},
     components::{Hitpoint, Movement, MovementQueue, Position},
     engine::{
+        animation::BackgroundAtlasAnimation,
         spawner::{SpawnEvent, Spawner},
-        stage::{PreloadType, Stage},
+        stage::{PreloadType, Stage, StageBackground},
     },
     entity::{spawn_enemy, spawn_player},
 };
+
+struct Stage1Background {
+    pub atlas: Arc<Texture2D>,
+    pub bg_animation: BackgroundAtlasAnimation,
+}
+
+impl Stage1Background {
+    pub fn new(assets_manager: &AssetsManager) -> Box<dyn StageBackground> {
+        let atlas = assets_manager.textures.get("stage1").unwrap();
+        let bg_animation =
+            BackgroundAtlasAnimation::new(&atlas, 8, vec2(900., 1100.), 50, 20., 1., true);
+
+        Box::new(Self {
+            atlas,
+            bg_animation,
+        })
+    }
+}
+
+impl StageBackground for Stage1Background {
+    fn draw(&self, _time: f64, _delta: f32, screen: &crate::window::Window) {
+        let offset = vec2(0.001, 0.001) * screen.playable_window().size().clone()
+            + screen.playable_window().get_start().clone();
+
+        draw_texture_ex(
+            &*self.atlas,
+            offset.x,
+            offset.y,
+            WHITE,
+            DrawTextureParams {
+                source: Some(*self.bg_animation.source_rect()),
+                dest_size: Some(*screen.playable_window().size()),
+                ..Default::default()
+            },
+        )
+    }
+
+    fn update(&mut self, time: f64, delta: f32) {
+        self.bg_animation.update(time, delta);
+    }
+}
 
 pub fn stage_1() -> Stage<'static> {
     // TODO : Refactor later
@@ -90,22 +134,13 @@ pub fn stage_1() -> Stage<'static> {
     let spawner = Spawner::new(timeline);
 
     Stage::new(
-        "Demo",
-        "Demo",
+        "Misty Lake",
+        "Stage 1",
         vec![
             PreloadType::Texture("remilia0", "./resources/textures/remilia-scarlet/1.png"),
             PreloadType::Texture("fairy0", "./resources/textures/fairy/fairy0001.png"),
             PreloadType::Texture("hud", "./resources/ui/hud.png"),
-            PreloadType::Texture("stage1-bg-fog", "./resources/background/stage1-bg-fog.png"),
-            PreloadType::Texture(
-                "stage1-bg-water1",
-                "./resources/background/stage1-bg-water1.png",
-            ),
-            PreloadType::Texture(
-                "stage1-bg-water2",
-                "./resources/background/stage1-bg-water2.png",
-            ),
-            PreloadType::Texture("mask", "./resources/ui/playable-mask.png"),
+            PreloadType::Texture("stage1", "./resources/background/stage1.png"),
             PreloadType::Texture(
                 "bullet-red",
                 "./resources/textures/projectiles/generic-bullet-red.png",
@@ -140,92 +175,6 @@ pub fn stage_1() -> Stage<'static> {
         ],
         String::from("title-screen"),
         spawner,
-        |time, screen, assets_manager| {
-            let offset = vec2(0.001, 0.001) * screen.playable_window().size().clone()
-                + screen.playable_window().get_start().clone();
-
-            let mut keyframe_bg1 = keyframes![(0.2, 0.0), (0.5, 1.0), (0.2, 2.0)];
-            let mut keyframe_bg2 = keyframes![(0.5, 0.0), (0.2, 1.0), (0.5, 2.0)];
-            keyframe_bg1.advance_by(time % 2.0);
-            keyframe_bg2.advance_by(time % 2.0);
-
-            let stage1_bg1 = assets_manager.textures.get("stage1-bg-water1").unwrap();
-            let stage1_bg2 = assets_manager.textures.get("stage1-bg-water2").unwrap();
-            let stage1_fog = assets_manager.textures.get("stage1-bg-fog").unwrap();
-            let mask = assets_manager.textures.get("mask").unwrap();
-            draw_texture_ex(
-                &mask,
-                offset.x,
-                offset.y,
-                WHITE,
-                DrawTextureParams {
-                    dest_size: Some(screen.playable_window().size().clone()),
-                    ..Default::default()
-                },
-            );
-            // INFO : First bg
-            let bg1_y = offset.y - screen.playable_window().size().y
-                + ((time.to_f32().unwrap() % 19.5) * screen.playable_window().size().y / 9.75);
-            draw_texture_ex(
-                &stage1_bg1,
-                offset.x,
-                bg1_y,
-                Color::new(1f32, 1f32, 1f32, keyframe_bg1.now()),
-                DrawTextureParams {
-                    dest_size: Some(screen.playable_window().size().clone()),
-                    ..Default::default()
-                },
-            );
-
-            draw_texture_ex(
-                &stage1_bg2,
-                offset.x,
-                bg1_y,
-                Color::new(1f32, 1f32, 1f32, keyframe_bg2.now()),
-                DrawTextureParams {
-                    dest_size: Some(screen.playable_window().size().clone()),
-                    ..Default::default()
-                },
-            );
-
-            // INFO : bg2
-            let bg2_y = offset.y - screen.playable_window().size().y
-                + (((time.to_f32().unwrap() + 9.75) % 19.5) * screen.playable_window().size().y
-                    / 9.75);
-            draw_texture_ex(
-                &stage1_bg1,
-                offset.x,
-                bg2_y,
-                Color::new(1f32, 1f32, 1f32, keyframe_bg1.now()),
-                DrawTextureParams {
-                    dest_size: Some(screen.playable_window().size().clone()),
-                    ..Default::default()
-                },
-            );
-
-            draw_texture_ex(
-                &stage1_bg2,
-                offset.x,
-                bg2_y,
-                Color::new(1f32, 1f32, 1f32, keyframe_bg2.now()),
-                DrawTextureParams {
-                    dest_size: Some(screen.playable_window().size().clone()),
-                    ..Default::default()
-                },
-            );
-
-            let mut fog_half = screen.playable_window().size().clone();
-            fog_half.y /= 1.35;
-            draw_texture_ex(
-                &stage1_fog,
-                offset.x,
-                offset.y,
-                Color::new(1f32, 1f32, 1f32, 0.3),
-                DrawTextureParams {
-                    dest_size: Some(fog_half),
-                    ..Default::default()
-                },
-            );
-        },
+        Stage1Background::new,
     )
 }

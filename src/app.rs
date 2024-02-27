@@ -52,12 +52,13 @@ impl App<'_> {
     /// This is where the update happen
     pub fn update(&mut self) {
         let time = get_time();
+        let delta = get_frame_time();
         self.pause.update(time, &self.controls);
         self.debugger.update(&self.window);
         self.window.update();
         if !self.pause.is_paused() {
             self.stage_manager
-                .update(time, &mut self.world, &self.assets_manager);
+                .update(time, delta, &mut self.world, &self.assets_manager);
 
             update_system(
                 &mut self.world,
@@ -79,7 +80,7 @@ impl App<'_> {
         let time = get_time();
         let delta = get_frame_time();
         self.stage_manager
-            .draw(time, &self.window, &self.assets_manager);
+            .draw(time, delta, &self.window, &self.assets_manager);
         update_draw(
             &self.world,
             &self.controls,
