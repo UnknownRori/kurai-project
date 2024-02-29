@@ -9,8 +9,8 @@ use num_complex::Complex;
 use rayon::prelude::*;
 
 use crate::components::{
-    CanShoot, Controllable, Death, DeathBlinkingAnimation, Enemy, Hitbox, Hitpoint, Player,
-    PlayerBullet, Position,
+    AttackInfo, Death, DeathBlinkingAnimation, Enemy, Hitbox, Hitpoint, Player, PlayerBullet,
+    Position,
 };
 use crate::entity::EnemyMovableEntity;
 use crate::math::*;
@@ -60,7 +60,7 @@ pub fn enemy_shoot_normal_fairy(
             );
 
             let _ = world
-                .get::<&mut CanShoot>(entity)
+                .get::<&mut AttackInfo>(entity)
                 .unwrap()
                 .update_cooldown();
         }
@@ -120,7 +120,7 @@ pub fn player_shoot(
             );
 
             let _ = world
-                .get::<&mut CanShoot>(entity)
+                .get::<&mut AttackInfo>(entity)
                 .unwrap()
                 .update_cooldown();
         }

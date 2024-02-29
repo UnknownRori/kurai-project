@@ -1,5 +1,6 @@
 pub mod app;
 pub mod assets;
+pub mod attack_type;
 pub mod components;
 pub mod constant;
 pub mod controls;

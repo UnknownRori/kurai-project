@@ -1,7 +1,6 @@
 use std::sync::Arc;
 
 use super::utils::spawner_line;
-use keyframe::{keyframes, AnimationSequence};
 
 use macroquad::prelude::*;
 use num_complex::Complex;
@@ -9,7 +8,8 @@ use num_traits::ToPrimitive;
 
 use crate::{
     assets::{AssetsHandler, AssetsManager},
-    components::{Hitpoint, Movement, MovementQueue, Position},
+    attack_type::target_player_attack,
+    components::{AttackInfo, Hitpoint, Movement, MovementQueue, Position},
     engine::{
         animation::BackgroundAtlasAnimation,
         spawner::{SpawnEvent, Spawner},
@@ -60,8 +60,14 @@ impl StageBackground for Stage1Background {
 }
 
 pub fn stage_1() -> Stage<'static> {
+    let basic_attack_to_player = Arc::new(target_player_attack);
+    let basic_attack_to_player_clone1 = Arc::clone(&basic_attack_to_player);
+    let basic_attack_to_player_clone2 = Arc::clone(&basic_attack_to_player);
+    let basic_attack_to_player_clone3 = Arc::clone(&basic_attack_to_player);
+
     // TODO : Refactor later
-    let mut first_col = spawner_line(2., 1., 4, |world, assets_manager| {
+    let mut first_col = spawner_line(2., 1., 4, move |world, assets_manager| {
+        let attack_fn = Arc::clone(&basic_attack_to_player_clone1);
         let pos = vec![
             Movement::new(Complex::new(0.3, 0.5), 0.0, false),
             Movement::new(Complex::new(0.0, 0.8), 0.0, true),
@@ -76,10 +82,11 @@ pub fn stage_1() -> Stage<'static> {
                 .expect("There is no Fairy Texture"),
             movement,
             Hitpoint::new(2.5),
-            0.4,
+            AttackInfo::new(1., 1., attack_fn),
         );
     });
-    let mut second_col = spawner_line(7.0, 0.8, 3, |world, assets_manager| {
+    let mut second_col = spawner_line(7.0, 0.8, 3, move |world, assets_manager| {
+        let attack_fn = Arc::clone(&basic_attack_to_player_clone2);
         let pos = vec![
             Movement::new(Complex::new(0.0, 0.2), 0.0, false),
             Movement::new(Complex::new(1.0, 0.35), 0.0, true),
@@ -94,11 +101,12 @@ pub fn stage_1() -> Stage<'static> {
                 .expect("There is no Fairy Texture"),
             movement,
             Hitpoint::new(2.5),
-            0.5,
+            AttackInfo::new(1., 1., attack_fn),
         );
     });
 
-    let mut third_col = spawner_line(10., 1., 3, |world, assets_manager| {
+    let mut third_col = spawner_line(10., 1., 3, move |world, assets_manager| {
+        let attack_fn = Arc::clone(&basic_attack_to_player_clone3);
         let pos = vec![
             Movement::new(Complex::new(1.0, 0.35), 0.0, true),
             Movement::new(Complex::new(0.0, 0.2), 0.0, false),
@@ -113,7 +121,7 @@ pub fn stage_1() -> Stage<'static> {
                 .expect("There is no Fairy Texture"),
             movement,
             Hitpoint::new(2.5),
-            0.5,
+            AttackInfo::new(1., 1., attack_fn),
         );
     });
 

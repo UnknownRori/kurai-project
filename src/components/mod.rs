@@ -195,14 +195,14 @@ impl Hitbox {
 }
 
 #[derive(Clone)]
-pub struct CanShoot {
+pub struct AttackInfo {
     pub fire_rate: f64,
     pub last_shoot: Option<Instant>,
     pub bullet_speed: f32,
     pub shoot_fn: Arc<dyn Fn(&mut World, &AssetsManager, &Position, &Position, f32) + Send + Sync>,
 }
 
-impl Default for CanShoot {
+impl Default for AttackInfo {
     fn default() -> Self {
         Self {
             fire_rate: 1.0,
@@ -229,7 +229,7 @@ impl Default for CanShoot {
     }
 }
 
-impl CanShoot {
+impl AttackInfo {
     #[must_use]
     pub fn new(
         firerate: f64,

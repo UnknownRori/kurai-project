@@ -13,7 +13,7 @@ use num_complex::{Complex, ComplexFloat};
 use crate::{
     assets::AssetsHandler,
     components::{
-        CanShoot, Controllable, Death, DeathBlinkingAnimation, Enemy, EnemyBullet, Hitbox,
+        AttackInfo, Controllable, Death, DeathBlinkingAnimation, Enemy, EnemyBullet, Hitbox,
         Hitpoint, Movable, MovementQueue, Player, PlayerBullet, Position, SingleShoot, Sprite,
         TargetPlayer, Velocity,
     },
@@ -24,7 +24,7 @@ pub type NormalFairyEntity<'a> = (
     &'a Enemy,
     &'a mut Position,
     &'a Movable,
-    &'a CanShoot,
+    &'a AttackInfo,
     &'a TargetPlayer,
     &'a SingleShoot,
     &'a Sprite,
@@ -38,7 +38,7 @@ pub type PlayerEntity<'a> = (
     &'a Controllable,
     &'a Movable,
     &'a mut Position,
-    &'a CanShoot,
+    &'a AttackInfo,
     &'a Sprite,
     &'a Hitbox,
     Option<&'a Death>,
@@ -105,33 +105,13 @@ pub fn spawn_enemy(
     texture: Arc<Texture2D>,
     movement: MovementQueue,
     hitpoint: Hitpoint,
-    fire_rate: f64,
+    attack_info: AttackInfo,
 ) -> Entity {
     world.spawn((
         Enemy,
         pos,
         Movable::new(0.2, 0.4),
-        CanShoot::new(
-            fire_rate,
-            1.0,
-            Arc::new(
-                |world, assets_manager, current_pos, player_pos, bullet_speed| {
-                    let texture = assets_manager
-                        .textures
-                        .get("bullet-red")
-                        .expect("No generic bullet texture!");
-                    spawn_generic_bullet(world, &current_pos, player_pos, bullet_speed, texture);
-                    let sound = assets_manager.sfx.get("generic-shoot").unwrap();
-                    play_sound(
-                        &*sound,
-                        PlaySoundParams {
-                            looped: false,
-                            volume: 0.5,
-                        },
-                    );
-                },
-            ),
-        ), // TODO : Make this dynamic
+        attack_info,
         TargetPlayer,
         SingleShoot,
         Sprite::new(texture, vec2(0.1, 0.1), 0.),
@@ -147,7 +127,7 @@ pub fn spawn_player(world: &mut World, texture: Arc<Texture2D>) -> Entity {
         Controllable,
         Movable::new(1.0, 1.0),
         Position::from_array([0.5, 0.8]),
-        CanShoot::new(
+        AttackInfo::new(
             20.0,
             2.5,
             Arc::new(
