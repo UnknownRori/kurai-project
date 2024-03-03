@@ -117,8 +117,8 @@ impl<'a> StageManager<'a> {
             };
         }
         let time = Instant::now();
-        stage.start = Some(time);
         stage.background = (stage.background_init)(assets_manager).into();
+        stage.start = Some(time);
         let sound = assets_manager.bgm.get(&stage.bgm).unwrap();
         play_sound_once(&*sound);
     }
