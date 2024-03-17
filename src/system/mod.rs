@@ -9,7 +9,8 @@ use self::{
     },
     update::{
         ai_movement::enemy_movement_update, attack_info_trigger::attack_info_trigger,
-        player_control::update_player_control, velocity::update_velocity,
+        delete_bullet_offmap::delete_bullet_offmap, player_control::update_player_control,
+        velocity::update_velocity,
     },
 };
 
@@ -21,6 +22,8 @@ pub fn update_system(world: &mut World, controls: &Controls<Action>, time: f64, 
     enemy_movement_update(world, time, delta);
     update_velocity(world, delta);
     attack_info_trigger(world, time, delta);
+
+    delete_bullet_offmap(world);
 }
 
 pub fn update_draw(world: &World, controls: &Controls<Action>, time: f64, delta: f32) {

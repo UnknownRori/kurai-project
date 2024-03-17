@@ -15,7 +15,7 @@ use crate::{
     },
     scene::{stage::StageManager, stage1::Stage1Lazy},
     system::{update_draw, update_draw_hud, update_system},
-    ui::game_hud::{init_game_hud, init_hud_info},
+    ui::game_hud::{draw_entity_number, init_game_hud, init_hud_info},
 };
 
 pub struct App {
@@ -90,6 +90,7 @@ impl App {
             },
         );
         update_draw_hud(&self.world, &self.controls, time, delta);
+        draw_entity_number(self.world.len());
         self.game_buffer.done_camera();
 
         // INFO : Begin drawing on playable area
@@ -125,15 +126,6 @@ impl App {
                 dest_size: Some(adjusted),
                 ..Default::default()
             },
-        );
-
-        // INFO : For debugging purposes
-        draw_text(
-            format!("{}", self.world.len()).as_ref(),
-            0.2,
-            0.2,
-            16.,
-            WHITE,
         );
     }
 }

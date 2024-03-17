@@ -50,7 +50,7 @@ pub fn draw_hud_info() {
     let len = measure_text(GAME_VERSION, None, font_size, font_scale);
     draw_text_ex(
         GAME_VERSION,
-        1. - len.width + 0.019,
+        1. - len.width + 0.03,
         len.height,
         TextParams {
             color: WHITE,
@@ -64,4 +64,23 @@ pub fn draw_hud_info() {
 
 pub fn init_hud_info() -> (HUD, CustomDraw, Layer2D) {
     (HUD, CustomDraw(draw_hud_info), Layer2D(100))
+}
+
+pub fn draw_entity_number(len: u32) {
+    // INFO : For debugging purposes
+    let total_entity = format!("{}", len);
+    let (font_size, font_scale, font_scale_aspect) = camera_font_scale(0.05);
+    let len = measure_text(&total_entity, None, font_size, font_scale);
+    draw_text_ex(
+        &total_entity,
+        0.0,
+        0.0 + len.height,
+        TextParams {
+            color: WHITE,
+            font_size,
+            font_scale,
+            font_scale_aspect,
+            ..Default::default()
+        },
+    );
 }
