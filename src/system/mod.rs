@@ -8,8 +8,8 @@ use self::{
         hud_draw::hud_draw,
     },
     update::{
-        ai_movement::enemy_movement_update, player_control::update_player_control,
-        velocity::update_velocity,
+        ai_movement::enemy_movement_update, attack_info_trigger::attack_info_trigger,
+        player_control::update_player_control, velocity::update_velocity,
     },
 };
 
@@ -20,6 +20,7 @@ pub fn update_system(world: &mut World, controls: &Controls<Action>, time: f64, 
     update_player_control(world, controls, time);
     enemy_movement_update(world, time, delta);
     update_velocity(world, delta);
+    attack_info_trigger(world, time, delta);
 }
 
 pub fn update_draw(world: &World, controls: &Controls<Action>, time: f64, delta: f32) {

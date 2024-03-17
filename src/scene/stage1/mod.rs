@@ -87,6 +87,7 @@ impl LazyStage for Stage1Lazy {
             Movement::new(complx(0.0, 0.8), 0.0, true),
         ];
         let fairy_spawn = lazy_spawn_enemy(
+            assets_manager,
             Transform2D::new(complx(0.2, -0.25), vec2(0.1, 0.1), 0.),
             fairy,
             movement_queue,

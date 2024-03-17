@@ -5,7 +5,13 @@ use hecs::World;
 use crate::engine::{components::Transform2D, time::Instant};
 
 pub trait AttackSpawner: Send + Sync + Debug {
-    fn spawn(&self, _world: &mut World, _current: &Transform2D, _bullet_speed: f32);
+    fn spawn(
+        &self,
+        _world: &mut World,
+        _current: &Transform2D,
+        _player: &Transform2D,
+        _bullet_speed: f32,
+    );
 }
 
 #[derive(Debug, Clone)]
