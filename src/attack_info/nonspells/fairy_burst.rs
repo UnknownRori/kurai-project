@@ -38,7 +38,7 @@ impl AttackSpawner for FairyBurst {
         let velocity = current.position().dir(player.as_ref()) * bullet_speed;
 
         let transform = Transform2D {
-            scale: vec2(0.05, 0.05),
+            scale: vec2(0.03, 0.03),
             rotation: velocity.rot(),
             ..*current
         };
