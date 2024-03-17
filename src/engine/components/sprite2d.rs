@@ -23,7 +23,7 @@ impl Sprite2D {
             transform.position().im - half_scale.y,
             WHITE,
             DrawTextureParams {
-                rotation: *transform.rotation(),
+                rotation: -*transform.rotation(), // Not sure why it need to be negative
                 dest_size: Some(*transform.scale()),
                 ..Default::default()
             },

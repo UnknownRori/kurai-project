@@ -1,3 +1,5 @@
+use std::f32::consts::FRAC_PI_2;
+
 use macroquad::math::vec2;
 use num_complex::Complex;
 
@@ -18,6 +20,7 @@ pub trait ComplexExt: CartesianExt {
     fn clamp(&self, min: &Self, max: &Self) -> Self;
     fn dir(&self, other: &Self) -> Self;
     fn normalize(&self) -> Self;
+    fn rot(&self) -> f32;
 }
 
 impl<T> CartesianExt for Complex<T> {
@@ -46,6 +49,10 @@ impl ComplexExt for Complex<f32> {
     }
 
     fn dir(&self, other: &Self) -> Self {
-        (self - other).normalize()
+        (other - self).normalize()
+    }
+
+    fn rot(&self) -> f32 {
+        self.conj().arg() - FRAC_PI_2
     }
 }
