@@ -6,11 +6,11 @@ use macroquad::math::vec2;
 use crate::{
     assets::konst::FAIRY_1,
     engine::{
-        components::{Hitpoint, Movement, MovementQueue, Transform2D},
-        ecs::{spawner, SpawnEvent, Spawner},
+        components::{Hitpoint, Movement, Transform2D},
+        ecs::{SpawnEvent, Spawner},
         math::complx,
     },
-    entity::{lazy_spawn_enemy, lazy_spawn_player, spawn_enemy},
+    entity::{lazy_spawn_enemy, player::lazy_spawn_player},
 };
 
 use super::{lazy_stage::LazyStage, scene::Scene, stage::Stage, stage_info::StageInfo};
