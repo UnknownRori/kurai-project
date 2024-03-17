@@ -1,5 +1,5 @@
 [package]
-name = "scarlet-project"
+name = "kurai-project"
 version = "0.1.0"
 edition = "2021"
 
@@ -12,7 +12,6 @@ unsafe_code = "forbid"
 enum_glob_use = "deny"
 pedantic = "deny"
 nursery = "deny"
-unwrap_used = "deny"
 module_name_repetitions = "allow"
 
 # Enable a small amount of optimization in debug mode
@@ -25,7 +24,6 @@ incremental = true
 opt-level = 3
 
 [dependencies]
-async-trait = "0.1.77"
 color-eyre = "0.6.2"
 hecs = "0.10.4"
 keyframe = "1.1.1"
@@ -33,5 +31,3 @@ macroquad = { version = "0.4.5", features = ["audio", "backtrace", "log"] }
 num-complex = "0.4.5"
 num-traits = "0.2.18"
 rayon = "1.8.1"
-tracing = "0.1.40"
-tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }

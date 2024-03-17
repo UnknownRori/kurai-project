@@ -1,181 +1,165 @@
-pub mod remilia_scarlet;
-
 use std::sync::Arc;
 
 use hecs::{Entity, World};
-use macroquad::{
-    audio::{play_sound, PlaySoundParams},
-    math::vec2,
-    texture::Texture2D,
-};
-use num_complex::{Complex, ComplexFloat};
+use macroquad::{math::vec2, texture::Texture2D};
 
 use crate::{
-    assets::AssetsHandler,
+    assets::konst::{FOCUS, REMILIA_TEXTURE_1},
+    attack_info::remi::RemiliaBasicAttack,
     components::{
-        AttackInfo, Controllable, Death, DeathBlinkingAnimation, Enemy, EnemyBullet, Hitbox,
-        Hitpoint, Movable, MovementQueue, Player, PlayerBullet, Position, SingleShoot, Sprite,
-        TargetPlayer, Velocity,
+        attack_info::{AttackInfo, AttackSpawner, GenericAttackInfo, PlayerAttack, SpellInfo},
+        bullet::Bullet,
+        enemy::Enemy,
+        player::{Focus, Player},
     },
-    math::{ExtendedComplexNumber, ToVec2},
+    engine::{
+        assets::AssetsManager,
+        components::{
+            CircleHitbox2D, Hitpoint, Movable, Movement, MovementQueue, Sprite2D, Transform2D,
+            Velocity,
+        },
+        math::{complx, ComplexExt},
+    },
 };
 
-pub type NormalFairyEntity<'a> = (
-    &'a Enemy,
-    &'a mut Position,
-    &'a Movable,
-    &'a AttackInfo,
-    &'a TargetPlayer,
-    &'a SingleShoot,
-    &'a Sprite,
-    &'a MovementQueue,
-    &'a Hitbox,
-    &'a mut Hitpoint,
-);
+pub fn lazy_spawn_player(assets_manager: &AssetsManager) -> Box<dyn Fn(&mut World)> {
+    let texture = assets_manager.textures.get(REMILIA_TEXTURE_1).unwrap();
+    let focus = assets_manager.textures.get(FOCUS).unwrap();
 
-pub type PlayerEntity<'a> = (
-    &'a Player,
-    &'a Controllable,
-    &'a Movable,
-    &'a mut Position,
-    &'a AttackInfo,
-    &'a Sprite,
-    &'a Hitbox,
-    Option<&'a Death>,
-    Option<&'a mut DeathBlinkingAnimation>,
-);
+    // TODO : Put this character specific somewhere
+    let remi_attack = Arc::new(RemiliaBasicAttack::new(assets_manager)) as Arc<dyn AttackSpawner>;
 
-pub type PlayerBulletEntity<'a> = (
-    &'a PlayerBullet,
-    &'a mut Position,
-    &'a Movable,
-    &'a Velocity,
-    &'a Hitbox,
-    &'a Sprite,
-);
+    Box::new(move |world| {
+        let remi_attack = remi_attack.clone();
+        let player_attack = PlayerAttack {
+            normal: AttackInfo::new(GenericAttackInfo::new(2., 20.), Arc::clone(&remi_attack)),
+            focus: AttackInfo::new(GenericAttackInfo::new(2., 20.), Arc::clone(&remi_attack)),
+            spell: SpellInfo::new(
+                1,
+                "Gugnir".to_string(),
+                0.,
+                Arc::clone(&remi_attack),
+                GenericAttackInfo::new(20., 1.),
+            ),
+        };
+        let focus = Focus(Sprite2D::new(focus.clone()));
 
-pub type EnemyMovableEntity<'a> = (
-    &'a Enemy,
-    &'a mut Position,
-    &'a Movable,
-    &'a mut MovementQueue,
-);
-pub type DrawableEnemyEntity<'a> = (&'a Enemy, &'a Position, &'a Sprite);
-pub type NormalFairyBulletEntity<'a> = (
-    &'a EnemyBullet,
-    &'a mut Position,
-    &'a Movable,
-    &'a Velocity,
-    &'a Hitbox,
-    &'a Sprite,
-);
+        world.spawn((
+            Player,
+            Transform2D::new(complx(0.5, 0.5), vec2(0.1, 0.1), 0.),
+            focus,
+            Movable::new(1., 1.),
+            Sprite2D::new(texture.clone()),
+            player_attack,
+        ));
+    })
+}
 
-pub type EnemyBulletEntity<'a> = (&'a EnemyBullet, &'a mut Position, &'a Hitbox);
-pub type BulletEntity<'a> = (
-    &'a mut Position,
-    &'a Movable,
-    &'a Velocity,
-    &'a Hitbox,
-    &'a Sprite,
-);
+// pub fn spawn_player(world: &mut World, assets_manager: &AssetsManager) {
+//     let texture = assets_manager.textures.get(REMILIA_TEXTURE_1).unwrap();
+//     let focus = assets_manager.textures.get(FOCUS).unwrap();
+//
+//     // TODO : Put this character specific somewhere
+//     let remi_attack = Arc::new(RemiliaBasicAttack::new(assets_manager)) as Arc<dyn AttackSpawner>;
+//     let player_attack = PlayerAttack {
+//         normal: AttackInfo::new(GenericAttackInfo::new(2., 20.), Arc::clone(&remi_attack)),
+//         focus: AttackInfo::new(GenericAttackInfo::new(2., 20.), Arc::clone(&remi_attack)),
+//         spell: SpellInfo::new(
+//             1,
+//             "Gugnir".to_string(),
+//             0.,
+//             Arc::clone(&remi_attack),
+//             GenericAttackInfo::new(20., 1.),
+//         ),
+//     };
+//
+//     world.spawn((
+//         Player,
+//         Transform2D::new(complx(0.5, 0.5), vec2(0.1, 0.1), 0.),
+//         Focus(Sprite2D::new(focus)),
+//         Movable::new(1., 1.),
+//         Sprite2D::new(texture),
+//         player_attack,
+//     ));
+// }
 
-pub fn spawn_generic_bullet(
+pub fn spawn_player_bullet(
     world: &mut World,
-    current: &Position,
-    target: &Position,
-    speed: f32,
+    transform: &Transform2D,
     texture: Arc<Texture2D>,
+    velocity: Velocity,
 ) -> Entity {
-    let direction = (target.position - current.position).normalize() * speed;
-    let rot = direction.conj().arg() - std::f32::consts::FRAC_PI_2;
+    let transform = Transform2D {
+        scale: vec2(0.15, 0.15),
+        ..*transform
+    };
 
-    world.spawn((
-        EnemyBullet::default(),
-        current.clone(),
+    let component = (
+        Player,
+        Bullet,
+        transform,
         Movable::default(),
-        Velocity::from(direction),
-        Hitbox::new(0.004),
-        Sprite::new(texture, vec2(0.03, 0.03), rot),
-    ))
+        CircleHitbox2D::new(0.010),
+        Sprite2D::new(texture),
+        velocity,
+    );
+
+    world.spawn(component)
+}
+
+pub fn lazy_spawn_enemy(
+    transform: Transform2D,
+    texture: Arc<Texture2D>,
+    movement: Vec<Movement>,
+    hitpoint: Hitpoint,
+) -> Box<dyn Fn(&mut World)> {
+    Box::new(move |world| {
+        world.spawn((
+            Enemy,
+            transform,
+            Movable::new(0.2, 0.4),
+            Sprite2D::new(texture.clone()),
+            MovementQueue::new(movement.clone()),
+            hitpoint.clone(),
+        ));
+    })
 }
 
 pub fn spawn_enemy(
     world: &mut World,
-    pos: Position,
+    transform: Transform2D,
     texture: Arc<Texture2D>,
     movement: MovementQueue,
     hitpoint: Hitpoint,
-    attack_info: AttackInfo,
-) -> Entity {
+) {
     world.spawn((
         Enemy,
-        pos,
+        transform,
         Movable::new(0.2, 0.4),
-        attack_info,
-        TargetPlayer,
-        SingleShoot,
-        Sprite::new(texture, vec2(0.1, 0.1), 0.),
+        Sprite2D::new(texture),
         movement,
-        Hitbox::new(0.02),
         hitpoint,
-    ))
+    ));
 }
 
-pub fn spawn_player(world: &mut World, texture: Arc<Texture2D>) -> Entity {
-    world.spawn((
-        Player,
-        Controllable,
-        Movable::new(1.0, 1.0),
-        Position::from_array([0.5, 0.8]),
-        AttackInfo::new(
-            20.0,
-            2.5,
-            Arc::new(
-                |world, assets_manager, current_pos, player_pos, bullet_speed| {
-                    let pos = current_pos.position + Complex::new(0.0, 0.0);
-
-                    // TODO : Use proper player texture
-                    let texture = assets_manager
-                        .textures
-                        .get("remi-bullet-0")
-                        .expect("Generic bullet is not found");
-                    spawn_player_bullet(
-                        world,
-                        &pos.into(),
-                        texture,
-                        Complex::new(0.0, -bullet_speed),
-                    );
-
-                    let sound = assets_manager.sfx.get("player-shoot").unwrap();
-                    play_sound(
-                        &*sound,
-                        PlaySoundParams {
-                            looped: false,
-                            volume: 0.5,
-                        },
-                    );
-                },
-            ),
-        ),
-        Sprite::new(texture, vec2(0.1, 0.1), 0.),
-        Hitbox::new(0.008),
-    ))
-}
-
-pub fn spawn_player_bullet(
+// TODO : Not completed
+pub fn spawn_generic_bullet(
     world: &mut World,
-    position: &Position,
+    current: &Transform2D,
+    target: &Transform2D,
+    velocity: Velocity,
     texture: Arc<Texture2D>,
-    velocity: Complex<f32>,
 ) -> Entity {
-    // TODO : Refactor this later
-    let component = (
-        PlayerBullet,
-        *position,
-        Movable::default(),
-        Velocity::from(velocity),
-        Hitbox::new(0.010),
-        Sprite::new(texture, vec2(0.15, 0.15), 0.),
-    );
-    world.spawn(component)
+    let speed = 0.5;
+    let direction = (target.position - current.position).normalize() * speed;
+    let rot = direction.conj().arg() - std::f32::consts::FRAC_PI_2;
+
+    world.spawn((
+        Enemy,
+        Bullet,
+        Sprite2D::new(texture),
+        Transform2D::new(current.position, vec2(0.1, 0.1), rot),
+        CircleHitbox2D::new(0.004),
+        velocity,
+    ))
 }

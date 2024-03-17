@@ -1,6 +1,6 @@
-use std::collections::HashMap;
+use macroquad::miniquad::KeyCode;
 
-use macroquad::input::{is_key_down, is_key_pressed, KeyCode};
+use crate::engine::controls::{Combination, Controls};
 
 #[derive(Hash, Eq, PartialEq)]
 pub enum Action {
@@ -16,39 +16,19 @@ pub enum Action {
     Escape,
 }
 
-pub struct Controls {
-    controls: HashMap<Action, KeyCode>,
-}
+pub fn init_controls() -> Controls<Action> {
+    let mut controls = Controls::new();
 
-impl Controls {
-    #[must_use]
-    pub fn is_down(&self, action: &Action) -> bool {
-        self.controls.get(action).map_or(false, |a| is_key_down(*a))
-    }
+    controls.add(Action::Attack, Combination::Single(KeyCode::Z));
+    controls.add(Action::Focus, Combination::Single(KeyCode::LeftShift));
+    controls.add(Action::Spell, Combination::Single(KeyCode::X));
 
-    #[must_use]
-    pub fn is_pressed(&self, action: &Action) -> bool {
-        self.controls
-            .get(action)
-            .map_or(false, |a| is_key_pressed(*a))
-    }
-}
+    controls.add(Action::Up, Combination::Single(KeyCode::Up));
+    controls.add(Action::Left, Combination::Single(KeyCode::Left));
+    controls.add(Action::Right, Combination::Single(KeyCode::Right));
+    controls.add(Action::Down, Combination::Single(KeyCode::Down));
 
-impl Default for Controls {
-    fn default() -> Self {
-        let mut controls = HashMap::with_capacity(8);
+    controls.add(Action::Escape, Combination::Single(KeyCode::Escape));
 
-        controls.insert(Action::Attack, KeyCode::Z);
-        controls.insert(Action::Spell, KeyCode::C);
-        controls.insert(Action::Focus, KeyCode::LeftShift);
-
-        controls.insert(Action::Up, KeyCode::Up);
-        controls.insert(Action::Down, KeyCode::Down);
-        controls.insert(Action::Left, KeyCode::Left);
-        controls.insert(Action::Right, KeyCode::Right);
-
-        controls.insert(Action::Escape, KeyCode::Escape);
-
-        Self { controls }
-    }
+    controls
 }

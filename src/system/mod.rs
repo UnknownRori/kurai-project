@@ -1,61 +1,32 @@
-mod draw;
-mod update;
-
 use hecs::World;
-use macroquad::time::get_time;
 
-use crate::{
-    assets::AssetsManager, controls::Controls, pause::Pause, score::ScoreData, window::Window,
-};
+use crate::{controls::Action, engine::controls::Controls};
 
 use self::{
     draw::{
-        draw_hitbox, update_render_enemy, update_render_normal_fairy_bullet, update_render_player,
-        update_render_player_bullet,
+        entity_draw::{game_entity_draw, player_focus_draw},
+        hud_draw::hud_draw,
     },
     update::{
-        blink_death_entity, enemy_movement_update, enemy_shoot_normal_fairy, player_shoot,
-        update_collision_detection_enemy_bullet_to_player,
-        update_collision_detection_player_bullet_to_enemy, update_delete_bullet_offscreen,
-        update_move_bullet, update_player_move,
+        ai_movement::enemy_movement_update, player_control::update_player_control,
+        velocity::update_velocity,
     },
 };
 
-/// Register all the system related stuff of ECS here
-pub fn update_system(
-    world: &mut World,
-    controls: &Controls,
-    screen: &Window,
-    delta: f32,
-    time: f64,
-    score: &mut ScoreData,
-    assets_manager: &AssetsManager,
-    pause: &Pause,
-) {
-    update_player_move(world, controls, screen, delta, time);
-    update_move_bullet(world, screen, delta, time);
-    player_shoot(world, assets_manager, controls, delta, time);
-    enemy_shoot_normal_fairy(world, assets_manager, delta, time);
-    enemy_movement_update(world, delta, time);
-    update_collision_detection_enemy_bullet_to_player(world, assets_manager, score);
-    update_collision_detection_player_bullet_to_enemy(world, score);
+pub mod draw;
+pub mod update;
 
-    blink_death_entity(world);
-
-    update_delete_bullet_offscreen(world, screen, delta, time);
+pub fn update_system(world: &mut World, controls: &Controls<Action>, time: f64, delta: f32) {
+    update_player_control(world, controls, time);
+    enemy_movement_update(world, time, delta);
+    update_velocity(world, delta);
 }
 
-pub fn update_draw(
-    world: &World,
-    controls: &Controls,
-    screen: &Window,
-    time: f64,
-    delta: f32,
-    assets_manager: &AssetsManager,
-) {
-    update_render_player_bullet(world, screen);
-    update_render_player(world, assets_manager, screen, controls, delta, time);
-    update_render_enemy(world, screen);
-    update_render_normal_fairy_bullet(world, screen);
-    draw_hitbox(world, screen);
+pub fn update_draw(world: &World, controls: &Controls<Action>, time: f64, delta: f32) {
+    game_entity_draw(world);
+    player_focus_draw(world, controls, time);
+}
+
+pub fn update_draw_hud(world: &World, controls: &Controls<Action>, time: f64, delta: f32) {
+    hud_draw(world);
 }
