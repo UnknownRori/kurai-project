@@ -68,6 +68,8 @@ impl App {
     }
 
     pub async fn draw(&self) {
+        let width = screen_width();
+        let height = screen_height();
         let time = get_time();
         let delta = get_frame_time();
         clear_background(BLACK);
@@ -93,13 +95,25 @@ impl App {
         // INFO : Begin drawing on playable area
         self.playable_buffer.set_camera();
         clear_background(BLACK);
+
+        let material = self.assets_manager.shaders.get("stg1-bg").unwrap();
+        material.set_uniform("iTime", time as f32);
+        material.set_uniform(
+            "iResolution",
+            vec2(
+                self.playable_buffer.texture().width(),
+                self.playable_buffer.texture().height(),
+            ),
+        );
+        gl_use_material(&*material);
+        draw_rectangle(0., 0., 1.0, 1.0, WHITE);
+        gl_use_default_material();
+
         self.stages_manager.draw(time, delta);
         update_draw(&self.world, &self.controls, time, delta);
         self.playable_buffer.done_camera();
 
         // INFO : Draw the buffer to the screen
-        let width = screen_width();
-        let height = screen_height();
         let adjusted = get_adjusted_screen(DESIRED_ASPECT_RATIO);
         let offset = vec2((width - adjusted.x) / 2f32, (height - adjusted.y) / 2f32);
         draw_texture_ex(

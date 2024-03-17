@@ -1,3 +1,5 @@
+use macroquad::{material::MaterialParams, miniquad::UniformType};
+
 use crate::engine::assets::AssetsManager;
 
 use super::{
@@ -45,4 +47,21 @@ pub async fn preload(assets_manager: &mut AssetsManager) {
     .await;
     preload_sfx(assets_manager, PICHUN, "./resources/sfx/death.ogg").await;
     preload_sfx(assets_manager, GRAZE, "./resources/sfx/graze.ogg").await;
+
+    assets_manager
+        .shaders
+        .register(
+            "stg1-bg",
+            "./resources/shaders/stage1.vert.glsl",
+            "./resources/shaders/stage1.frag.glsl",
+            MaterialParams {
+                uniforms: vec![
+                    (String::from("iTime"), UniformType::Float1),
+                    (String::from("iResolution"), UniformType::Float2),
+                ],
+                ..Default::default()
+            },
+        )
+        .await
+        .unwrap();
 }
