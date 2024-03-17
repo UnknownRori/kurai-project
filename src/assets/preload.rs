@@ -4,8 +4,8 @@ use crate::engine::assets::AssetsManager;
 
 use super::{
     konst::{
-        FAIRY_1, FOCUS, GENERIC_SHOOT_SOUND, GRAZE, PICHUN, REMILIA_TEXTURE_1, REMI_BULLET_1,
-        TEXTURE_HUD,
+        FAIRY_1, FOCUS, GENERIC_SHOOT_SOUND, GRAZE, PICHUN, RED_BULLET, REMILIA_TEXTURE_1,
+        REMI_BULLET_1, TEXTURE_HUD,
     },
     preload_sfx, preload_texture,
 };
@@ -29,6 +29,13 @@ pub async fn preload(assets_manager: &mut AssetsManager) {
         assets_manager,
         FAIRY_1,
         "./resources/textures/fairy/fairy0001.png",
+    )
+    .await;
+
+    preload_texture(
+        assets_manager,
+        RED_BULLET,
+        "./resources/textures/projectiles/generic-bullet-red.png",
     )
     .await;
 
