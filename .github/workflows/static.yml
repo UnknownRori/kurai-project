@@ -3,9 +3,9 @@ name: Deploy static content to Pages
 
 on:
   push:
-    branches: [ "stable" ]
+    branches: [ "main" ]
   pull_request:
-    branches: [ "stable" ]
+    branches: [ "main" ]
 
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
