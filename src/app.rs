@@ -1,5 +1,6 @@
 use hecs::World;
 use macroquad::prelude::*;
+use num_traits::ToPrimitive;
 
 use crate::{
     assets::preload::preload,
@@ -117,7 +118,7 @@ impl App {
         clear_background(BLACK);
 
         let material = self.assets_manager.shaders.get("stg1-bg").unwrap();
-        material.set_uniform("iTime", time as f32);
+        material.set_uniform("iTime", time.to_f32().unwrap());
         material.set_uniform(
             "iResolution",
             vec2(
