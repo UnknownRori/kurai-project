@@ -1,7 +1,11 @@
 use hecs::World;
+use macroquad::text::Font;
 
 use crate::{
-    controls::Action, engine::controls::Controls, score::ScoreData, ui::game_hud::draw_score,
+    controls::Action,
+    engine::controls::Controls,
+    score::ScoreData,
+    ui::game_hud::{draw_hud_info, draw_score},
 };
 
 use self::{
@@ -20,13 +24,19 @@ use self::{
 pub mod draw;
 pub mod update;
 
-pub fn update_system(world: &mut World, controls: &Controls<Action>, time: f64, delta: f32) {
+pub fn update_system(
+    world: &mut World,
+    controls: &Controls<Action>,
+    score: &mut ScoreData,
+    time: f64,
+    delta: f32,
+) {
     update_player_control(world, controls, time);
     enemy_movement_update(world, time, delta);
     update_velocity(world, delta);
     attack_info_trigger(world, time, delta);
 
-    collision_player_with_enemy_bullets(world);
+    collision_player_with_enemy_bullets(world, score);
     delete_bullet_offmap(world);
 }
 
@@ -40,9 +50,11 @@ pub fn update_draw_hud(
     world: &World,
     controls: &Controls<Action>,
     score: &ScoreData,
+    font: &Font,
     time: f64,
     delta: f32,
 ) {
     hud_draw(world);
-    draw_score(score);
+    draw_hud_info(font);
+    draw_score(score, font);
 }

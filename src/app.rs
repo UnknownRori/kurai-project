@@ -16,7 +16,7 @@ use crate::{
     scene::{stage::StageManager, stage1::Stage1Lazy},
     score::ScoreData,
     system::{update_draw, update_draw_hud, update_system},
-    ui::game_hud::{draw_entity_number, init_game_hud, init_hud_info},
+    ui::game_hud::{draw_entity_number, init_game_hud},
 };
 
 pub struct App {
@@ -27,6 +27,7 @@ pub struct App {
     world: World,
     stages_manager: StageManager,
     score: ScoreData,
+    font: Font,
 }
 
 impl App {
@@ -47,7 +48,6 @@ impl App {
 
         let mut stages_manager = StageManager::new(vec![Box::new(Stage1Lazy)]);
 
-        world.spawn(init_hud_info());
         world.spawn(init_game_hud(&assets_manager));
 
         stages_manager.start_stage_id(1, &assets_manager, get_time(), get_frame_time());
@@ -60,13 +60,22 @@ impl App {
             playable_buffer,
             world,
             score: ScoreData::default(),
+            font: load_ttf_font("./resources/fonts/AveriaSansLibre-Regular.ttf")
+                .await
+                .unwrap(),
         }
     }
 
     pub async fn update(&mut self) {
         let time = get_time();
         let delta = get_frame_time();
-        update_system(&mut self.world, &self.controls, time, delta);
+        update_system(
+            &mut self.world,
+            &self.controls,
+            &mut self.score,
+            time,
+            delta,
+        );
         self.stages_manager.update(&mut self.world, time, delta);
     }
 
@@ -92,8 +101,15 @@ impl App {
                 ..Default::default()
             },
         );
-        update_draw_hud(&self.world, &self.controls, &self.score, time, delta);
-        draw_entity_number(self.world.len());
+        update_draw_hud(
+            &self.world,
+            &self.controls,
+            &self.score,
+            &self.font,
+            time,
+            delta,
+        );
+        draw_entity_number(self.world.len(), &self.font);
         self.game_buffer.done_camera();
 
         // INFO : Begin drawing on playable area
