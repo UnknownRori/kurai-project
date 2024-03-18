@@ -1,111 +1,151 @@
-use crate::{
-    assets::AssetsManager,
-    controls::Controls,
-    engine::stage::StageManager,
-    pause::Pause,
-    score::ScoreData,
-    stage::stage1::stage_1,
-    system::{update_draw, update_system},
-    ui::{draw_entity_number, draw_fps, draw_version, fill_outside_game_window, StageUI},
-    window::Window,
-};
-
 use hecs::World;
 use macroquad::prelude::*;
+use num_traits::ToPrimitive;
 
-pub struct App<'a> {
-    window: Window,
-    controls: Controls,
-    world: World,
-    score_data: ScoreData,
+use crate::{
+    assets::preload::preload,
+    controls::{init_controls, Action},
+    engine::{
+        assets::AssetsManager,
+        camera::screen_buffer2d::{ScreenBuffer2D, ScreenBuffer2DBuilder},
+        controls::Controls,
+        window::utils::get_adjusted_screen,
+    },
+    konst::{
+        DESIRED_ASPECT_RATIO, VIRTUAL_SCREEN_WIDTH, VIRTUAL_STAGE_HEIGHT, VIRTUAL_STAGE_WIDTH,
+    },
+    scene::{stage::StageManager, stage1::Stage1Lazy},
+    score::ScoreData,
+    system::{update_draw, update_draw_hud, update_system},
+    ui::game_hud::{draw_entity_number, init_game_hud},
+};
+
+pub struct App {
     assets_manager: AssetsManager,
-    debugger: crate::engine::debug::Debugger,
-    stage_manager: StageManager<'a>,
-    pause: Pause,
+    game_buffer: ScreenBuffer2D,
+    playable_buffer: ScreenBuffer2D,
+    controls: Controls<Action>,
+    world: World,
+    stages_manager: StageManager,
+    score: ScoreData,
+    font: Font,
 }
 
-impl App<'_> {
-    /// Initialize Game state
-    #[must_use]
-    pub async fn new(window: Window, controls: Controls) -> Self {
-        let world = World::new();
+impl App {
+    pub async fn new() -> Self {
+        let game_buffer: ScreenBuffer2D =
+            ScreenBuffer2DBuilder::from_aspect_ratio(VIRTUAL_SCREEN_WIDTH, DESIRED_ASPECT_RATIO)
+                .filter(FilterMode::Nearest)
+                .into();
+
+        let playable_buffer: ScreenBuffer2D =
+            ScreenBuffer2DBuilder::from_size(VIRTUAL_STAGE_WIDTH, VIRTUAL_STAGE_HEIGHT)
+                .filter(FilterMode::Nearest)
+                .into();
+
         let mut assets_manager = AssetsManager::default();
-        let score_data = ScoreData::default();
-        let mut stage_manager = StageManager::new(vec![stage_1()]);
+        preload(&mut assets_manager).await;
+        let mut world = World::new();
 
-        // TODO : Put this into Engine part
-        let debugger = crate::engine::debug::Debugger::new();
+        let mut stages_manager = StageManager::new(vec![Box::new(Stage1Lazy)]);
 
-        stage_manager.preload(&mut assets_manager, &window).await;
+        world.spawn(init_game_hud(&assets_manager));
+
+        stages_manager.start_stage_id(1, &assets_manager, get_time(), get_frame_time());
+
         Self {
-            window,
-            controls,
-            world,
-            score_data,
+            stages_manager,
             assets_manager,
-            debugger,
-            stage_manager,
-            pause: Pause::new(),
+            game_buffer,
+            controls: init_controls(),
+            playable_buffer,
+            world,
+            score: ScoreData::default(),
+            font: load_ttf_font("./resources/fonts/AveriaSansLibre-Regular.ttf")
+                .await
+                .unwrap(),
         }
     }
 
-    /// This is where the update happen
-    pub fn update(&mut self) {
+    pub async fn update(&mut self) {
         let time = get_time();
         let delta = get_frame_time();
-        self.pause.update(time, &self.controls);
-        self.debugger.update(&self.window);
-        self.window.update();
-        if !self.pause.is_paused() {
-            self.stage_manager
-                .update(time, delta, &mut self.world, &self.assets_manager);
-
-            update_system(
-                &mut self.world,
-                &self.controls,
-                &self.window,
-                get_frame_time(),
-                time,
-                &mut self.score_data,
-                &self.assets_manager,
-                &self.pause,
-            );
-        }
-    }
-
-    /// This is where the draw happen
-    pub async fn draw(&mut self) {
-        clear_background(BLACK);
-
-        let time = get_time();
-        let delta = get_frame_time();
-        self.stage_manager
-            .draw(time, delta, &self.window, &self.assets_manager);
-        update_draw(
-            &self.world,
+        update_system(
+            &mut self.world,
             &self.controls,
-            &self.window,
+            &mut self.score,
             time,
             delta,
-            &self.assets_manager,
         );
-        StageUI::draw(&self.window, &self.score_data, &self.assets_manager).await;
+        self.stages_manager.update(&mut self.world, time, delta);
+    }
 
-        draw_entity_number(&self.window, self.world.len());
-        draw_fps(&self.window, 32.0, WHITE);
-        draw_version(&self.window);
+    pub async fn draw(&self) {
+        let width = screen_width();
+        let height = screen_height();
+        let time = get_time();
+        let delta = get_frame_time();
+        clear_background(BLACK);
 
-        self.pause.draw(time, delta, &self.window);
+        // INFO : Begin drawing on the buffer space
+        self.game_buffer.set_camera();
+        clear_background(BLACK);
 
-        self.debugger.draw(&self.window);
-        fill_outside_game_window(&self.window);
+        let offset = vec2(0.03, 0.009);
+        draw_texture_ex(
+            self.playable_buffer.texture(),
+            offset.x,
+            offset.y,
+            WHITE,
+            DrawTextureParams {
+                dest_size: Some(vec2(0.64, 0.975)),
+                ..Default::default()
+            },
+        );
+        update_draw_hud(
+            &self.world,
+            &self.controls,
+            &self.score,
+            &self.font,
+            time,
+            delta,
+        );
+        draw_entity_number(self.world.len(), &self.font);
+        self.game_buffer.done_camera();
 
-        // draw_rectangle(
-        //     self.window.playable_window().get_start().x,
-        //     self.window.playable_window().get_start().y,
-        //     self.window.playable_window().size().x,
-        //     self.window.playable_window().size().y,
-        //     Color::new(255f32, 0f32, 0f32, 0.5),
-        // );
+        // INFO : Begin drawing on playable area
+        self.playable_buffer.set_camera();
+        clear_background(BLACK);
+
+        let material = self.assets_manager.shaders.get("stg1-bg").unwrap();
+        material.set_uniform("iTime", time.to_f32().unwrap());
+        material.set_uniform(
+            "iResolution",
+            vec2(
+                self.playable_buffer.texture().width(),
+                self.playable_buffer.texture().height(),
+            ),
+        );
+        gl_use_material(&*material);
+        draw_rectangle(0., 0., 1.0, 1.0, WHITE);
+        gl_use_default_material();
+
+        self.stages_manager.draw(time, delta);
+        update_draw(&self.world, &self.controls, time, delta);
+        self.playable_buffer.done_camera();
+
+        // INFO : Draw the buffer to the screen
+        let adjusted = get_adjusted_screen(DESIRED_ASPECT_RATIO);
+        let offset = vec2((width - adjusted.x) / 2f32, (height - adjusted.y) / 2f32);
+        draw_texture_ex(
+            self.game_buffer.texture(),
+            offset.x,
+            offset.y,
+            WHITE,
+            DrawTextureParams {
+                dest_size: Some(adjusted),
+                ..Default::default()
+            },
+        );
     }
 }

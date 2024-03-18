@@ -37,7 +37,7 @@ jobs:
     - name: Move index.html
       run: cp ./index.html ./dist
     - name: Move wasm file to dist
-      run: cp target/wasm32-unknown-unknown/release/scarlet-project.wasm ./dist
+      run: cp target/wasm32-unknown-unknown/release/kurai-project.wasm ./dist
 
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v4.3.0
