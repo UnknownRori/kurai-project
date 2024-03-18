@@ -15,6 +15,7 @@ use crate::{
         math::complx,
     },
     konst::GAME_VERSION,
+    score::ScoreData,
 };
 
 pub fn init_game_hud(assets_manager: &AssetsManager) -> (HUD, Sprite2D, Transform2D, Layer2D) {
@@ -64,6 +65,130 @@ pub fn draw_hud_info() {
 
 pub fn init_hud_info() -> (HUD, CustomDraw, Layer2D) {
     (HUD, CustomDraw(draw_hud_info), Layer2D(100))
+}
+
+pub fn draw_score(score: &ScoreData) {
+    const SCALE: f32 = 0.06;
+
+    let (font_size, font_scale, font_scale_aspect) = camera_font_scale(SCALE);
+    let len = measure_text("Score", None, font_size, font_scale);
+    draw_text_ex(
+        "Score",
+        0.8 - len.width,
+        0.1,
+        TextParams {
+            color: WHITE,
+            font_size,
+            font_scale,
+            font_scale_aspect,
+            ..Default::default()
+        },
+    );
+
+    let score_text = format!("{:08}", score.score);
+    let (font_size, font_scale, font_scale_aspect) = camera_font_scale(SCALE);
+    draw_text_ex(
+        &score_text,
+        0.78,
+        0.1,
+        TextParams {
+            color: WHITE,
+            font_size,
+            font_scale,
+            font_scale_aspect,
+            ..Default::default()
+        },
+    );
+
+    let (font_size, font_scale, font_scale_aspect) = camera_font_scale(SCALE);
+    let len = measure_text("Score", None, font_size, font_scale);
+    draw_text_ex(
+        "Value",
+        0.8 - len.width,
+        0.12 + len.height,
+        TextParams {
+            color: WHITE,
+            font_size,
+            font_scale,
+            font_scale_aspect,
+            ..Default::default()
+        },
+    );
+
+    let value = format!("{:08}", score.value);
+    let (font_size, font_scale, font_scale_aspect) = camera_font_scale(SCALE);
+    draw_text_ex(
+        &value,
+        0.78,
+        0.12 + len.height,
+        TextParams {
+            color: WHITE,
+            font_size,
+            font_scale,
+            font_scale_aspect,
+            ..Default::default()
+        },
+    );
+
+    let (font_size, font_scale, font_scale_aspect) = camera_font_scale(SCALE);
+    let len = measure_text("Score", None, font_size, font_scale);
+    draw_text_ex(
+        "Graze",
+        0.8 - len.width,
+        0.14 + len.height * 2.,
+        TextParams {
+            color: WHITE,
+            font_size,
+            font_scale,
+            font_scale_aspect,
+            ..Default::default()
+        },
+    );
+
+    let value = format!("{:08}", score.graze);
+    let (font_size, font_scale, font_scale_aspect) = camera_font_scale(SCALE);
+    draw_text_ex(
+        &value,
+        0.78,
+        0.14 + len.height * 2.,
+        TextParams {
+            color: WHITE,
+            font_size,
+            font_scale,
+            font_scale_aspect,
+            ..Default::default()
+        },
+    );
+
+    let (font_size, font_scale, font_scale_aspect) = camera_font_scale(SCALE);
+    let len = measure_text("Score", None, font_size, font_scale);
+    draw_text_ex(
+        "Life",
+        0.8 - len.width,
+        0.34 + len.height,
+        TextParams {
+            color: WHITE,
+            font_size,
+            font_scale,
+            font_scale_aspect,
+            ..Default::default()
+        },
+    );
+
+    let value = format!("{}", score.life);
+    let (font_size, font_scale, font_scale_aspect) = camera_font_scale(SCALE);
+    draw_text_ex(
+        &value,
+        0.78,
+        0.34 + len.height,
+        TextParams {
+            color: WHITE,
+            font_size,
+            font_scale,
+            font_scale_aspect,
+            ..Default::default()
+        },
+    );
 }
 
 pub fn draw_entity_number(len: u32) {

@@ -12,7 +12,7 @@ use crate::{
     },
     engine::{
         assets::AssetsManager,
-        components::{Movable, Sprite2D, Transform2D},
+        components::{CircleHitbox2D, Movable, Sprite2D, Transform2D},
         math::complx,
     },
 };
@@ -46,6 +46,7 @@ pub fn lazy_spawn_player(assets_manager: &AssetsManager) -> Box<dyn Fn(&mut Worl
             Movable::new(1., 1.),
             Sprite2D::new(texture.clone()),
             player_attack,
+            CircleHitbox2D::new(0.010),
         ));
     })
 }

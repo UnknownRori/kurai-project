@@ -1,7 +1,7 @@
 use std::sync::Arc;
 
 use hecs::World;
-use macroquad::{math::vec2, texture::Texture2D};
+use macroquad::texture::Texture2D;
 
 use crate::{
     components::{bullet::Bullet, enemy::Enemy},

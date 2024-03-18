@@ -14,6 +14,7 @@ use crate::{
         DESIRED_ASPECT_RATIO, VIRTUAL_SCREEN_WIDTH, VIRTUAL_STAGE_HEIGHT, VIRTUAL_STAGE_WIDTH,
     },
     scene::{stage::StageManager, stage1::Stage1Lazy},
+    score::ScoreData,
     system::{update_draw, update_draw_hud, update_system},
     ui::game_hud::{draw_entity_number, init_game_hud, init_hud_info},
 };
@@ -25,6 +26,7 @@ pub struct App {
     controls: Controls<Action>,
     world: World,
     stages_manager: StageManager,
+    score: ScoreData,
 }
 
 impl App {
@@ -57,6 +59,7 @@ impl App {
             controls: init_controls(),
             playable_buffer,
             world,
+            score: ScoreData::default(),
         }
     }
 
@@ -89,7 +92,7 @@ impl App {
                 ..Default::default()
             },
         );
-        update_draw_hud(&self.world, &self.controls, time, delta);
+        update_draw_hud(&self.world, &self.controls, &self.score, time, delta);
         draw_entity_number(self.world.len());
         self.game_buffer.done_camera();
 

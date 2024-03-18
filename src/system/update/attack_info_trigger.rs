@@ -1,13 +1,14 @@
 use hecs::World;
 
 use crate::{
-    components::{attack_info::AttackInfo, enemy::Enemy, player::Player},
+    components::{attack_info::AttackInfo, bullet::Bullet, enemy::Enemy, player::Player},
     engine::components::Transform2D,
 };
 
 pub fn attack_info_trigger(world: &mut World, time: f64, delta: f32) {
     let players = world
         .query::<(&Player, &Transform2D)>()
+        .without::<&Bullet>()
         .iter()
         .map(|(_, (_, transform))| (transform.clone()))
         .collect::<Vec<_>>();

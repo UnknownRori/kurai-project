@@ -68,6 +68,7 @@ pub fn lazy_spawn_enemy(
             MovementQueue::new(movement.clone()),
             hitpoint.clone(),
             attack.clone(),
+            CircleHitbox2D::new(0.01),
         ));
     })
 }
