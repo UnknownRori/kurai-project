@@ -1,6 +1,5 @@
 use hecs::World;
 use macroquad::prelude::*;
-use num_traits::ToPrimitive;
 
 use crate::{
     assets::preload::preload,
@@ -14,10 +13,11 @@ use crate::{
     konst::{
         DESIRED_ASPECT_RATIO, VIRTUAL_SCREEN_WIDTH, VIRTUAL_STAGE_HEIGHT, VIRTUAL_STAGE_WIDTH,
     },
+    render::{draw_main_ui, draw_stage},
     scene::{stage::StageManager, stage1::Stage1Lazy},
     score::ScoreData,
-    system::{update_draw, update_draw_hud, update_system},
-    ui::game_hud::{draw_entity_number, init_game_hud},
+    system::update_system,
+    ui::game_hud::init_game_hud,
 };
 
 pub struct App {
@@ -88,51 +88,26 @@ impl App {
         clear_background(BLACK);
 
         // INFO : Begin drawing on the buffer space
-        self.game_buffer.set_camera();
-        clear_background(BLACK);
-
-        let offset = vec2(0.03, 0.009);
-        draw_texture_ex(
-            self.playable_buffer.texture(),
-            offset.x,
-            offset.y,
-            WHITE,
-            DrawTextureParams {
-                dest_size: Some(vec2(0.64, 0.975)),
-                ..Default::default()
-            },
-        );
-        update_draw_hud(
+        draw_main_ui(
             &self.world,
+            &self.game_buffer,
+            &self.playable_buffer,
             &self.controls,
-            &self.score,
             &self.font,
+            &self.score,
             time,
             delta,
         );
-        draw_entity_number(self.world.len(), &self.font);
-        self.game_buffer.done_camera();
 
-        // INFO : Begin drawing on playable area
-        self.playable_buffer.set_camera();
-        clear_background(BLACK);
-
-        let material = self.assets_manager.shaders.get("stg1-bg").unwrap();
-        material.set_uniform("iTime", time.to_f32().unwrap());
-        material.set_uniform(
-            "iResolution",
-            vec2(
-                self.playable_buffer.texture().width(),
-                self.playable_buffer.texture().height(),
-            ),
+        draw_stage(
+            &self.world,
+            &self.assets_manager,
+            &self.stages_manager,
+            &self.playable_buffer,
+            &self.controls,
+            time,
+            delta,
         );
-        gl_use_material(&*material);
-        draw_rectangle(0., 0., 1.0, 1.0, WHITE);
-        gl_use_default_material();
-
-        self.stages_manager.draw(time, delta);
-        update_draw(&self.world, &self.controls, time, delta);
-        self.playable_buffer.done_camera();
 
         // INFO : Draw the buffer to the screen
         let adjusted = get_adjusted_screen(DESIRED_ASPECT_RATIO);

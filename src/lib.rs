@@ -6,6 +6,7 @@ mod controls;
 mod difficulty;
 mod engine;
 mod entity;
+mod render;
 mod konst;
 mod scene;
 mod score;
