@@ -5,7 +5,7 @@ use crate::engine::assets::AssetsManager;
 use super::{
     konst::{
         FAIRY_1, FOCUS, GENERIC_SHOOT_SOUND, GRAZE, PICHUN, RED_BULLET, REMILIA_TEXTURE_1,
-        REMI_BULLET_1, TEXTURE_HUD,
+        REMI_BULLET_1, STAGE_1_BG_SHADER, STAGE_1_GROUND, TEXTURE_HUD,
     },
     preload_sfx, preload_texture,
 };
@@ -55,10 +55,17 @@ pub async fn preload(assets_manager: &mut AssetsManager) {
     preload_sfx(assets_manager, PICHUN, "./resources/sfx/death.ogg").await;
     preload_sfx(assets_manager, GRAZE, "./resources/sfx/graze.ogg").await;
 
+    preload_texture(
+        assets_manager,
+        STAGE_1_GROUND,
+        "./resources/background/stage1/ground.png",
+    )
+    .await;
+
     assets_manager
         .shaders
         .register(
-            "stg1-bg",
+            STAGE_1_BG_SHADER,
             "./resources/shaders/stage1.vert.glsl",
             "./resources/shaders/stage1.frag.glsl",
             MaterialParams {

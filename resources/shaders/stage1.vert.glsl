@@ -1,11 +1,9 @@
 #version 100
 
-attribute vec3 position;        // Already normalized so don't normalize this shit
-attribute vec4 color0;          // Color from texture
+attribute vec3 position;		// Already normalized so don't normalize this shit
 
-varying lowp vec2 uv;           // For fragment shader
+varying lowp vec2 uv;			// For fragment shader
 varying lowp vec2 fragTexCoord;
-// varying lowp vec4 color;     // Converted color for fragment
 
 uniform mediump float iTime;            // Coming from uniform
 uniform mediump vec2 iResolution;       // Coming from uniform not normalized

@@ -16,3 +16,8 @@ pub const GENERIC_SHOOT_SOUND: &str = "generic-snd";
 pub const PLAYER_SHOOT_SOUND: &str = "plr-shoot-snd";
 pub const PICHUN: &str = "pichun";
 pub const GRAZE: &str = "graze";
+
+// Stage Resource
+// Stage 1
+pub const STAGE_1_GROUND: &str = "grn-stg";
+pub const STAGE_1_BG_SHADER: &str = "stg1-bg";

@@ -53,16 +53,6 @@ pub fn draw_stage(
     buffer.set_camera();
     clear_background(BLACK);
 
-    let material = assets_manager.shaders.get("stg1-bg").unwrap();
-    material.set_uniform("iTime", time.to_f32().unwrap());
-    material.set_uniform(
-        "iResolution",
-        vec2(buffer.texture().width(), buffer.texture().height()),
-    );
-    gl_use_material(&*material);
-    draw_rectangle(0., 0., 1.0, 1.0, WHITE);
-    gl_use_default_material();
-
     stage_manager.draw(time, delta);
     update_draw(&world, controls, time, delta);
     buffer.done_camera();

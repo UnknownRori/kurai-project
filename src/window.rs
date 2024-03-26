@@ -12,7 +12,7 @@ pub fn game_window() -> Conf {
         ivec2(900, 675),
         WINDOW_RESIZEABLE,
         None,
-        1,
+        2,
         true,
         Platform::default(),
     )
