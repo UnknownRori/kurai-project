@@ -2,13 +2,13 @@
 // https://www.shadertoy.com/view/M3jSW1
 #version 100
 
-varying lowp vec2 uv;                // From vertex shader
-varying lowp vec2 fragTexCoord;
+varying mediump vec2 uv;                // From vertex shader
+varying mediump vec2 fragTexCoord;
 
-uniform lowp float iTime;            // Coming from uniform
-uniform lowp vec2 iResolution;       // Coming from uniform not normalized
-uniform lowp mat4 Model;             // Default macroquad model stuff
-uniform lowp mat4 Projection;        // Default macroquad camera stuff
+uniform mediump float iTime;            // Coming from uniform
+uniform mediump vec2 iResolution;       // Coming from uniform not normalized
+uniform mediump mat4 Model;             // Default macroquad model stuff
+uniform mediump mat4 Projection;        // Default macroquad camera stuff
 uniform sampler2D Texture;		// Texture from macroquad draw_texture
 
 #define SPEED_GROUND 0.45
