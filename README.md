@@ -2,9 +2,12 @@
 
 <div align = center>
 
+<img src="./resources/misc/kurai.png" width="200">
+<br><br><br>
+
 &ensp;[<kbd> <br> Install <br> </kbd>](#installation)&ensp;
 &ensp;[<kbd> <br> Development <br> </kbd>](#development)&ensp;
-<br><br><br></div>
+<br><br></div>
 
 ## Introduction
 
