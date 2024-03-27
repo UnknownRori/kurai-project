@@ -1,6 +1,5 @@
 use hecs::World;
 use macroquad::prelude::*;
-use num_traits::ToPrimitive;
 
 use crate::{
     controls::Action,

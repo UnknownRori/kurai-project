@@ -197,6 +197,38 @@ pub fn draw_score(score: &ScoreData, font: &Font) {
             ..Default::default()
         },
     );
+
+    let (font_size, font_scale, font_scale_aspect) = camera_font_scale(SCALE);
+    let len = measure_text("Score", Some(font), font_size, font_scale);
+    draw_text_ex(
+        "Spell",
+        0.8 - len.width,
+        0.38 + len.height,
+        TextParams {
+            color: WHITE,
+            font: Some(font),
+            font_size,
+            font_scale,
+            font_scale_aspect,
+            ..Default::default()
+        },
+    );
+
+    let value = format!("{}", score.spell);
+    let (font_size, font_scale, font_scale_aspect) = camera_font_scale(SCALE);
+    draw_text_ex(
+        &value,
+        0.8,
+        0.38 + len.height,
+        TextParams {
+            color: WHITE,
+            font: Some(font),
+            font_size,
+            font_scale,
+            font_scale_aspect,
+            ..Default::default()
+        },
+    );
 }
 
 pub fn draw_entity_number(len: u32, font: &Font) {

@@ -7,7 +7,7 @@ use num_traits::ToPrimitive as _;
 use crate::{
     assets::konst::{FAIRY_1, STAGE_1_BG_SHADER, STAGE_1_GROUND},
     engine::{
-        components::{Hitpoint, Movement, Transform2D},
+        components::{Hitpoint, Transform2D},
         ecs::{SpawnEvent, Spawner},
         math::complx,
     },
@@ -56,10 +56,6 @@ impl Scene for Stage1 {
     fn draw(&self, time: f64, delta: f32) {
         self.bg_material
             .set_uniform("iTime", time.to_f32().unwrap());
-        self.bg_material.set_uniform(
-            "iResolution",
-            vec2(VIRTUAL_STAGE_WIDTH as f32, VIRTUAL_STAGE_HEIGHT as f32),
-        );
         gl_use_material(&*self.bg_material);
         draw_texture_ex(
             &*self.bg_texture,
@@ -104,15 +100,11 @@ impl LazyStage for Stage1Lazy {
         let player_spawn = lazy_spawn_player(assets_manager);
 
         let fairy = assets_manager.textures.get(FAIRY_1).unwrap();
-        let movement_queue = vec![
-            Movement::new(complx(0.3, 0.5), 0.0, false),
-            Movement::new(complx(0.0, 0.8), 0.0, true),
-        ];
         let fairy_spawn = lazy_spawn_enemy(
             assets_manager,
-            Transform2D::new(complx(0.2, -0.25), vec2(0.1, 0.1), 0.),
+            // Transform2D::new(complx(0.2, -0.25), vec2(0.1, 0.1), 0.),
+            Transform2D::new(complx(0.2, 0.2), vec2(0.1, 0.1), 0.),
             fairy,
-            movement_queue,
             Hitpoint::new(2.5),
         );
 
@@ -135,6 +127,11 @@ impl LazyStage for Stage1Lazy {
 
         let bg_material = assets_manager.shaders.get(STAGE_1_BG_SHADER).unwrap();
         let bg_texture = assets_manager.textures.get(STAGE_1_GROUND).unwrap();
+
+        bg_material.set_uniform(
+            "iResolution",
+            vec2(VIRTUAL_STAGE_WIDTH as f32, VIRTUAL_STAGE_HEIGHT as f32),
+        );
 
         Box::new(Stage1 {
             spawner,

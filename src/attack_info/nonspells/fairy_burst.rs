@@ -4,12 +4,8 @@ use macroquad::{math::vec2, texture::Texture2D};
 
 use crate::{
     assets::konst::RED_BULLET,
-    components::attack_info::AttackSpawner,
-    engine::{
-        assets::AssetsManager,
-        components::{Transform2D, Velocity},
-        math::ComplexExt,
-    },
+    components::{attack_info::AttackSpawner, velocity::Velocity},
+    engine::{assets::AssetsManager, components::Transform2D, math::ComplexExt},
     entity::bullet::spawn_generic_bullet,
 };
 

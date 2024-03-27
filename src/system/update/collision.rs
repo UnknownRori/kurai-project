@@ -1,4 +1,5 @@
 use hecs::World;
+use rayon::iter::{ParallelBridge, ParallelIterator};
 
 use crate::{
     components::{
@@ -27,6 +28,7 @@ pub fn collision_player_with_enemy_bullets(world: &mut World, score: &mut ScoreD
             &CircleHitbox2D,
         )>()
         .iter()
+        .par_bridge()
         .map(|(id, (_, _, grazed, transform, hitbox))| {
             (
                 id.clone(),
@@ -50,7 +52,6 @@ pub fn collision_player_with_enemy_bullets(world: &mut World, score: &mut ScoreD
                                   // TODO : Added death animation and despawn player
             } else if player_hitbox.near(&player_transform, &bullet_transform, bullet_hitbox) {
                 // INFO : Update Score!
-                println!("{:#?} - Graze! - {:#?}", player_id, bullet_id);
 
                 if !is_grazed {
                     world.insert_one(*bullet_id, GrazedBullet).unwrap();

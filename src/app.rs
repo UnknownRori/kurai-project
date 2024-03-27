@@ -53,6 +53,11 @@ impl App {
 
         stages_manager.start_stage_id(1, &assets_manager, get_time(), get_frame_time());
 
+        let mut font = load_ttf_font("./resources/fonts/AveriaSansLibre-Regular.ttf")
+            .await
+            .unwrap();
+        font.set_filter(FilterMode::Nearest);
+
         Self {
             stages_manager,
             assets_manager,
@@ -61,9 +66,7 @@ impl App {
             playable_buffer,
             world,
             score: ScoreData::default(),
-            font: load_ttf_font("./resources/fonts/AveriaSansLibre-Regular.ttf")
-                .await
-                .unwrap(),
+            font,
         }
     }
 
@@ -122,5 +125,9 @@ impl App {
                 ..Default::default()
             },
         );
+
+        macroquad_profiler::profiler(macroquad_profiler::ProfilerParams {
+            fps_counter_pos: vec2(0., 0.),
+        });
     }
 }

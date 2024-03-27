@@ -4,8 +4,8 @@ use hecs::World;
 use macroquad::texture::Texture2D;
 
 use crate::{
-    components::{bullet::Bullet, enemy::Enemy},
-    engine::components::{CircleHitbox2D, Movable, Sprite2D, Transform2D, Velocity},
+    components::{bullet::Bullet, enemy::Enemy, velocity::Velocity},
+    engine::components::{CircleHitbox2D, Sprite2D, Transform2D},
 };
 
 pub fn spawn_generic_bullet(
@@ -18,7 +18,6 @@ pub fn spawn_generic_bullet(
         Enemy,
         Bullet,
         transform,
-        Movable::default(),
         CircleHitbox2D::new(0.010),
         Sprite2D::new(texture),
         velocity,

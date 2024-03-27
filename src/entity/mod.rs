@@ -4,6 +4,7 @@ pub mod player;
 use std::sync::Arc;
 
 use hecs::{Entity, World};
+use keyframe::functions::EaseInOut;
 use macroquad::{math::vec2, texture::Texture2D};
 
 use crate::{
@@ -13,13 +14,11 @@ use crate::{
         bullet::Bullet,
         enemy::Enemy,
         player::Player,
+        velocity::Velocity,
     },
     engine::{
         assets::AssetsManager,
-        components::{
-            CircleHitbox2D, Hitpoint, Movable, Movement, MovementQueue, Sprite2D, Transform2D,
-            Velocity,
-        },
+        components::{CircleHitbox2D, Hitpoint, Sprite2D, Transform2D},
     },
 };
 
@@ -27,7 +26,7 @@ pub fn spawn_player_bullet(
     world: &mut World,
     transform: &Transform2D,
     texture: Arc<Texture2D>,
-    velocity: Velocity,
+    movement: Velocity,
 ) -> Entity {
     let transform = Transform2D {
         scale: vec2(0.15, 0.15),
@@ -38,10 +37,9 @@ pub fn spawn_player_bullet(
         Player,
         Bullet,
         transform,
-        Movable::default(),
+        movement,
         CircleHitbox2D::new(0.010),
         Sprite2D::new(texture),
-        velocity,
     );
 
     world.spawn(component)
@@ -51,7 +49,6 @@ pub fn lazy_spawn_enemy(
     assets_manager: &AssetsManager,
     transform: Transform2D,
     texture: Arc<Texture2D>,
-    movement: Vec<Movement>,
     hitpoint: Hitpoint,
 ) -> Box<dyn Fn(&mut World)> {
     let attack = AttackInfo::new(
@@ -63,9 +60,8 @@ pub fn lazy_spawn_enemy(
         world.spawn((
             Enemy,
             transform,
-            Movable::new(0.2, 0.4),
+            // Velocity::new_accelerated_damped(0.2, 0.4, 1., GLOBAL_DAMPING_FACTOR, EaseInOut),
             Sprite2D::new(texture.clone()),
-            MovementQueue::new(movement.clone()),
             hitpoint.clone(),
             attack.clone(),
             CircleHitbox2D::new(0.01),
