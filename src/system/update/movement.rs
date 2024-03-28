@@ -3,6 +3,7 @@ use rayon::iter::{ParallelBridge, ParallelIterator};
 
 use crate::{
     components::{
+        controllable::Controllable,
         player::Player,
         velocity::{DampedVelocity, Velocity},
     },
@@ -12,6 +13,7 @@ use crate::{
 pub fn update_velocity(world: &mut World, delta: f32, time: f64) {
     world
         .query::<(&mut Transform2D, &mut Velocity)>()
+        .without::<(&Player, &Controllable)>()
         .iter()
         .par_bridge()
         .for_each(|(_, (transform, vel))| match vel {

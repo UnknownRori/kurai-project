@@ -103,7 +103,10 @@ impl AcceleratedVelocity {
                 add.im
             };
 
-            complx(re, im)
+            complx(
+                if im != 0. { re / 2. } else { re },
+                if re != 0. { im / 2. } else { im },
+            )
         };
 
         if add.re != 0. {

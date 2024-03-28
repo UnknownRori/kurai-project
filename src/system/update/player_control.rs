@@ -49,7 +49,7 @@ pub fn update_player_control(
     world
         .query::<(
             &Player,
-            &Transform2D,
+            &mut Transform2D,
             &mut Velocity,
             &mut AcceleratedVelocity,
         )>()
@@ -80,11 +80,12 @@ pub fn update_player_control(
             } else {
                 1.
             };
+
             vel.set(acceleration.update(new_pos, *vel.get(), delta, time) * move_speed);
 
-            // transform.position += result;
-            // transform.position = transform
-            //     .position
-            //     .clamp(&Complex::new(0.05, 0.05), &Complex::new(0.95, 0.95));
+            transform.position += vel.get() * delta;
+            transform.position = transform
+                .position
+                .clamp(&Complex::new(0.05, 0.05), &Complex::new(0.95, 0.95));
         })
 }
