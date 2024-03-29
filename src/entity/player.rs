@@ -47,7 +47,7 @@ pub fn lazy_spawn_player(assets_manager: &AssetsManager) -> Box<dyn Fn(&mut Worl
             focus,
             DampedVelocity(15.),
             Velocity::Normal(complx(0., 0.)),
-            AcceleratedVelocity::new(0.8, 0.8, 0.4, 0.5, EaseInOut),
+            AcceleratedVelocity::new(0.8, 0.4, 0.5, 0.5, EaseInOut),
             Sprite2D::new(texture.clone()),
             player_attack,
             CircleHitbox2D::new(0.010),
