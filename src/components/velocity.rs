@@ -1,7 +1,10 @@
 use keyframe::{keyframes, AnimationSequence};
 use num_complex::Complex;
 
-use crate::engine::math::{complx, ComplexExt};
+use crate::engine::{
+    math::{complx, ComplexExt},
+    time::Instant,
+};
 
 /// Velocity type that will update the Transform2D
 pub enum Velocity {
@@ -58,6 +61,8 @@ pub struct AcceleratedVelocity {
     pub acceleration: f32,
 
     pub acceleration_keyframe: (AnimationSequence<f32>, AnimationSequence<f32>),
+
+    pub timer: (Option<Instant>, Option<Instant>),
 }
 
 impl AcceleratedVelocity {
@@ -72,6 +77,7 @@ impl AcceleratedVelocity {
             max_speed,
             starting_acceleration,
             acceleration,
+            timer: (None, None),
             acceleration_keyframe: (
                 keyframes![(0., 0., ease), (1., acceleration_time, ease)],
                 keyframes![(0., 0., ease), (1., acceleration_time, ease)],
@@ -131,5 +137,65 @@ impl AcceleratedVelocity {
             &complx(-self.max_speed, -self.max_speed),
             &complx(self.max_speed, self.max_speed),
         )
+    }
+}
+
+/// Constant Acceleration one direction that will modify Velocity enum overtime
+/// It will apply force overtime
+/// INFO : Still experimenting
+pub struct ConstantAcceleration {
+    // Speed Cap
+    pub max_speed: (Complex<f32>, Complex<f32>),
+
+    // Starting acceleration before default acceleration
+    pub starting_acceleration: Complex<f32>,
+
+    // Acceleration overtime
+    pub acceleration: f32,
+
+    pub acceleration_keyframe: (AnimationSequence<f32>, AnimationSequence<f32>),
+
+    pub timer: Instant,
+}
+
+impl ConstantAcceleration {
+    pub fn new(
+        max_speed: f32,
+        starting_acceleration: Complex<f32>,
+        acceleration: f32,
+        acceleration_time: f32,
+        ease: impl keyframe::EasingFunction + Sync + Send + Copy + 'static,
+    ) -> Self {
+        Self {
+            max_speed: (
+                starting_acceleration * max_speed,
+                -(starting_acceleration * max_speed),
+            ),
+            starting_acceleration,
+            acceleration,
+            timer: Instant::now(),
+            acceleration_keyframe: (
+                keyframes![(0., 0., ease), (1., acceleration_time, ease)],
+                keyframes![(0., 0., ease), (1., acceleration_time, ease)],
+            ),
+        }
+    }
+
+    /// Update the current_velocity with the current speed
+    /// add speed should be normalized from -1 to 1
+    pub fn update(
+        &mut self,
+        current_velocity: Complex<f32>,
+        delta: f32,
+        time: f64,
+        // max_speed: Option<f32>,
+    ) -> Complex<f32> {
+        self.acceleration_keyframe
+            .0
+            .advance_by(self.timer.elapsed(time));
+
+        let new_vel =
+            self.starting_acceleration * (self.acceleration * self.acceleration_keyframe.0.now());
+        new_vel
     }
 }

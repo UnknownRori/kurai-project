@@ -5,12 +5,20 @@ use crate::{
     components::{
         controllable::Controllable,
         player::Player,
-        velocity::{DampedVelocity, Velocity},
+        velocity::{ConstantAcceleration, DampedVelocity, Velocity},
     },
-    engine::components::Transform2D,
+    engine::{components::Transform2D, math::ComplexExt},
 };
 
 pub fn update_velocity(world: &mut World, delta: f32, time: f64) {
+    world
+        .query::<(&mut Velocity, &mut ConstantAcceleration)>()
+        .iter()
+        .par_bridge()
+        .for_each(|(_, (vel, acc))| {
+            vel.set(acc.update(*vel.get(), delta, time));
+        });
+
     world
         .query::<(&mut Transform2D, &mut Velocity)>()
         .without::<(&Player, &Controllable)>()

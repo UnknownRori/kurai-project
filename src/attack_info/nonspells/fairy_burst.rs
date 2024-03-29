@@ -1,12 +1,21 @@
 use std::sync::Arc;
 
+use keyframe::functions::EaseInOutCubic;
 use macroquad::{math::vec2, texture::Texture2D};
 
 use crate::{
     assets::konst::RED_BULLET,
-    components::{attack_info::AttackSpawner, velocity::Velocity},
-    engine::{assets::AssetsManager, components::Transform2D, math::ComplexExt},
-    entity::bullet::spawn_generic_bullet,
+    components::{
+        attack_info::AttackSpawner,
+        bullet::Bullet,
+        enemy::Enemy,
+        velocity::{ConstantAcceleration, Velocity},
+    },
+    engine::{
+        assets::AssetsManager,
+        components::{CircleHitbox2D, Sprite2D, Transform2D},
+        math::{complx, ComplexExt},
+    },
 };
 
 #[derive(Debug)]
@@ -30,19 +39,26 @@ impl AttackSpawner for FairyBurst {
         player: &crate::engine::components::Transform2D,
         bullet_speed: f32,
     ) {
-        // Get the direction from target position (player) and add some speed
-        let velocity = current.position().dir(player.as_ref()) * bullet_speed;
+        // Get the direction from target position (player)
+        let dir = current.position().dir(player.as_ref());
 
         let transform = Transform2D {
             scale: vec2(0.03, 0.03),
-            rotation: velocity.rot(),
+            rotation: dir.rot(),
             ..*current
         };
-        spawn_generic_bullet(
-            world,
+
+        let component = (
+            Enemy,
+            Bullet,
             transform,
-            Velocity::Normal(velocity),
-            Arc::clone(&self.bullet),
+            CircleHitbox2D::new(0.010),
+            Sprite2D::new(Arc::clone(&self.bullet)),
+            Velocity::Normal(complx(0., 0.)),
+            // Velocity::Normal(dir * bullet_speed),
+            ConstantAcceleration::new(bullet_speed, dir, 1., 12., EaseInOutCubic),
         );
+
+        world.spawn(component);
     }
 }
