@@ -13,7 +13,7 @@ use crate::{
     konst::{
         DESIRED_ASPECT_RATIO, VIRTUAL_SCREEN_WIDTH, VIRTUAL_STAGE_HEIGHT, VIRTUAL_STAGE_WIDTH,
     },
-    render::{draw_main_ui, draw_stage},
+    render::{draw_main_ui, draw_stage, RenderingBuffer},
     scene::{stage::StageManager, stage1::Stage1Lazy},
     score::ScoreData,
     system::update_system,
@@ -22,26 +22,18 @@ use crate::{
 
 pub struct App {
     assets_manager: AssetsManager,
-    game_buffer: ScreenBuffer2D,
-    playable_buffer: ScreenBuffer2D,
-    controls: Controls<Action>,
-    world: World,
-    stages_manager: StageManager,
-    score: ScoreData,
     font: Font,
+
+    world: World,
+    score: ScoreData,
+    controls: Controls<Action>,
+    render: RenderingBuffer,
+    stages_manager: StageManager,
 }
 
 impl App {
     pub async fn new() -> Self {
-        let game_buffer: ScreenBuffer2D =
-            ScreenBuffer2DBuilder::from_aspect_ratio(VIRTUAL_SCREEN_WIDTH, DESIRED_ASPECT_RATIO)
-                .filter(FilterMode::Nearest)
-                .into();
-
-        let playable_buffer: ScreenBuffer2D =
-            ScreenBuffer2DBuilder::from_size(VIRTUAL_STAGE_WIDTH, VIRTUAL_STAGE_HEIGHT)
-                .filter(FilterMode::Nearest)
-                .into();
+        let render = RenderingBuffer::default();
 
         let mut assets_manager = AssetsManager::default();
         preload(&mut assets_manager).await;
@@ -60,13 +52,13 @@ impl App {
 
         Self {
             stages_manager,
-            assets_manager,
-            game_buffer,
-            controls: init_controls(),
-            playable_buffer,
-            world,
-            score: ScoreData::default(),
             font,
+
+            world,
+            render,
+            assets_manager,
+            controls: init_controls(),
+            score: ScoreData::default(),
         }
     }
 
@@ -93,8 +85,7 @@ impl App {
         // INFO : Begin drawing on the buffer space
         draw_main_ui(
             &self.world,
-            &self.game_buffer,
-            &self.playable_buffer,
+            &self.render,
             &self.controls,
             &self.font,
             &self.score,
@@ -106,7 +97,7 @@ impl App {
             &self.world,
             &self.assets_manager,
             &self.stages_manager,
-            &self.playable_buffer,
+            &self.render,
             &self.controls,
             time,
             delta,
@@ -116,7 +107,7 @@ impl App {
         let adjusted = get_adjusted_screen(DESIRED_ASPECT_RATIO);
         let offset = vec2((width - adjusted.x) / 2f32, (height - adjusted.y) / 2f32);
         draw_texture_ex(
-            self.game_buffer.texture(),
+            self.render.ui.texture(),
             offset.x,
             offset.y,
             WHITE,

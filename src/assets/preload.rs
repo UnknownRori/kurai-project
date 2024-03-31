@@ -1,11 +1,15 @@
-use macroquad::{material::MaterialParams, miniquad::UniformType};
+use macroquad::{
+    material::MaterialParams,
+    miniquad::{self, BlendFactor, BlendState, Equation, PipelineParams, UniformType},
+};
 
 use crate::engine::assets::AssetsManager;
 
 use super::{
     konst::{
-        FAIRY_1, FOCUS, GENERIC_SHOOT_SOUND, GRAZE, PICHUN, RED_BULLET, REMILIA_TEXTURE_1,
-        REMI_BULLET_1, STAGE_1_BG_SHADER, STAGE_1_GROUND, TEXTURE_HUD,
+        BLOOM_MATERIAL, FAIRY_1, FOCUS, GENERIC_SHOOT_SOUND, GRAZE, LIGHTMAP, PICHUN,
+        POST_PROCESSING, RED_BULLET, REMILIA_TEXTURE_1, REMI_BULLET_1, STAGE_1_BG_SHADER,
+        STAGE_1_GROUND, TEXTURE_HUD,
     },
     preload_sfx, preload_texture,
 };
@@ -73,6 +77,95 @@ pub async fn preload(assets_manager: &mut AssetsManager) {
                     (String::from("iTime"), UniformType::Float1),
                     (String::from("iResolution"), UniformType::Float2),
                 ],
+                ..Default::default()
+            },
+        )
+        .await
+        .unwrap();
+
+    assets_manager
+        .shaders
+        .register(
+            LIGHTMAP,
+            "./resources/shaders/lightmap.vert.glsl",
+            "./resources/shaders/lightmap.frag.glsl",
+            MaterialParams {
+                uniforms: vec![(String::from("iResolution"), UniformType::Float2)],
+                pipeline_params: PipelineParams {
+                    color_blend: Some(BlendState::new(
+                        Equation::Add,
+                        BlendFactor::Value(miniquad::BlendValue::SourceAlpha),
+                        BlendFactor::OneMinusValue(miniquad::BlendValue::SourceAlpha),
+                    )),
+                    alpha_blend: Some(BlendState::new(
+                        Equation::Add,
+                        BlendFactor::One,
+                        BlendFactor::One,
+                    )),
+                    ..Default::default()
+                },
+                ..Default::default()
+            },
+        )
+        .await
+        .unwrap();
+
+    assets_manager
+        .shaders
+        .register(
+            BLOOM_MATERIAL,
+            "./resources/shaders/bloom.vert.glsl",
+            "./resources/shaders/bloom.frag.glsl",
+            MaterialParams {
+                uniforms: vec![
+                    (String::from("iResolution"), UniformType::Float2),
+                    (String::from("horizontal"), UniformType::Int1),
+                    (String::from("depth"), UniformType::Int1),
+                ],
+                pipeline_params: PipelineParams {
+                    color_blend: Some(BlendState::new(
+                        Equation::Add,
+                        BlendFactor::Value(miniquad::BlendValue::SourceAlpha),
+                        BlendFactor::OneMinusValue(miniquad::BlendValue::SourceAlpha),
+                    )),
+                    alpha_blend: Some(BlendState::new(
+                        Equation::Add,
+                        BlendFactor::One,
+                        BlendFactor::One,
+                    )),
+                    ..Default::default()
+                },
+                ..Default::default()
+            },
+        )
+        .await
+        .unwrap();
+
+    assets_manager
+        .shaders
+        .register(
+            POST_PROCESSING,
+            "./resources/shaders/post_processing.vert.glsl",
+            "./resources/shaders/post_processing.frag.glsl",
+            MaterialParams {
+                uniforms: vec![
+                    (String::from("iResolution"), UniformType::Float2),
+                    (String::from("exposure"), UniformType::Float1),
+                ],
+                textures: vec![String::from("bloom")],
+                pipeline_params: PipelineParams {
+                    color_blend: Some(BlendState::new(
+                        Equation::Add,
+                        BlendFactor::Value(miniquad::BlendValue::SourceAlpha),
+                        BlendFactor::OneMinusValue(miniquad::BlendValue::SourceAlpha),
+                    )),
+                    alpha_blend: Some(BlendState::new(
+                        Equation::Add,
+                        BlendFactor::One,
+                        BlendFactor::One,
+                    )),
+                    ..Default::default()
+                },
                 ..Default::default()
             },
         )

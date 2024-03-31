@@ -17,7 +17,12 @@ pub const PLAYER_SHOOT_SOUND: &str = "plr-shoot-snd";
 pub const PICHUN: &str = "pichun";
 pub const GRAZE: &str = "graze";
 
+// MATERIAL
+pub const BLOOM_MATERIAL: &str = "bloom";
+pub const LIGHTMAP: &str = "lightmap";
+pub const POST_PROCESSING: &str = "post";
+
 // Stage Resource
 // Stage 1
-pub const STAGE_1_GROUND: &str = "grn-stg";
+pub const STAGE_1_GROUND: &str = "stg1-grnd";
 pub const STAGE_1_BG_SHADER: &str = "stg1-bg";
