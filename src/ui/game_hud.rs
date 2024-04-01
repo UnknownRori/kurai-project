@@ -1,21 +1,20 @@
-use hecs::World;
 use macroquad::{
     color::WHITE,
-    math::vec2,
     text::{camera_font_scale, draw_text_ex, measure_text, Font, TextParams},
     time::get_fps,
 };
 
 use crate::{
     assets::konst::TEXTURE_HUD,
+    cmpx,
     components::hud::HUD,
     engine::{
         assets::AssetsManager,
-        components::{CustomDraw, Layer2D, Sprite2D, Transform2D},
-        math::complx,
+        components::{Layer2D, Sprite2D, Transform2D},
     },
     konst::GAME_VERSION,
     score::ScoreData,
+    vec2,
 };
 
 pub fn init_game_hud(assets_manager: &AssetsManager) -> (HUD, Sprite2D, Transform2D, Layer2D) {
@@ -25,7 +24,7 @@ pub fn init_game_hud(assets_manager: &AssetsManager) -> (HUD, Sprite2D, Transfor
         .expect("texture hud not found!");
 
     let sprite = Sprite2D::new(texture);
-    let transform = Transform2D::new(complx(0.5, 0.5), vec2(1., 1.), 0.);
+    let transform = Transform2D::new(cmpx!(0.5), vec2!(1.), 0.);
 
     (HUD, sprite, transform, Layer2D(100))
 }

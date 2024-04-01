@@ -6,10 +6,10 @@ use num_traits::ToPrimitive as _;
 
 use crate::{
     assets::konst::{FAIRY_1, STAGE_1_BG_SHADER, STAGE_1_GROUND},
+    cmpx,
     engine::{
         components::{Hitpoint, Transform2D},
         ecs::{SpawnEvent, Spawner},
-        math::complx,
     },
     entity::{lazy_spawn_enemy, player::lazy_spawn_player},
     konst::{VIRTUAL_STAGE_HEIGHT, VIRTUAL_STAGE_WIDTH},
@@ -102,21 +102,21 @@ impl LazyStage for Stage1Lazy {
         let fairy = assets_manager.textures.get(FAIRY_1).unwrap();
         let fairy_spawn = lazy_spawn_enemy(
             assets_manager,
-            Transform2D::new(complx(0.2, 0.2), vec2(0.1, 0.1), 0.),
+            Transform2D::new(cmpx!(0.2, 0.2), vec2(0.1, 0.1), 0.),
             Arc::clone(&fairy),
             Hitpoint::new(2.5),
         );
 
         let fairy_spawn1 = lazy_spawn_enemy(
             assets_manager,
-            Transform2D::new(complx(0.8, 0.2), vec2(0.1, 0.1), 0.),
+            Transform2D::new(cmpx!(0.8, 0.2), vec2(0.1, 0.1), 0.),
             Arc::clone(&fairy),
             Hitpoint::new(2.5),
         );
 
         let fairy_spawn2 = lazy_spawn_enemy(
             assets_manager,
-            Transform2D::new(complx(0.5, 0.3), vec2(0.1, 0.1), 0.),
+            Transform2D::new(cmpx!(0.5, 0.3), vec2(0.1, 0.1), 0.),
             Arc::clone(&fairy),
             Hitpoint::new(2.5),
         );

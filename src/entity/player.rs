@@ -1,22 +1,22 @@
 use std::sync::Arc;
 
 use hecs::World;
-use keyframe::functions::EaseInOut;
 use macroquad::math::vec2;
 
 use crate::{
     assets::konst::{FOCUS, REMILIA_TEXTURE_1},
     attack_info::players::remi::RemiliaBasicAttack,
+    cmpx,
     components::{
         attack_info::{AttackInfo, AttackSpawner, GenericAttackInfo, PlayerAttack, SpellInfo},
+        movement::MoveParams,
         player::{Focus, Player},
-        velocity::{AcceleratedVelocity, DampedVelocity, Velocity},
     },
     engine::{
         assets::AssetsManager,
         components::{CircleHitbox2D, Sprite2D, Transform2D},
-        math::complx,
     },
+    vec2,
 };
 
 pub fn lazy_spawn_player(assets_manager: &AssetsManager) -> Box<dyn Fn(&mut World)> {
@@ -43,11 +43,9 @@ pub fn lazy_spawn_player(assets_manager: &AssetsManager) -> Box<dyn Fn(&mut Worl
 
         world.spawn((
             Player,
-            Transform2D::new(complx(0.5, 0.5), vec2(0.1, 0.1), 0.),
+            Transform2D::new(cmpx!(0.5), vec2!(0.1), 0.),
             focus,
-            DampedVelocity(15.),
-            Velocity::Normal(complx(0., 0.)),
-            AcceleratedVelocity::new(0.8, 0.4, 0.5, 0.5, EaseInOut),
+            MoveParams::move_dampen(cmpx!(0.), 0.85),
             Sprite2D::new(texture.clone()),
             player_attack,
             CircleHitbox2D::new(0.010),

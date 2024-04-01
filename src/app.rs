@@ -4,15 +4,8 @@ use macroquad::prelude::*;
 use crate::{
     assets::preload::preload,
     controls::{init_controls, Action},
-    engine::{
-        assets::AssetsManager,
-        camera::screen_buffer2d::{ScreenBuffer2D, ScreenBuffer2DBuilder},
-        controls::Controls,
-        window::utils::get_adjusted_screen,
-    },
-    konst::{
-        DESIRED_ASPECT_RATIO, VIRTUAL_SCREEN_WIDTH, VIRTUAL_STAGE_HEIGHT, VIRTUAL_STAGE_WIDTH,
-    },
+    engine::{assets::AssetsManager, controls::Controls, window::utils::get_adjusted_screen},
+    konst::DESIRED_ASPECT_RATIO,
     render::{draw_main_ui, draw_stage, RenderingBuffer},
     scene::{stage::StageManager, stage1::Stage1Lazy},
     score::ScoreData,

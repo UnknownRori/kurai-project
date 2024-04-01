@@ -4,14 +4,14 @@ use hecs::World;
 use macroquad::texture::Texture2D;
 
 use crate::{
-    components::{bullet::Bullet, enemy::Enemy, velocity::Velocity},
+    components::{bullet::Bullet, enemy::Enemy, movement::MoveParams},
     engine::components::{CircleHitbox2D, Sprite2D, Transform2D},
 };
 
 pub fn spawn_generic_bullet(
     world: &mut World,
     transform: Transform2D,
-    velocity: Velocity,
+    velocity: MoveParams,
     texture: Arc<Texture2D>,
 ) {
     let component = (

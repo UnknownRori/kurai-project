@@ -5,10 +5,6 @@ use num_complex::Complex;
 
 use super::{CartesianExt, ToVec2};
 
-pub fn complx(re: f32, im: f32) -> Complex<f32> {
-    Complex::new(re, im)
-}
-
 impl ToVec2 for Complex<f32> {
     fn to_vec2(&self) -> macroquad::prelude::Vec2 {
         vec2(self.re, self.im)
@@ -16,11 +12,13 @@ impl ToVec2 for Complex<f32> {
 }
 
 pub trait ComplexExt: CartesianExt {
-    fn distance_squared(&self, other: &Self);
+    fn distance_squared(&self, other: &Self) -> f32;
     fn clamp(&self, min: &Self, max: &Self) -> Self;
     fn dir(&self, other: &Self) -> Self;
+    fn cdir(angle: f32) -> Self;
     fn normalize(&self) -> Self;
     fn rot(&self) -> f32;
+    fn lerp(&self, other: &Self, t: f32) -> Self;
 }
 
 impl<T> CartesianExt for Complex<T> {
@@ -36,8 +34,16 @@ impl<T> CartesianExt for Complex<T> {
 }
 
 impl ComplexExt for Complex<f32> {
-    fn distance_squared(&self, other: &Self) {
-        todo!()
+    fn distance_squared(&self, other: &Self) -> f32 {
+        (self - other).norm_sqr()
+    }
+
+    fn lerp(&self, other: &Self, t: f32) -> Self {
+        t * (self - other) + self
+    }
+
+    fn cdir(angle: f32) -> Self {
+        Complex::from_polar(1., angle)
     }
 
     fn clamp(&self, min: &Self, max: &Self) -> Self {

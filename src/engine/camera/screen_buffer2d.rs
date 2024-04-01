@@ -1,10 +1,8 @@
 use macroquad::{
     camera::{set_camera, set_default_camera, Camera2D},
-    input::{is_key_down, mouse_wheel},
     math::{uvec2, vec2, Rect, UVec2},
-    miniquad::{FilterMode, KeyCode},
+    miniquad::FilterMode,
     texture::{render_target, RenderTarget, Texture2D},
-    time::get_frame_time,
     window::{screen_height, screen_width},
 };
 

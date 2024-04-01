@@ -4,7 +4,6 @@ pub mod player;
 use std::sync::Arc;
 
 use hecs::{Entity, World};
-use keyframe::functions::EaseInOut;
 use macroquad::{math::vec2, texture::Texture2D};
 
 use crate::{
@@ -13,8 +12,8 @@ use crate::{
         attack_info::{AttackInfo, GenericAttackInfo},
         bullet::Bullet,
         enemy::Enemy,
+        movement::MoveParams,
         player::Player,
-        velocity::Velocity,
     },
     engine::{
         assets::AssetsManager,
@@ -26,7 +25,7 @@ pub fn spawn_player_bullet(
     world: &mut World,
     transform: &Transform2D,
     texture: Arc<Texture2D>,
-    movement: Velocity,
+    movement: MoveParams,
 ) -> Entity {
     let transform = Transform2D {
         scale: vec2(0.15, 0.15),

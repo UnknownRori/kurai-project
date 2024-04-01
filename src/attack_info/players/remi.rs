@@ -5,8 +5,9 @@ use macroquad::texture::Texture2D;
 
 use crate::{
     assets::konst::REMI_BULLET_1,
-    components::{attack_info::AttackSpawner, velocity::Velocity},
-    engine::{assets::AssetsManager, components::Transform2D, math::complx},
+    cmpx,
+    components::{attack_info::AttackSpawner, movement::MoveParams},
+    engine::{assets::AssetsManager, components::Transform2D},
     entity::spawn_player_bullet,
 };
 
@@ -29,7 +30,7 @@ impl AttackSpawner for RemiliaBasicAttack {
             world,
             current,
             Arc::clone(&self.bullet),
-            Velocity::Normal(complx(0., -bullet_speed)),
+            MoveParams::move_linear(cmpx!(0., -bullet_speed)),
         );
     }
 }

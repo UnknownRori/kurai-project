@@ -1,42 +1,15 @@
 use hecs::World;
 use rayon::iter::{ParallelBridge, ParallelIterator};
 
-use crate::{
-    components::{
-        controllable::Controllable,
-        player::Player,
-        velocity::{ConstantAcceleration, DampedVelocity, Velocity},
-    },
-    engine::{components::Transform2D, math::ComplexExt},
-};
+use crate::{components::movement::MoveParams, engine::components::Transform2D};
 
-pub fn update_velocity(world: &mut World, delta: f32, time: f64) {
+pub fn update_movement(world: &mut World, delta: f32) {
     world
-        .query::<(&mut Velocity, &mut ConstantAcceleration)>()
+        .query::<(&mut Transform2D, &mut MoveParams)>()
         .iter()
         .par_bridge()
-        .for_each(|(_, (vel, acc))| {
-            vel.set(acc.update(*vel.get(), delta, time));
-        });
-
-    world
-        .query::<(&mut Transform2D, &mut Velocity)>()
-        .without::<(&Player, &Controllable)>()
-        .iter()
-        .par_bridge()
-        .for_each(|(_, (transform, vel))| match vel {
-            Velocity::Normal(a) => transform.position += *a * delta,
-            Velocity::Multiply(a) => transform.position *= *a * delta,
+        .for_each(|(_, (transform, move_params))| {
+            move_params.update(&mut transform.position, delta);
         });
 }
 
-pub fn update_vel_damper(world: &mut World, delta: f32, time: f64) {
-    world
-        .query::<(&mut Velocity, &DampedVelocity)>()
-        .iter()
-        .par_bridge()
-        .for_each(|(_, (vel, damper))| match vel {
-            Velocity::Normal(vel) => *vel *= 1. - damper.0 * delta,
-            Velocity::Multiply(vel) => *vel *= 1. - damper.0 * delta,
-        });
-}

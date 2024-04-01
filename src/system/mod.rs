@@ -15,12 +15,9 @@ use self::{
         hud_draw::hud_draw,
     },
     update::{
-        ai_movement::enemy_movement_update,
-        attack_info_trigger::attack_info_trigger,
-        collision::collision_player_with_enemy_bullets,
-        delete_bullet_offmap::delete_bullet_offmap,
-        movement::{update_vel_damper, update_velocity},
-        player_control::update_player_control,
+        ai_movement::enemy_movement_update, attack_info_trigger::attack_info_trigger,
+        collision::collision_player_with_enemy_bullets, delete_bullet_offmap::delete_bullet_offmap,
+        movement::update_movement, player_control::update_player_control,
     },
 };
 
@@ -37,8 +34,7 @@ pub fn update_system(
     update_player_control(world, controls, delta, time);
     enemy_movement_update(world, time, delta);
     attack_info_trigger(world, time, delta);
-    update_velocity(world, delta, time);
-    update_vel_damper(world, delta, time);
+    update_movement(world, delta);
 
     collision_player_with_enemy_bullets(world, score);
     delete_bullet_offmap(world);

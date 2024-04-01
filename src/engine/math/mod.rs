@@ -1,11 +1,35 @@
 mod complex;
 mod normalization;
+mod utils;
 mod vec2;
 
-pub use complex::{complx, ComplexExt};
+pub use complex::ComplexExt;
 use macroquad::math::Vec2;
 pub use normalization::{NormalizationComplexf32, NormalizationVector2};
 use num_complex::Complex;
+
+#[macro_export]
+macro_rules! cmpx {
+    ($x:expr) => {
+        num_complex::Complex::new($x, $x)
+    };
+    ($re:expr, $im:expr) => {
+        num_complex::Complex::new($re, $im)
+    };
+    (($re:expr, $im:expr)) => {
+        num_complex::Complex::new($re, $im)
+    };
+}
+
+#[macro_export]
+macro_rules! vec2 {
+    ($x:expr) => {
+        macroquad::math::Vec2::new($x, $x)
+    };
+    ($x:expr, $y:expr) => {
+        macroquad::math::Vec2::new($x, $y)
+    };
+}
 
 pub trait CartesianExt {
     type Output;

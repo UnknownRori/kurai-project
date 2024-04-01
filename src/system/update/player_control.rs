@@ -1,16 +1,16 @@
 use hecs::World;
-use macroquad::time::get_frame_time;
+use macroquad::math::Rect;
 use num_complex::Complex;
 
 use crate::{
-    components::{
-        attack_info::PlayerAttack,
-        bullet::Bullet,
-        player::Player,
-        velocity::{AcceleratedVelocity, DampedVelocity, Velocity},
-    },
+    cmpx,
+    components::{attack_info::PlayerAttack, bullet::Bullet, movement::MoveParams, player::Player},
     controls::Action,
-    engine::{components::Transform2D, controls::Controls, math::ComplexExt},
+    engine::{
+        components::Transform2D,
+        controls::Controls,
+        math::{ComplexExt, ToVec2},
+    },
 };
 
 pub fn update_player_control(
@@ -47,17 +47,12 @@ pub fn update_player_control(
     }
 
     world
-        .query::<(
-            &Player,
-            &mut Transform2D,
-            &mut Velocity,
-            &mut AcceleratedVelocity,
-        )>()
+        .query::<(&Player, &mut Transform2D, &mut MoveParams)>()
         .without::<&Bullet>()
         .iter()
-        .for_each(|(_, (_, transform, vel, acceleration))| {
+        .for_each(|(_, (_, transform, move_params))| {
             let mut new_pos = Complex::new(0.0, 0.0);
-            let move_speed = 1.;
+            let move_speed = 10.; // TODO : Make this correspond player mode
 
             if controls.is_key_down(Action::Left) {
                 new_pos += Complex::new(-move_speed, 0.0);
@@ -81,11 +76,12 @@ pub fn update_player_control(
                 1.
             };
 
-            vel.set(acceleration.update(new_pos, *vel.get(), delta, time) * move_speed);
+            move_params.acceleration = new_pos * move_speed;
 
-            transform.position += vel.get() * delta;
-            transform.position = transform
-                .position
-                .clamp(&Complex::new(0.05, 0.05), &Complex::new(0.95, 0.95));
+            let rect = Rect::new(0.05, 0.05, 0.95, 0.95);
+            transform.position = transform.position.clamp(&cmpx!(0.05), &cmpx!(0.95));
+            if !rect.contains(transform.position().to_vec2()) {
+                move_params.acceleration = cmpx!(0.);
+            }
         })
 }

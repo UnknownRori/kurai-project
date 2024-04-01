@@ -1,20 +1,14 @@
 use std::sync::Arc;
 
-use keyframe::functions::EaseInOutCubic;
 use macroquad::{math::vec2, texture::Texture2D};
 
 use crate::{
     assets::konst::RED_BULLET,
-    components::{
-        attack_info::AttackSpawner,
-        bullet::Bullet,
-        enemy::Enemy,
-        velocity::{ConstantAcceleration, Velocity},
-    },
+    components::{attack_info::AttackSpawner, bullet::Bullet, enemy::Enemy, movement::MoveParams},
     engine::{
         assets::AssetsManager,
         components::{CircleHitbox2D, Sprite2D, Transform2D},
-        math::{complx, ComplexExt},
+        math::ComplexExt,
     },
 };
 
@@ -54,9 +48,9 @@ impl AttackSpawner for FairyBurst {
             transform,
             CircleHitbox2D::new(0.010),
             Sprite2D::new(Arc::clone(&self.bullet)),
-            Velocity::Normal(complx(0., 0.)),
-            // Velocity::Normal(dir * bullet_speed),
-            ConstantAcceleration::new(bullet_speed, dir, 1., 12., EaseInOutCubic),
+            MoveParams::move_linear(dir),
+            // Velocity::Normal(cmpx!(0., 0.)),
+            // ConstantAcceleration::new(bullet_speed, dir, 1., 12., EaseInOutCubic),
         );
 
         world.spawn(component);
