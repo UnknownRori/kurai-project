@@ -13,8 +13,8 @@ uniform sampler2D bloom;
 uniform mediump float exposure;
 
 void main() {
-    lowp vec3 main_texture = texture(Texture, uv).rgb;      
-    lowp vec3 bloom_color = texture(bloom, uv).rgb;
+    lowp vec3 main_texture = texture2D(Texture, uv).rgb;      
+    lowp vec3 bloom_color = texture2D(bloom, uv).rgb;
     lowp vec3 result = main_texture + bloom_color * 0.5; // additive blending
     gl_FragColor = vec4(result, 1.0);
 }

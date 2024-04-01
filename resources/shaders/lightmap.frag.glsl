@@ -10,7 +10,7 @@ uniform sampler2D Texture;		// Texture from macroquad draw_texture
 #define BRIGHTNESS_THRESHOLD 0.90
 
 void main() {
-    lowp vec4 color = texture(Texture, uv);
+    lowp vec4 color = texture2D(Texture, uv);
 
     lowp float brightness = dot(color.rgb, vec3(0.2126, 0.7152, 0.0722));
     if (brightness > BRIGHTNESS_THRESHOLD) {

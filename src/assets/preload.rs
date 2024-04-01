@@ -120,7 +120,6 @@ pub async fn preload(assets_manager: &mut AssetsManager) {
                 uniforms: vec![
                     (String::from("iResolution"), UniformType::Float2),
                     (String::from("horizontal"), UniformType::Int1),
-                    (String::from("depth"), UniformType::Int1),
                 ],
                 pipeline_params: PipelineParams {
                     color_blend: Some(BlendState::new(

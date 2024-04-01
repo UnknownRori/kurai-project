@@ -35,7 +35,6 @@ pub fn generate_bloom(assets: &AssetsManager, from: &ScreenBuffer2D, to: &Screen
     clear_background(Color::new(0., 0., 0., 0.));
     let bloom_shader = assets.shaders.get(BLOOM_MATERIAL).unwrap();
     bloom_shader.set_uniform("iResolution", texture.size());
-    bloom_shader.set_uniform("depth", 5);
     gl_use_material(&bloom_shader);
     bloom_shader.set_uniform("horizontal", 1);
     draw_texture_ex(

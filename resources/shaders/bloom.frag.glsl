@@ -9,12 +9,12 @@ uniform sampler2D Texture;		// Texture from macroquad draw_texture
 uniform sampler2D _ScreenTexture;       // Texture from macroquad draw_texture
 
 uniform int horizontal;
-uniform int depth;
 
 #define TIME_GRADIENT 18.
 #define GRADIENT 0.40
+#define DEPTH 5
 
-lowp vec4 blur(sampler2D image, vec2 uv, vec2 resolution, vec2 direction) {
+lowp vec4 blur(sampler2D image, lowp vec2 uv, lowp vec2 resolution, lowp vec2 direction) {
   lowp vec4 color = vec4(0.0);
   lowp vec2 off1 = vec2(1.3846153846) * direction;
   lowp vec2 off2 = vec2(3.2307692308) * direction;
@@ -31,12 +31,12 @@ void main() {
    lowp vec4 color = vec4(0);
 
    if (horizontal > 0) {
-      for (int i = 0; i < depth; i++) {
+      for (int i = 0; i < DEPTH; i++) {
 	 lowp float gradient = smoothstep(GRADIENT, 0., float(i) / TIME_GRADIENT);
 	 color += blur(Texture, uv, iResolution, vec2(tex_offset.x * float(i), 0.)) * gradient;
       }
    } else {
-      for (int i = 0; i < depth; i++) {
+      for (int i = 0; i < DEPTH; i++) {
 	 lowp float gradient = smoothstep(GRADIENT, 0., float(i) / TIME_GRADIENT);
 	 color += blur(_ScreenTexture, uv, iResolution, vec2(0., tex_offset.y * float(i))) * gradient;
       }
