@@ -2,6 +2,9 @@
 pub const FOCUS: &str = "focus";
 pub const TEXTURE_HUD: &str = "hud";
 
+// NOISE
+pub const SUPER_PERLIN: &str = "spr-perlin";
+
 // BULLET
 pub const RED_BULLET: &str = "red-bullet";
 pub const REMI_BULLET_1: &str = "remi-blt-1";

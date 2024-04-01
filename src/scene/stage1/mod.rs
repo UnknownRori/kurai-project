@@ -5,7 +5,7 @@ use macroquad::prelude::*;
 use num_traits::ToPrimitive as _;
 
 use crate::{
-    assets::konst::{FAIRY_1, STAGE_1_BG_SHADER, STAGE_1_GROUND},
+    assets::konst::{FAIRY_1, STAGE_1_BG_SHADER, STAGE_1_GROUND, SUPER_PERLIN},
     cmpx,
     engine::{
         components::{Hitpoint, Transform2D},
@@ -19,6 +19,7 @@ use super::{lazy_stage::LazyStage, scene::Scene, stage::Stage, stage_info::Stage
 
 pub struct Stage1 {
     pub bg_material: Arc<Material>,
+    // pub bg_noise: Arc<Texture2D>,
     pub bg_texture: Arc<Texture2D>,
 
     pub spawner: Spawner,
@@ -152,15 +153,18 @@ impl LazyStage for Stage1Lazy {
 
         let bg_material = assets_manager.shaders.get(STAGE_1_BG_SHADER).unwrap();
         let bg_texture = assets_manager.textures.get(STAGE_1_GROUND).unwrap();
+        let bg_noise = assets_manager.textures.get(SUPER_PERLIN).unwrap();
 
         bg_material.set_uniform(
             "iResolution",
             vec2(VIRTUAL_STAGE_WIDTH as f32, VIRTUAL_STAGE_HEIGHT as f32),
         );
+        bg_material.set_texture("noise_texture", bg_noise.as_ref().clone());
 
         Box::new(Stage1 {
             spawner,
             bg_texture,
+            // bg_noise,
             bg_material,
         })
     }

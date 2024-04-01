@@ -3,31 +3,26 @@
 varying mediump vec2 uv;                // From vertex shader
 
 uniform mediump vec2 iResolution;       // Coming from uniform not normalized
-uniform mediump mat4 Model;             // Default macroquad model stuff
-uniform mediump mat4 Projection;        // Default macroquad camera stuff
 uniform sampler2D Texture;		// Texture from macroquad draw_texture
 uniform sampler2D _ScreenTexture;       // Texture from macroquad draw_texture
 
 uniform int horizontal;
 
-#define TIME_GRADIENT 18.
-#define GRADIENT 0.40
-#define DEPTH 5
+#define TIME_GRADIENT 15.
+#define GRADIENT 0.80
+#define DEPTH 3
 
 lowp vec4 blur(sampler2D image, lowp vec2 uv, lowp vec2 resolution, lowp vec2 direction) {
   lowp vec4 color = vec4(0.0);
-  lowp vec2 off1 = vec2(1.3846153846) * direction;
-  lowp vec2 off2 = vec2(3.2307692308) * direction;
-  color += texture2D(image, uv) * 0.2270270270;
-  color += texture2D(image, uv + (off1 / resolution)) * 0.3162162162;
-  color += texture2D(image, uv - (off1 / resolution)) * 0.3162162162;
-  color += texture2D(image, uv + (off2 / resolution)) * 0.0702702703;
-  color += texture2D(image, uv - (off2 / resolution)) * 0.0702702703;
+  lowp vec2 off1 = vec2(1.3333333333333333) * direction;
+  color += texture2D(image, uv) * 0.29411764705882354;
+  color += texture2D(image, uv + (off1 / resolution)) * 0.35294117647058826;
+  color += texture2D(image, uv - (off1 / resolution)) * 0.35294117647058826;
   return color;
 }
 
 void main() {
-   lowp vec2 tex_offset = vec2(1.5);
+   lowp vec2 tex_offset = vec2(2.5);
    lowp vec4 color = vec4(0);
 
    if (horizontal > 0) {

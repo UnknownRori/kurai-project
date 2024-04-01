@@ -9,7 +9,7 @@ use super::{
     konst::{
         BLOOM_MATERIAL, FAIRY_1, FOCUS, GENERIC_SHOOT_SOUND, GRAZE, LIGHTMAP, PICHUN,
         POST_PROCESSING, RED_BULLET, REMILIA_TEXTURE_1, REMI_BULLET_1, STAGE_1_BG_SHADER,
-        STAGE_1_GROUND, TEXTURE_HUD,
+        STAGE_1_GROUND, SUPER_PERLIN, TEXTURE_HUD,
     },
     preload_sfx, preload_texture,
 };
@@ -66,6 +66,13 @@ pub async fn preload(assets_manager: &mut AssetsManager) {
     )
     .await;
 
+    preload_texture(
+        assets_manager,
+        SUPER_PERLIN,
+        "./resources/noise/super-perlin.png",
+    )
+    .await;
+
     assets_manager
         .shaders
         .register(
@@ -77,6 +84,7 @@ pub async fn preload(assets_manager: &mut AssetsManager) {
                     (String::from("iTime"), UniformType::Float1),
                     (String::from("iResolution"), UniformType::Float2),
                 ],
+                textures: vec![String::from("noise_texture")],
                 ..Default::default()
             },
         )
