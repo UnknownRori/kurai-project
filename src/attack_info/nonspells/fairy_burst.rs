@@ -1,6 +1,4 @@
-use std::sync::Arc;
-
-use macroquad::{math::vec2, texture::Texture2D};
+use macroquad::prelude::*;
 
 use crate::{
     assets::konst::RED_BULLET,
@@ -14,7 +12,7 @@ use crate::{
 
 #[derive(Debug)]
 pub struct FairyBurst {
-    bullet: Arc<Texture2D>,
+    bullet: Texture2D,
 }
 
 impl FairyBurst {
@@ -47,10 +45,8 @@ impl AttackSpawner for FairyBurst {
             Bullet,
             transform,
             CircleHitbox2D::new(0.010),
-            Sprite2D::new(Arc::clone(&self.bullet)),
+            Sprite2D::new(self.bullet.clone()),
             MoveParams::move_linear(dir),
-            // Velocity::Normal(cmpx!(0., 0.)),
-            // ConstantAcceleration::new(bullet_speed, dir, 1., 12., EaseInOutCubic),
         );
 
         world.spawn(component);

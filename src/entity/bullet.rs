@@ -12,14 +12,14 @@ pub fn spawn_generic_bullet(
     world: &mut World,
     transform: Transform2D,
     velocity: MoveParams,
-    texture: Arc<Texture2D>,
+    sprite: Sprite2D,
 ) {
     let component = (
         Enemy,
         Bullet,
         transform,
         CircleHitbox2D::new(0.010),
-        Sprite2D::new(texture),
+        sprite,
         velocity,
     );
 

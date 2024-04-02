@@ -1,19 +1,20 @@
-use std::sync::Arc;
-
 use hecs::World;
-use macroquad::texture::Texture2D;
+use macroquad::prelude::*;
 
 use crate::{
     assets::konst::REMI_BULLET_1,
     cmpx,
     components::{attack_info::AttackSpawner, movement::MoveParams},
-    engine::{assets::AssetsManager, components::Transform2D},
+    engine::{
+        assets::AssetsManager,
+        components::{Sprite2D, Transform2D},
+    },
     entity::spawn_player_bullet,
 };
 
 #[derive(Debug)]
 pub struct RemiliaBasicAttack {
-    bullet: Arc<Texture2D>,
+    bullet: Texture2D,
 }
 
 impl RemiliaBasicAttack {
@@ -29,7 +30,7 @@ impl AttackSpawner for RemiliaBasicAttack {
         spawn_player_bullet(
             world,
             current,
-            Arc::clone(&self.bullet),
+            Sprite2D::new(self.bullet.clone()),
             MoveParams::move_linear(cmpx!(0., -bullet_speed)),
         );
     }

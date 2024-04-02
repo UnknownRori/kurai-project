@@ -12,4 +12,3 @@ pub const GAME_NAME: &str = "Kurai Project";
 pub const GAME_VERSION: &str = "0.0.1 alpha";
 
 pub const DONE_BLINKING: f32 = 0.000001;
-pub const GLOBAL_DAMPING_FACTOR: f32 = 0.1;

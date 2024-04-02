@@ -1,4 +1,4 @@
-use std::{collections::HashMap, error::Error, sync::Arc};
+use std::{collections::HashMap, error::Error};
 
 use macroquad::{
     audio::{load_sound, Sound},
@@ -8,7 +8,7 @@ use macroquad::{
     texture::{load_texture, Texture2D},
 };
 
-pub type SharedAsset<T> = Arc<T>;
+pub type SharedAsset<T> = T;
 
 #[derive(Default, Debug)]
 pub struct AssetsManager {
@@ -34,13 +34,13 @@ impl TextureHandler {
 
         let texture = load_texture(path).await?;
         texture.set_filter(filter.unwrap_or(FilterMode::Nearest));
-        self.0.insert(name.to_owned(), Arc::new(texture));
+        self.0.insert(name.to_owned(), texture);
 
         Ok(())
     }
 
-    pub fn get(&self, name: &str) -> Option<Arc<Texture2D>> {
-        self.0.get(name).map(|a| Arc::clone(&a))
+    pub fn get(&self, name: &str) -> Option<SharedAsset<Texture2D>> {
+        self.0.get(name).cloned()
     }
 }
 
@@ -54,12 +54,12 @@ impl SfxHandler {
         }
 
         let sound = load_sound(path).await?;
-        self.0.insert(name.to_owned(), Arc::new(sound));
+        self.0.insert(name.to_owned(), sound);
         Ok(())
     }
 
-    pub fn get(&self, name: &str) -> Option<Arc<Sound>> {
-        self.0.get(name).map(|a| Arc::clone(&a))
+    pub fn get(&self, name: &str) -> Option<SharedAsset<Sound>> {
+        self.0.get(name).cloned()
     }
 }
 
@@ -88,7 +88,7 @@ impl ShaderHandler {
             params,
         )?;
 
-        self.0.insert(name.to_owned(), Arc::new(material));
+        self.0.insert(name.to_owned(), material);
         Ok(())
     }
 
@@ -103,8 +103,8 @@ impl ShaderHandler {
         Ok(())
     }
 
-    pub fn get(&self, name: &str) -> Option<Arc<Material>> {
-        self.0.get(name).map(|a| Arc::clone(&a))
+    pub fn get(&self, name: &str) -> Option<SharedAsset<Material>> {
+        self.0.get(name).cloned()
     }
 }
 
@@ -118,11 +118,11 @@ impl BgmHandler {
         }
 
         let sound = load_sound(path).await?;
-        self.0.insert(name.to_owned(), Arc::new(sound));
+        self.0.insert(name.to_owned(), sound);
         Ok(())
     }
 
-    pub fn get(&self, name: &str) -> Option<Arc<Sound>> {
-        self.0.get(name).map(|a| Arc::clone(&a))
+    pub fn get(&self, name: &str) -> Option<SharedAsset<Sound>> {
+        self.0.get(name).cloned()
     }
 }

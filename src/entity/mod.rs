@@ -24,7 +24,7 @@ use crate::{
 pub fn spawn_player_bullet(
     world: &mut World,
     transform: &Transform2D,
-    texture: Arc<Texture2D>,
+    sprite: Sprite2D,
     movement: MoveParams,
 ) -> Entity {
     let transform = Transform2D {
@@ -38,7 +38,7 @@ pub fn spawn_player_bullet(
         transform,
         movement,
         CircleHitbox2D::new(0.010),
-        Sprite2D::new(texture),
+        sprite,
     );
 
     world.spawn(component)
@@ -47,7 +47,7 @@ pub fn spawn_player_bullet(
 pub fn lazy_spawn_enemy(
     assets_manager: &AssetsManager,
     transform: Transform2D,
-    texture: Arc<Texture2D>,
+    sprite: Sprite2D,
     hitpoint: Hitpoint,
 ) -> Box<dyn Fn(&mut World)> {
     let attack = AttackInfo::new(
@@ -59,8 +59,7 @@ pub fn lazy_spawn_enemy(
         world.spawn((
             Enemy,
             transform,
-            // Velocity::new_accelerated_damped(0.2, 0.4, 1., GLOBAL_DAMPING_FACTOR, EaseInOut),
-            Sprite2D::new(texture.clone()),
+            sprite.clone(),
             hitpoint.clone(),
             attack.clone(),
             CircleHitbox2D::new(0.01),

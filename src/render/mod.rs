@@ -128,7 +128,7 @@ pub fn draw_stage(
     post_processing.set_uniform("exposure", 0.8f32);
     post_processing.set_texture("bloom", render.bloom.texture().clone());
 
-    gl_use_material(&*post_processing);
+    gl_use_material(&post_processing);
     draw_texture_ex(
         render.stage.texture(),
         0.,

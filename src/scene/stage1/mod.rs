@@ -8,7 +8,7 @@ use crate::{
     assets::konst::{FAIRY_1, STAGE_1_BG_SHADER, STAGE_1_GROUND, SUPER_PERLIN},
     cmpx,
     engine::{
-        components::{Hitpoint, Transform2D},
+        components::{Hitpoint, Sprite2D, Transform2D},
         ecs::{SpawnEvent, Spawner},
     },
     entity::{lazy_spawn_enemy, player::lazy_spawn_player},
@@ -18,9 +18,8 @@ use crate::{
 use super::{lazy_stage::LazyStage, scene::Scene, stage::Stage, stage_info::StageInfo};
 
 pub struct Stage1 {
-    pub bg_material: Arc<Material>,
-    // pub bg_noise: Arc<Texture2D>,
-    pub bg_texture: Arc<Texture2D>,
+    pub bg_material: Material,
+    pub bg_texture: Texture2D,
 
     pub spawner: Spawner,
 }
@@ -57,9 +56,9 @@ impl Scene for Stage1 {
     fn draw(&self, time: f64, delta: f32) {
         self.bg_material
             .set_uniform("iTime", time.to_f32().unwrap());
-        gl_use_material(&*self.bg_material);
+        gl_use_material(&self.bg_material);
         draw_texture_ex(
-            &*self.bg_texture,
+            &self.bg_texture,
             0.,
             0.,
             WHITE,
@@ -104,21 +103,21 @@ impl LazyStage for Stage1Lazy {
         let fairy_spawn = lazy_spawn_enemy(
             assets_manager,
             Transform2D::new(cmpx!(0.2, 0.2), vec2(0.1, 0.1), 0.),
-            Arc::clone(&fairy),
+            Sprite2D::new(fairy.clone()),
             Hitpoint::new(2.5),
         );
 
         let fairy_spawn1 = lazy_spawn_enemy(
             assets_manager,
             Transform2D::new(cmpx!(0.8, 0.2), vec2(0.1, 0.1), 0.),
-            Arc::clone(&fairy),
+            Sprite2D::new(fairy.clone()),
             Hitpoint::new(2.5),
         );
 
         let fairy_spawn2 = lazy_spawn_enemy(
             assets_manager,
             Transform2D::new(cmpx!(0.5, 0.3), vec2(0.1, 0.1), 0.),
-            Arc::clone(&fairy),
+            Sprite2D::new(fairy.clone()),
             Hitpoint::new(2.5),
         );
 
@@ -159,7 +158,7 @@ impl LazyStage for Stage1Lazy {
             "iResolution",
             vec2(VIRTUAL_STAGE_WIDTH as f32, VIRTUAL_STAGE_HEIGHT as f32),
         );
-        bg_material.set_texture("noise_texture", bg_noise.as_ref().clone());
+        bg_material.set_texture("noise_texture", bg_noise.clone());
 
         Box::new(Stage1 {
             spawner,
