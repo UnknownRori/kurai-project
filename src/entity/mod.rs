@@ -7,7 +7,7 @@ use hecs::{Entity, World};
 use macroquad::{math::vec2, texture::Texture2D};
 
 use crate::{
-    attack_info::nonspells::fairy_burst::FairyBurst,
+    attack_info::nonspells::{fairy_burst::FairyBurst, fairy_spin::FairySpin},
     components::{
         attack_info::{AttackInfo, GenericAttackInfo},
         bullet::Bullet,
@@ -53,6 +53,29 @@ pub fn lazy_spawn_enemy(
     let attack = AttackInfo::new(
         GenericAttackInfo::new(1., 2.),
         Arc::new(FairyBurst::new(&assets_manager)),
+    );
+
+    Box::new(move |world| {
+        world.spawn((
+            Enemy,
+            transform,
+            sprite.clone(),
+            hitpoint.clone(),
+            attack.clone(),
+            CircleHitbox2D::new(0.01),
+        ));
+    })
+}
+
+pub fn lazy_spawn_enemy2(
+    assets_manager: &AssetsManager,
+    transform: Transform2D,
+    sprite: Sprite2D,
+    hitpoint: Hitpoint,
+) -> Box<dyn Fn(&mut World)> {
+    let attack = AttackInfo::new(
+        GenericAttackInfo::new(1., 2.),
+        Arc::new(FairySpin::new(&assets_manager)),
     );
 
     Box::new(move |world| {
