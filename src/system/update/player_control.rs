@@ -34,7 +34,7 @@ pub fn update_player_control(
             if controls.is_key_down(Action::Attack) && info.normal.info.can_fire(time) {
                 info.normal
                     .spawner
-                    .spawn(world, pos, pos, info.normal.info.bullet_speed);
+                    .spawn(world, pos, pos, info.normal.info.bullet_speed, delta);
 
                 let _ = world
                     .get::<&mut PlayerAttack>(*id)

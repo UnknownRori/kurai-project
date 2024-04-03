@@ -26,7 +26,14 @@ impl RemiliaBasicAttack {
 }
 
 impl AttackSpawner for RemiliaBasicAttack {
-    fn spawn(&self, world: &mut World, current: &Transform2D, _: &Transform2D, bullet_speed: f32) {
+    fn spawn(
+        &self,
+        world: &mut World,
+        current: &Transform2D,
+        _: &Transform2D,
+        bullet_speed: f32,
+        _delta: f32,
+    ) {
         spawn_player_bullet(
             world,
             current,

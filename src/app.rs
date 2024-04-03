@@ -4,7 +4,10 @@ use macroquad::prelude::*;
 use crate::{
     assets::preload::preload,
     controls::{init_controls, Action},
-    engine::{assets::AssetsManager, controls::Controls, window::utils::get_adjusted_screen},
+    engine::{
+        assets::AssetsManager, controls::Controls, fps_counter::FPSCounter,
+        window::utils::get_adjusted_screen,
+    },
     konst::DESIRED_ASPECT_RATIO,
     render::{draw_main_ui, draw_stage, RenderingBuffer},
     scene::{stage::StageManager, stage1::Stage1Lazy},
@@ -15,6 +18,7 @@ use crate::{
 
 pub struct App {
     assets_manager: AssetsManager,
+    fps_counter: FPSCounter,
     font: Font,
 
     world: World,
@@ -45,6 +49,7 @@ impl App {
 
         Self {
             stages_manager,
+            fps_counter: FPSCounter::default(),
             font,
 
             world,
@@ -58,6 +63,7 @@ impl App {
     pub async fn update(&mut self) {
         let time = get_time();
         let delta = get_frame_time();
+        self.fps_counter.update();
         update_system(
             &mut self.world,
             &self.controls,
@@ -82,6 +88,7 @@ impl App {
             &self.controls,
             &self.font,
             &self.score,
+            &self.fps_counter,
             time,
             delta,
         );

@@ -8,6 +8,7 @@ use crate::{
         assets::AssetsManager,
         camera::screen_buffer2d::{ScreenBuffer2D, ScreenBuffer2DBuilder},
         controls::Controls,
+        fps_counter::FPSCounter,
     },
     konst::{
         DESIRED_ASPECT_RATIO, VIRTUAL_SCREEN_WIDTH, VIRTUAL_STAGE_HEIGHT, VIRTUAL_STAGE_WIDTH,
@@ -78,6 +79,7 @@ pub fn draw_main_ui(
     controls: &Controls<Action>,
     font: &Font,
     score: &ScoreData,
+    fps_counter: &FPSCounter,
     time: f64,
     delta: f32,
 ) {
@@ -96,7 +98,7 @@ pub fn draw_main_ui(
         },
     );
 
-    update_draw_hud(world, controls, score, font, time, delta);
+    update_draw_hud(world, controls, score, fps_counter, font, time, delta);
     draw_entity_number(world.len(), font);
     render.ui.done_camera();
 }

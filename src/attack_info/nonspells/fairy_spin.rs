@@ -34,6 +34,7 @@ impl AttackSpawner for FairySpin {
         current: &crate::engine::components::Transform2D,
         player: &crate::engine::components::Transform2D,
         bullet_speed: f32,
+        delta: f32,
     ) {
         let dir = current.position().dir(player.as_ref());
 

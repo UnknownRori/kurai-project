@@ -3,7 +3,7 @@ use macroquad::text::Font;
 
 use crate::{
     controls::Action,
-    engine::controls::Controls,
+    engine::{controls::Controls, fps_counter::FPSCounter},
     score::ScoreData,
     ui::game_hud::{draw_hud_info, draw_score},
 };
@@ -40,7 +40,7 @@ pub fn update_system(
     delete_bullet_offmap(world);
 }
 
-pub fn update_draw(world: &World, controls: &Controls<Action>, time: f64, delta: f32) {
+pub fn update_draw(world: &World, controls: &Controls<Action>, time: f64, _delta: f32) {
     game_entity_draw(world);
     player_focus_draw(world, controls, time);
     collision_draw(world);
@@ -48,13 +48,14 @@ pub fn update_draw(world: &World, controls: &Controls<Action>, time: f64, delta:
 
 pub fn update_draw_hud(
     world: &World,
-    controls: &Controls<Action>,
+    _controls: &Controls<Action>,
     score: &ScoreData,
+    fps_counter: &FPSCounter,
     font: &Font,
-    time: f64,
-    delta: f32,
+    _time: f64,
+    _delta: f32,
 ) {
     hud_draw(world);
-    draw_hud_info(font);
+    draw_hud_info(font, fps_counter);
     draw_score(score, font);
 }

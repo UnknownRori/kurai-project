@@ -29,8 +29,13 @@ pub fn attack_info_trigger(world: &mut World, time: f64, delta: f32) {
             return;
         }
 
-        info.spawner
-            .spawn(world, &transform, player_transform, info.info.bullet_speed);
+        info.spawner.spawn(
+            world,
+            &transform,
+            player_transform,
+            info.info.bullet_speed,
+            delta,
+        );
 
         let _ = world
             .get::<&mut AttackInfo>(id)

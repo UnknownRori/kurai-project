@@ -11,6 +11,7 @@ pub trait AttackSpawner: Send + Sync + Debug {
         _current: &Transform2D,
         _player: &Transform2D,
         _bullet_speed: f32,
+        _delta: f32,
     );
 }
 

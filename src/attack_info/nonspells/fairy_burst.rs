@@ -30,6 +30,7 @@ impl AttackSpawner for FairyBurst {
         current: &crate::engine::components::Transform2D,
         player: &crate::engine::components::Transform2D,
         bullet_speed: f32,
+        _delta: f32,
     ) {
         // Get the direction from target position (player)
         let dir = current.position().dir(player.as_ref());

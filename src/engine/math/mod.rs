@@ -1,11 +1,9 @@
 mod complex;
-mod normalization;
 mod utils;
 mod vec2;
 
 pub use complex::ComplexExt;
 use macroquad::math::Vec2;
-pub use normalization::{NormalizationComplexf32, NormalizationVector2};
 use num_complex::Complex;
 
 #[macro_export]
