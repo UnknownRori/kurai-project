@@ -31,17 +31,9 @@ pub fn update_player_control(
             .collect::<Vec<_>>();
 
         for (id, pos, info) in player.iter() {
-            if controls.is_key_down(Action::Attack) && info.normal.info.can_fire(time) {
-                info.normal
-                    .spawner
-                    .spawn(world, pos, pos, info.normal.info.bullet_speed, delta);
-
-                let _ = world
-                    .get::<&mut PlayerAttack>(*id)
-                    .unwrap()
-                    .normal
-                    .info
-                    .update_cooldown();
+            if controls.is_key_down(Action::Attack) {
+                let mut normal_spawner = info.normal.spawner.lock().unwrap();
+                normal_spawner.spawn(world, pos, pos, delta);
             }
         }
     }
@@ -51,7 +43,7 @@ pub fn update_player_control(
         .without::<&Bullet>()
         .iter()
         .for_each(|(_, (_, transform, move_params))| {
-            let mut new_pos = Complex::new(0.0, 0.0);
+            let mut new_pos = cmpx!(0.);
             let move_speed = 10.; // TODO : Make this correspond player mode
 
             if controls.is_key_down(Action::Left) {

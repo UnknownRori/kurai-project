@@ -39,7 +39,7 @@ pub fn collision_player_with_enemy_bullets(world: &mut World, score: &mut ScoreD
         })
         .collect::<Vec<_>>();
 
-    for (player_id, player_transform, player_hitbox) in players {
+    for (_, player_transform, player_hitbox) in players {
         for (bullet_id, is_grazed, bullet_transform, bullet_hitbox) in &enemy_bullets {
             if player_hitbox.is_intersect_with_circle_hitbox(
                 &player_transform,

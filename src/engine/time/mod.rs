@@ -21,7 +21,7 @@ impl Instant {
     }
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct Timer {
     pub time: f32,
     pub repeating: bool,

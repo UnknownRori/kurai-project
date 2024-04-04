@@ -25,22 +25,7 @@ pub fn attack_info_trigger(world: &mut World, time: f64, delta: f32) {
 
     let player_transform = players.first().unwrap();
     for (id, info, transform) in enemies {
-        if !info.info.can_fire(time) {
-            return;
-        }
-
-        info.spawner.spawn(
-            world,
-            &transform,
-            player_transform,
-            info.info.bullet_speed,
-            delta,
-        );
-
-        let _ = world
-            .get::<&mut AttackInfo>(id)
-            .unwrap()
-            .info
-            .update_cooldown();
+        let mut spawner = info.spawner.lock().unwrap();
+        spawner.spawn(world, &transform, player_transform, delta);
     }
 }

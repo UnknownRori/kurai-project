@@ -8,37 +8,36 @@ use crate::{
     engine::{
         assets::AssetsManager,
         components::{Sprite2D, Transform2D},
+        time::Timer,
     },
     entity::spawn_player_bullet,
 };
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct RemiliaBasicAttack {
     bullet: Texture2D,
+    timer: Timer,
 }
 
 impl RemiliaBasicAttack {
     pub fn new(assets: &AssetsManager) -> Self {
         let bullet = assets.textures.get(REMI_BULLET_1).unwrap();
+        let timer = Timer::new(0.05, true);
 
-        Self { bullet }
+        Self { bullet, timer }
     }
 }
 
 impl AttackSpawner for RemiliaBasicAttack {
-    fn spawn(
-        &self,
-        world: &mut World,
-        current: &Transform2D,
-        _: &Transform2D,
-        bullet_speed: f32,
-        _delta: f32,
-    ) {
-        spawn_player_bullet(
-            world,
-            current,
-            Sprite2D::new(self.bullet.clone()),
-            MoveParams::move_linear(cmpx!(0., -bullet_speed)),
-        );
+    fn spawn(&mut self, world: &mut World, current: &Transform2D, _: &Transform2D, _delta: f32) {
+        self.timer.update();
+        if self.timer.completed() {
+            spawn_player_bullet(
+                world,
+                current,
+                Sprite2D::new(self.bullet.clone()),
+                MoveParams::move_linear(cmpx!(0., -2.)),
+            );
+        }
     }
 }

@@ -1,14 +1,13 @@
-use std::sync::Arc;
+use std::sync::{Arc, Mutex};
 
 use hecs::World;
-use macroquad::math::vec2;
 
 use crate::{
     assets::konst::{FOCUS, REMILIA_TEXTURE_1},
     attack_info::players::remi::RemiliaBasicAttack,
     cmpx,
     components::{
-        attack_info::{AttackInfo, AttackSpawner, GenericAttackInfo, PlayerAttack, SpellInfo},
+        attack_info::{AttackInfo, AttackSpawnFn, PlayerAttack, SpellInfo},
         movement::MoveParams,
         player::{Focus, Player},
     },
@@ -24,20 +23,15 @@ pub fn lazy_spawn_player(assets_manager: &AssetsManager) -> Box<dyn Fn(&mut Worl
     let focus = assets_manager.textures.get(FOCUS).unwrap();
 
     // TODO : Put this character specific somewhere
-    let remi_attack = Arc::new(RemiliaBasicAttack::new(assets_manager)) as Arc<dyn AttackSpawner>;
+    let remi_attack =
+        Arc::new(Mutex::new(RemiliaBasicAttack::new(assets_manager))) as AttackSpawnFn;
 
     Box::new(move |world| {
         let remi_attack = remi_attack.clone();
         let player_attack = PlayerAttack {
-            normal: AttackInfo::new(GenericAttackInfo::new(2., 20.), Arc::clone(&remi_attack)),
-            focus: AttackInfo::new(GenericAttackInfo::new(2., 20.), Arc::clone(&remi_attack)),
-            spell: SpellInfo::new(
-                1,
-                "Gugnir".to_string(),
-                0.,
-                Arc::clone(&remi_attack),
-                GenericAttackInfo::new(20., 1.),
-            ),
+            normal: AttackInfo::new(Arc::clone(&remi_attack)),
+            focus: AttackInfo::new(Arc::clone(&remi_attack)),
+            spell: SpellInfo::new(1, "Gugnir".to_string(), 0., Arc::clone(&remi_attack)),
         };
         let focus = Focus(Sprite2D::new(focus.clone()));
 

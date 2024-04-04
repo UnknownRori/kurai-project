@@ -1,19 +1,15 @@
 pub mod bullet;
 pub mod player;
 
-use std::sync::Arc;
+use std::sync::{Arc, Mutex};
 
 use hecs::{Entity, World};
-use macroquad::{math::vec2, texture::Texture2D};
+use macroquad::math::vec2;
 
 use crate::{
     attack_info::nonspells::{fairy_burst::FairyBurst, fairy_spin::FairySpin},
     components::{
-        attack_info::{AttackInfo, GenericAttackInfo},
-        bullet::Bullet,
-        enemy::Enemy,
-        movement::MoveParams,
-        player::Player,
+        attack_info::AttackInfo, bullet::Bullet, enemy::Enemy, movement::MoveParams, player::Player,
     },
     engine::{
         assets::AssetsManager,
@@ -50,10 +46,7 @@ pub fn lazy_spawn_enemy(
     sprite: Sprite2D,
     hitpoint: Hitpoint,
 ) -> Box<dyn Fn(&mut World)> {
-    let attack = AttackInfo::new(
-        GenericAttackInfo::new(1., 2.),
-        Arc::new(FairyBurst::new(&assets_manager)),
-    );
+    let attack = Arc::new(Mutex::new(FairyBurst::new(&assets_manager)));
 
     Box::new(move |world| {
         world.spawn((
@@ -61,7 +54,7 @@ pub fn lazy_spawn_enemy(
             transform,
             sprite.clone(),
             hitpoint.clone(),
-            attack.clone(),
+            AttackInfo::new(attack.clone()),
             CircleHitbox2D::new(0.01),
         ));
     })
@@ -73,10 +66,7 @@ pub fn lazy_spawn_enemy2(
     sprite: Sprite2D,
     hitpoint: Hitpoint,
 ) -> Box<dyn Fn(&mut World)> {
-    let attack = AttackInfo::new(
-        GenericAttackInfo::new(1., 2.),
-        Arc::new(FairySpin::new(&assets_manager)),
-    );
+    let attack = Arc::new(Mutex::new(FairySpin::new(&assets_manager)));
 
     Box::new(move |world| {
         world.spawn((
@@ -84,7 +74,7 @@ pub fn lazy_spawn_enemy2(
             transform,
             sprite.clone(),
             hitpoint.clone(),
-            attack.clone(),
+            AttackInfo::new(attack.clone()),
             CircleHitbox2D::new(0.01),
         ));
     })
