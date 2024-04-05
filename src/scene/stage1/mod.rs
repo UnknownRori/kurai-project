@@ -51,11 +51,11 @@ impl StageInfo for Stage1 {
 
 impl Scene for Stage1 {
     fn start(&mut self, time: f64, delta: f32) {
-        self.spawner.start(time);
+        //
     }
 
     fn update(&mut self, world: &mut World, time: f64, delta: f32) {
-        self.spawner.update(world, time);
+        self.spawner.update(world, delta.into());
     }
 
     fn draw(&self, time: f64, delta: f32) {
@@ -141,19 +141,19 @@ impl LazyStage for Stage1Lazy {
                 }),
             ),
             SpawnEvent::new(
-                1.,
+                2.9,
                 Arc::new(move |world| {
                     (fairy_spawn)(world);
                 }),
             ),
             SpawnEvent::new(
-                4.,
+                2.9,
                 Arc::new(move |world| {
                     (fairy_spawn1)(world);
                 }),
             ),
             SpawnEvent::new(
-                8.,
+                4.,
                 Arc::new(move |world| {
                     (fairy_spawn2)(world);
                 }),

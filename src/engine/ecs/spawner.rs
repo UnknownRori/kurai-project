@@ -5,13 +5,13 @@ use hecs::World;
 use crate::engine::time::Instant;
 
 pub struct SpawnEvent {
-    pub start: f64,
+    pub start: f32,
     pub is_spawned: bool,
     pub spawn: Arc<dyn Fn(&mut World)>,
 }
 
 impl SpawnEvent {
-    pub fn new(start: f64, spawn: Arc<dyn Fn(&mut World)>) -> Self {
+    pub fn new(start: f32, spawn: Arc<dyn Fn(&mut World)>) -> Self {
         Self {
             start,
             is_spawned: false,
@@ -21,23 +21,20 @@ impl SpawnEvent {
 }
 
 pub struct Spawner {
-    start: Option<Instant>,
+    timer: f32,
     lists: Vec<SpawnEvent>,
 }
 
 impl Spawner {
     pub fn new(lists: Vec<SpawnEvent>) -> Self {
-        Self { lists, start: None }
+        Self { lists, timer: 0. }
     }
 
-    pub fn start(&mut self, time: f64) {
-        self.start = Some(Instant::new(time));
-    }
-
-    pub fn update(&mut self, world: &mut World, time: f64) {
+    pub fn update(&mut self, world: &mut World, time: f32) {
+        self.timer += time;
         self.lists
             .iter_mut()
-            .filter(|event| !event.is_spawned && event.start < self.start.unwrap().elapsed(time))
+            .filter(|event| !event.is_spawned && event.start < self.timer)
             .for_each(|event| {
                 (event.spawn)(world);
                 event.is_spawned = true;
