@@ -76,7 +76,7 @@ impl From<ScreenBuffer2DBuilder> for ScreenBuffer2D {
 
 #[derive(Debug, Default)]
 pub struct ScreenBuffer2D {
-    camera: Camera2D,
+    pub camera: Camera2D,
 }
 
 impl ScreenBuffer2D {

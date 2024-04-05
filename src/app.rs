@@ -5,7 +5,10 @@ use crate::{
     assets::preload::preload,
     controls::{init_controls, Action},
     engine::{
-        assets::AssetsManager, controls::Controls, fps_counter::FPSCounter,
+        assets::AssetsManager,
+        camera::screen_shake::{self, ScreenShake},
+        controls::Controls,
+        fps_counter::FPSCounter,
         window::utils::get_adjusted_screen,
     },
     konst::DESIRED_ASPECT_RATIO,
@@ -26,6 +29,8 @@ pub struct App {
     controls: Controls<Action>,
     render: RenderingBuffer,
     stages_manager: StageManager,
+
+    screen_shake: ScreenShake,
 }
 
 impl App {
@@ -47,6 +52,8 @@ impl App {
             .unwrap();
         font.set_filter(FilterMode::Nearest);
 
+        let mut screen_shake = ScreenShake::new();
+
         Self {
             stages_manager,
             fps_counter: FPSCounter::default(),
@@ -57,12 +64,18 @@ impl App {
             assets_manager,
             controls: init_controls(),
             score: ScoreData::default(),
+
+            screen_shake,
         }
     }
 
     pub async fn update(&mut self) {
         let time = get_time();
         let delta = get_frame_time();
+
+        self.screen_shake.update();
+        self.render.stage.camera.offset = self.screen_shake.get_shake_offset();
+
         self.fps_counter.update();
         update_system(
             &mut self.world,
