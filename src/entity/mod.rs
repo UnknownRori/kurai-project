@@ -8,8 +8,10 @@ use macroquad::math::vec2;
 
 use crate::{
     attack_info::nonspells::{fairy_burst::FairyBurst, fairy_spin::FairySpin},
+    cmpx,
     components::{
-        attack_info::AttackInfo, bullet::Bullet, enemy::Enemy, movement::MoveParams, player::Player,
+        attack_info::AttackInfo, bullet::Bullet, enemy::Enemy, movement::MoveParams,
+        player::Player, waypoints::Waypoints,
     },
     engine::{
         assets::AssetsManager,
@@ -54,6 +56,7 @@ pub fn lazy_spawn_enemy(
             transform,
             sprite.clone(),
             hitpoint.clone(),
+            MoveParams::default(),
             AttackInfo::new(attack.clone()),
             CircleHitbox2D::new(0.01),
         ));
@@ -65,6 +68,7 @@ pub fn lazy_spawn_enemy2(
     transform: Transform2D,
     sprite: Sprite2D,
     hitpoint: Hitpoint,
+    waypoints: Waypoints,
 ) -> Box<dyn Fn(&mut World)> {
     let attack = Arc::new(Mutex::new(FairySpin::new(&assets_manager)));
 
@@ -74,6 +78,8 @@ pub fn lazy_spawn_enemy2(
             transform,
             sprite.clone(),
             hitpoint.clone(),
+            MoveParams::default(),
+            waypoints.clone(),
             AttackInfo::new(attack.clone()),
             CircleHitbox2D::new(0.01),
         ));

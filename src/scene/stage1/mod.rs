@@ -7,6 +7,11 @@ use num_traits::ToPrimitive as _;
 use crate::{
     assets::konst::{FAIRY_1, STAGE_1_BG_SHADER, STAGE_1_GROUND, SUPER_PERLIN},
     cmpx,
+    components::{
+        movement::MoveParams,
+        waypoint::{Waypoint, WaypointFactor},
+        waypoints::Waypoints,
+    },
     engine::{
         components::{Hitpoint, Sprite2D, Transform2D},
         ecs::{SpawnEvent, Spawner},
@@ -119,6 +124,13 @@ impl LazyStage for Stage1Lazy {
             Transform2D::new(cmpx!(0.5, 0.3), vec2(0.1, 0.1), 0.),
             Sprite2D::new(fairy.clone()),
             Hitpoint::new(2.5),
+            Waypoints::new(vec![Waypoint::new(
+                1.,
+                WaypointFactor::PreserveVelocity(MoveParams::move_accelerated(
+                    cmpx!(0.),
+                    cmpx!(0., 0.1),
+                )),
+            )]),
         );
 
         let spawn_lists = vec![
