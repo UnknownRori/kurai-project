@@ -30,7 +30,7 @@ pub fn game_window() -> Conf {
         ivec2(900, 675),
         WINDOW_RESIZEABLE,
         Some(icon),
-        2,
+        1,
         true,
         Platform::default(),
     )
