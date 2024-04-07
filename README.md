@@ -38,6 +38,17 @@ For more information on dōjin culture,
 
 ## Installation
 
+### System Requirement
+
+----------------------------------------
+| Component |   Minimum  | Recommended |
+|-----------|------------|-------------|
+|    CPU    |   2.0 Ghz  |   2.0 Ghz   |
+|    RAM    |   300 Mb   |   500 Mb    |
+|    GPU    |    1 Gb    |  > 1.0 Gb   |
+
+* The requirement might change over the course of development
+
 > [!WARNING]
 > Pre-compiled is not yet available, you can install it via cargo install or cargo build``
 
