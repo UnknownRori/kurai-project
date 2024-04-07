@@ -8,9 +8,10 @@ uniform sampler2D _ScreenTexture;       // Texture from macroquad draw_texture
 
 uniform int horizontal;
 
-#define TIME_GRADIENT 15.
+#define TIME_GRADIENT 25.
+#define OFFSET 3.5
 #define GRADIENT 0.80
-#define DEPTH 3
+#define DEPTH 4
 
 lowp vec4 blur(sampler2D image, lowp vec2 uv, lowp vec2 resolution, lowp vec2 direction) {
   lowp vec4 color = vec4(0.0);
@@ -22,7 +23,7 @@ lowp vec4 blur(sampler2D image, lowp vec2 uv, lowp vec2 resolution, lowp vec2 di
 }
 
 void main() {
-   lowp vec2 tex_offset = vec2(2.5);
+   lowp vec2 tex_offset = vec2(OFFSET);
    lowp vec4 color = vec4(0);
 
    if (horizontal > 0) {

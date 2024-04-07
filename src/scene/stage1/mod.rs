@@ -18,6 +18,7 @@ use crate::{
     },
     entity::{lazy_spawn_enemy, lazy_spawn_enemy2, player::lazy_spawn_player},
     konst::{VIRTUAL_STAGE_HEIGHT, VIRTUAL_STAGE_WIDTH},
+    render::RenderingBuffer,
 };
 
 use super::{lazy_stage::LazyStage, scene::Scene, stage::Stage, stage_info::StageInfo};
@@ -58,9 +59,11 @@ impl Scene for Stage1 {
         self.spawner.update(world, delta.into());
     }
 
-    fn draw(&self, time: f64, delta: f32) {
+    fn draw(&self, render: &RenderingBuffer, time: f64, delta: f32) {
         self.bg_material
             .set_uniform("iTime", time.to_f32().unwrap());
+        self.bg_material
+            .set_texture("entities_buffer", render.entities.texture().clone());
         gl_use_material(&self.bg_material);
         draw_texture_ex(
             &self.bg_texture,

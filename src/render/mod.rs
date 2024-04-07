@@ -21,9 +21,11 @@ use crate::{
         update_draw_hud,
     },
     ui::game_hud::draw_entity_number,
+    vec2,
 };
 
 pub struct RenderingBuffer {
+    pub entities: ScreenBuffer2D,
     // Entity drawed
     pub stage: ScreenBuffer2D,
     // Everything combine and ui on top of that
@@ -40,6 +42,11 @@ impl Default for RenderingBuffer {
     fn default() -> Self {
         let ui: ScreenBuffer2D =
             ScreenBuffer2DBuilder::from_aspect_ratio(VIRTUAL_SCREEN_WIDTH, DESIRED_ASPECT_RATIO)
+                .filter(FilterMode::Nearest)
+                .into();
+
+        let entities: ScreenBuffer2D =
+            ScreenBuffer2DBuilder::from_size(VIRTUAL_STAGE_WIDTH, VIRTUAL_STAGE_HEIGHT)
                 .filter(FilterMode::Nearest)
                 .into();
 
@@ -66,6 +73,7 @@ impl Default for RenderingBuffer {
         Self {
             ui,
             bloom,
+            entities,
             stage,
             lightmap,
             post_processing,
@@ -112,11 +120,25 @@ pub fn draw_stage(
     time: f64,
     delta: f32,
 ) {
+    render.entities.set_camera();
+    clear_background(Color::new(0., 0., 0., 0.));
+    game_entity_draw(world);
+    render.entities.done_camera();
+
     render.stage.set_camera();
     clear_background(Color::new(0., 0., 0., 0.));
 
-    stage_manager.draw(time, delta);
-    game_entity_draw(world);
+    stage_manager.draw(render, time, delta);
+    draw_texture_ex(
+        render.entities.texture(),
+        0.,
+        0.,
+        WHITE,
+        DrawTextureParams {
+            dest_size: Some(vec2!(1.)),
+            ..Default::default()
+        },
+    );
     render.stage.done_camera();
 
     fetch_lightmap(assets_manager, &render.stage, &render.lightmap);
@@ -129,6 +151,7 @@ pub fn draw_stage(
     post_processing.set_uniform("iResolution", render.bloom.texture().size());
     post_processing.set_uniform("exposure", 0.8f32);
     post_processing.set_texture("bloom", render.bloom.texture().clone());
+    post_processing.set_texture("stage", render.stage.texture().clone());
 
     gl_use_material(&post_processing);
     draw_texture_ex(

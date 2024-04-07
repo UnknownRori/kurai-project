@@ -1,6 +1,6 @@
 use hecs::World;
 
-use crate::engine::assets::AssetsManager;
+use crate::{engine::assets::AssetsManager, render::RenderingBuffer};
 
 use super::{lazy_stage::LazyStage, scene::Scene, stage_info::StageInfo};
 
@@ -42,9 +42,9 @@ impl StageManager {
         }
     }
 
-    pub fn draw(&self, time: f64, delta: f32) {
+    pub fn draw(&self, render: &RenderingBuffer, time: f64, delta: f32) {
         if let Some(stage) = &self.current {
-            stage.draw(time, delta);
+            stage.draw(render, time, delta);
         }
     }
 }

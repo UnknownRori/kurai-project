@@ -5,7 +5,7 @@ varying mediump vec2 uv;                // From vertex shader
 uniform mediump vec2 iResolution;       // Coming from uniform not normalized
 uniform sampler2D Texture;		// Texture from macroquad draw_texture
 
-#define BRIGHTNESS_THRESHOLD 0.90
+#define BRIGHTNESS_THRESHOLD 0.5
 
 void main() {
     lowp vec4 color = texture2D(Texture, uv);

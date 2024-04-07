@@ -84,7 +84,10 @@ pub async fn preload(assets_manager: &mut AssetsManager) {
                     (String::from("iTime"), UniformType::Float1),
                     (String::from("iResolution"), UniformType::Float2),
                 ],
-                textures: vec![String::from("noise_texture")],
+                textures: vec![
+                    String::from("noise_texture"),
+                    String::from("entities_buffer"),
+                ],
                 ..Default::default()
             },
         )
@@ -159,7 +162,7 @@ pub async fn preload(assets_manager: &mut AssetsManager) {
                     (String::from("iResolution"), UniformType::Float2),
                     (String::from("exposure"), UniformType::Float1),
                 ],
-                textures: vec![String::from("bloom")],
+                textures: vec![String::from("bloom"), String::from("stage")],
                 pipeline_params: PipelineParams {
                     color_blend: Some(BlendState::new(
                         Equation::Add,
