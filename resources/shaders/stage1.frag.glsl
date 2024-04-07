@@ -25,7 +25,7 @@ lowp float noise( in lowp vec2 p )
     return texture2D(noise_texture, fract(p)).b;
 }
 
-lowp vec3 clouds(in lowp vec2 uv, in lowp vec2 intensity) {
+lowp vec4 clouds(in lowp vec2 uv, in lowp vec2 intensity) {
     uv.y += iTime * SPEED_CLOUD;
 	
     lowp float f = 0.0;
@@ -38,10 +38,10 @@ lowp vec3 clouds(in lowp vec2 uv, in lowp vec2 intensity) {
     f += 0.0625*noise( uv ); uv = m*uv;
 
     f = 0.2 + 0.5*f;
-    return vec3(f);
+    return vec4(vec3(f), 1.);
 }
 
-lowp float generateDistortion(in float iTime, in vec2 uv)
+lowp float generateDistortion(in lowp float iTime, in lowp vec2 uv)
 {
     return noise(uv + iTime * TIME_MULTIPLIER);
 }
@@ -82,10 +82,11 @@ void main()
 
     lowp vec2 textureUv = vec2(uv.x, fract(-uv.y  + iTime * SPEED_GROUND));
     final += water(textureUv);
-    lowp vec4 clouds = vec4(clouds(-uv, vec2(0.3, 0.5)), 1.);
-    clouds += vec4(clouds(-uv + 6., vec2(0.3, 0.5)), 1.);
+    lowp vec4 cloud;
+    cloud += clouds(-uv, vec2(0.3, 0.5));
+    cloud += clouds(-uv + 6., vec2(0.3, 0.5));
 
-    final += clouds;
+    final += cloud;
     final = mix(final, vec4(0.), vec4(0.58));
 
     lowp vec2 uvSnow=(fragTexCoord.xy * 200.-iResolution.xy)/min(iResolution.x,iResolution.y); 
