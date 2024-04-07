@@ -50,7 +50,7 @@ For more information on dōjin culture,
 * The requirement might change over the course of development
 
 > [!WARNING]
-> Pre-compiled is not yet available, you can install it via cargo install or cargo build``
+> Pre-compiled is not yet available, you can install it via `cargo install` or `cargo build`
 
 ## Development
 
