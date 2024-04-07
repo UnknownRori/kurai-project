@@ -21,6 +21,8 @@ pub struct FairySpin {
     bullet_count: usize,
     current_bullet: usize,
     angular_seperation: f32,
+    last_position: Option<Complex<f32>>,
+    last_player: Option<Complex<f32>>,
 
     timer: Timer,
 }
@@ -28,16 +30,18 @@ pub struct FairySpin {
 impl FairySpin {
     pub fn new(assets: &AssetsManager) -> Self {
         let bullet = assets.textures.get(RED_BULLET).unwrap();
-        let bullet_count = 15;
+        let bullet_count = 20;
         let current_bullet = 0;
-        let angular_seperation = 2.0 * PI / (bullet_count as f32);
-        let timer = Timer::new(0.1, true);
+        let angular_seperation = 2. * PI / (bullet_count as f32);
+        let timer = Timer::new(0.5, true);
 
         Self {
             bullet,
             bullet_count,
             current_bullet,
             angular_seperation,
+            last_position: None,
+            last_player: None,
 
             timer,
         }
@@ -52,20 +56,26 @@ impl AttackSpawner for FairySpin {
         player: &crate::engine::components::Transform2D,
         _delta: f32,
     ) {
-        self.timer.update();
-        if !self.timer.completed() {
-            return;
+        if self.current_bullet == 0 {
+            self.timer.update();
+            if !self.timer.completed() {
+                return;
+            }
+
+            self.last_position = Some(*current.position());
+            self.last_player = Some(*player.position());
         }
 
-        self.current_bullet = self.current_bullet + 1 % self.bullet_count;
-        let dir = current.position().dir(player.as_ref());
+        self.current_bullet = (self.current_bullet + 1) % self.bullet_count;
+        let dir = self
+            .last_position
+            .unwrap_or(*current.position())
+            .dir(&self.last_player.unwrap_or(*player.position()));
 
+        const BULLET_SPEED: f32 = 0.5;
         let angle = self.current_bullet as f32 * self.angular_seperation;
-        let new_dir = if self.current_bullet == 0 {
-            dir * Complex::from_polar(1., angle)
-        } else {
-            Complex::from_polar(1., angle)
-        };
+        // TODO : Make the first shot directed to player and then start the rotation from there
+        let new_dir = dir * Complex::cdir(angle) * BULLET_SPEED;
 
         let transform = Transform2D {
             scale: vec2(0.03, 0.03),
@@ -79,37 +89,9 @@ impl AttackSpawner for FairySpin {
             transform,
             CircleHitbox2D::new(0.010),
             Sprite2D::new(self.bullet.clone()),
-            MoveParams::move_accelerated(cmpx!(0.), new_dir),
+            MoveParams::move_linear(new_dir),
         );
 
         world.spawn(component);
-
-        // let bullet_count = 30;
-        // let angular_seperation = 2.0 * PI / (bullet_count as f32);
-        // let batch = (0..bullet_count)
-        //     .map(|i| {
-        //         let angle = i as f32 * angular_seperation;
-        //         let new_dir = dir * Complex::from_polar(1., angle);
-        //
-        //         let transform = Transform2D {
-        //             scale: vec2(0.03, 0.03),
-        //             rotation: new_dir.rot(),
-        //             ..*current
-        //         };
-        //
-        //         let component = (
-        //             Enemy,
-        //             Bullet,
-        //             transform,
-        //             CircleHitbox2D::new(0.010),
-        //             Sprite2D::new(self.bullet.clone()),
-        //             MoveParams::move_accelerated(cmpx!(0.), new_dir),
-        //         );
-        //
-        //         component
-        //     })
-        //     .collect::<Vec<_>>();
-        //
-        // world.spawn_batch(batch);
     }
 }
