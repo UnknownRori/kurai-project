@@ -13,6 +13,7 @@ use crate::{
     konst::{
         DESIRED_ASPECT_RATIO, VIRTUAL_SCREEN_WIDTH, VIRTUAL_STAGE_HEIGHT, VIRTUAL_STAGE_WIDTH,
     },
+    pause::Pause,
     scene::stage::StageManager,
     score::ScoreData,
     shader::{fetch_lightmap, generate_bloom},
@@ -117,6 +118,7 @@ pub fn draw_stage(
     stage_manager: &StageManager,
     render: &RenderingBuffer,
     controls: &Controls<Action>,
+    pause: &Pause,
     time: f64,
     delta: f32,
 ) {
@@ -139,6 +141,7 @@ pub fn draw_stage(
             ..Default::default()
         },
     );
+    pause.draw();
     render.stage.done_camera();
 
     fetch_lightmap(assets_manager, &render.stage, &render.lightmap);

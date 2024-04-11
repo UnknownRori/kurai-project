@@ -12,6 +12,7 @@ use crate::{
         window::utils::get_adjusted_screen,
     },
     konst::DESIRED_ASPECT_RATIO,
+    pause::Pause,
     render::{draw_main_ui, draw_stage, RenderingBuffer},
     scene::{stage::StageManager, stage1::Stage1Lazy},
     score::ScoreData,
@@ -31,6 +32,7 @@ pub struct App {
     stages_manager: StageManager,
 
     screen_shake: ScreenShake,
+    pause: Pause,
 }
 
 impl App {
@@ -52,7 +54,7 @@ impl App {
             .unwrap();
         font.set_filter(FilterMode::Nearest);
 
-        let mut screen_shake = ScreenShake::new();
+        let screen_shake = ScreenShake::new();
 
         Self {
             stages_manager,
@@ -66,6 +68,7 @@ impl App {
             score: ScoreData::default(),
 
             screen_shake,
+            pause: Default::default(),
         }
     }
 
@@ -73,18 +76,22 @@ impl App {
         let time = get_time();
         let delta = get_frame_time();
 
-        self.screen_shake.update();
-        self.render.stage.camera.offset = self.screen_shake.get_shake_offset();
-
         self.fps_counter.update();
-        update_system(
-            &mut self.world,
-            &self.controls,
-            &mut self.score,
-            time,
-            delta,
-        );
-        self.stages_manager.update(&mut self.world, time, delta);
+        self.pause.update(&self.controls);
+
+        if self.pause.is_paused() {
+            self.screen_shake.update();
+            self.render.stage.camera.offset = self.screen_shake.get_shake_offset();
+
+            update_system(
+                &mut self.world,
+                &self.controls,
+                &mut self.score,
+                time,
+                delta,
+            );
+            self.stages_manager.update(&mut self.world, time, delta);
+        }
     }
 
     pub async fn draw(&self) {
@@ -112,6 +119,7 @@ impl App {
             &self.stages_manager,
             &self.render,
             &self.controls,
+            &self.pause,
             time,
             delta,
         );

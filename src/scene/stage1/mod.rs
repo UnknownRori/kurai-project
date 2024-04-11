@@ -28,6 +28,7 @@ pub struct Stage1 {
     pub bg_texture: Texture2D,
 
     pub spawner: Spawner,
+    pub timer: f32,
 }
 
 impl Stage for Stage1 {}
@@ -56,12 +57,12 @@ impl Scene for Stage1 {
     }
 
     fn update(&mut self, world: &mut World, time: f64, delta: f32) {
+        self.timer += delta;
         self.spawner.update(world, delta.into());
     }
 
     fn draw(&self, render: &RenderingBuffer, time: f64, delta: f32) {
-        self.bg_material
-            .set_uniform("iTime", time.to_f32().unwrap());
+        self.bg_material.set_uniform("iTime", self.timer);
         self.bg_material
             .set_texture("entities_buffer", render.entities.texture().clone());
         gl_use_material(&self.bg_material);
@@ -178,8 +179,8 @@ impl LazyStage for Stage1Lazy {
         Box::new(Stage1 {
             spawner,
             bg_texture,
-            // bg_noise,
             bg_material,
+            timer: 0.,
         })
     }
 }
