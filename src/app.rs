@@ -52,7 +52,7 @@ impl App {
         let mut font = load_ttf_font("./resources/fonts/AveriaSansLibre-Regular.ttf")
             .await
             .unwrap();
-        font.set_filter(FilterMode::Nearest);
+        font.set_filter(FilterMode::Linear);
 
         let screen_shake = ScreenShake::new();
 
@@ -120,6 +120,7 @@ impl App {
             &self.render,
             &self.controls,
             &self.pause,
+            &self.font,
             time,
             delta,
         );

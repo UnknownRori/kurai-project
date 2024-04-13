@@ -119,6 +119,7 @@ pub fn draw_stage(
     render: &RenderingBuffer,
     controls: &Controls<Action>,
     pause: &Pause,
+    font: &Font,
     time: f64,
     delta: f32,
 ) {
@@ -141,7 +142,7 @@ pub fn draw_stage(
             ..Default::default()
         },
     );
-    pause.draw();
+    pause.draw(font);
     render.stage.done_camera();
 
     fetch_lightmap(assets_manager, &render.stage, &render.lightmap);
