@@ -33,6 +33,8 @@ pub struct App {
 
     screen_shake: ScreenShake,
     pause: Pause,
+
+    should_exit: bool,
 }
 
 impl App {
@@ -44,8 +46,6 @@ impl App {
         let mut world = World::new();
 
         let mut stages_manager = StageManager::new(vec![Box::new(Stage1Lazy)]);
-
-        world.spawn(init_game_hud(&assets_manager));
 
         stages_manager.start_stage_id(1, &assets_manager, get_time(), get_frame_time());
 
@@ -69,6 +69,16 @@ impl App {
 
             screen_shake,
             pause: Default::default(),
+
+            should_exit: false,
+        }
+    }
+
+    pub async fn game_loop(&mut self) {
+        while !self.should_exit {
+            self.update().await;
+            self.draw().await;
+            next_frame().await;
         }
     }
 
@@ -77,9 +87,26 @@ impl App {
         let delta = get_frame_time();
 
         self.fps_counter.update();
-        self.pause.update(&self.controls);
+        match self.pause.update(&self.controls) {
+            Some(choice) => match choice {
+                crate::pause::PauseChoice::Restart => {
+                    // TODO : Make easy to reset
+                    self.world.clear();
+                    self.score = ScoreData::default();
+                    self.stages_manager.start_stage_id(
+                        1,
+                        &self.assets_manager,
+                        get_time(),
+                        get_frame_time(),
+                    );
+                }
+                crate::pause::PauseChoice::Exit => self.should_exit = true,
+                _ => {}
+            },
+            None => {}
+        };
 
-        if self.pause.is_paused() {
+        if !self.pause.is_paused() {
             self.screen_shake.update();
             self.render.stage.camera.offset = self.screen_shake.get_shake_offset();
 
@@ -105,12 +132,10 @@ impl App {
         draw_main_ui(
             &self.world,
             &self.render,
-            &self.controls,
+            &self.assets_manager,
             &self.font,
             &self.score,
             &self.fps_counter,
-            time,
-            delta,
         );
 
         draw_stage(

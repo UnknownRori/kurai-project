@@ -2,7 +2,7 @@ use hecs::World;
 use macroquad::prelude::*;
 
 use crate::{
-    assets::konst::POST_PROCESSING,
+    assets::konst::{POST_PROCESSING, TEXTURE_HUD},
     controls::Action,
     engine::{
         assets::AssetsManager,
@@ -21,7 +21,7 @@ use crate::{
         draw::entity_draw::{game_entity_draw, player_focus_draw},
         update_draw_hud,
     },
-    ui::game_hud::draw_entity_number,
+    ui::game_hud::{draw_entity_number, draw_hud_info, draw_score},
     vec2,
 };
 
@@ -85,12 +85,10 @@ impl Default for RenderingBuffer {
 pub fn draw_main_ui(
     world: &World,
     render: &RenderingBuffer,
-    controls: &Controls<Action>,
+    assets_manager: &AssetsManager,
     font: &Font,
     score: &ScoreData,
     fps_counter: &FPSCounter,
-    time: f64,
-    delta: f32,
 ) {
     render.ui.set_camera();
     clear_background(BLACK);
@@ -106,8 +104,19 @@ pub fn draw_main_ui(
             ..Default::default()
         },
     );
-
-    update_draw_hud(world, controls, score, fps_counter, font, time, delta);
+    let hud = assets_manager.textures.get(TEXTURE_HUD).unwrap();
+    draw_texture_ex(
+        &hud,
+        0.,
+        0.,
+        WHITE,
+        DrawTextureParams {
+            dest_size: Some(vec2!(1.)),
+            ..Default::default()
+        },
+    );
+    draw_hud_info(font, fps_counter);
+    draw_score(score, font);
     draw_entity_number(world.len(), font);
     render.ui.done_camera();
 }

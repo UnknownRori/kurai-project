@@ -14,6 +14,7 @@ pub enum Action {
     Down,
 
     Escape,
+    Accept,
 }
 
 pub fn init_controls() -> Controls<Action> {
@@ -29,6 +30,7 @@ pub fn init_controls() -> Controls<Action> {
     controls.add(Action::Down, Combination::Single(KeyCode::Down));
 
     controls.add(Action::Escape, Combination::Single(KeyCode::Escape));
+    controls.add(Action::Accept, Combination::Single(KeyCode::Enter));
 
     controls
 }

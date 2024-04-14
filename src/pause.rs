@@ -5,7 +5,7 @@ use crate::{
     engine::{controls::Controls, text::draw_text_ex2},
 };
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub enum PauseChoice {
     Resume,
     Restart,
@@ -32,13 +32,44 @@ impl Pause {
     const ACTIVE: Color = WHITE;
 
     pub fn is_paused(&self) -> bool {
-        !self.currently_paused
+        self.currently_paused
     }
 
-    pub fn update(&mut self, controls: &Controls<Action>) {
+    pub fn update(&mut self, controls: &Controls<Action>) -> Option<PauseChoice> {
         if controls.is_pressed(Action::Escape) {
+            self.selected_choice = PauseChoice::Resume;
             self.currently_paused = !self.currently_paused;
         }
+
+        if !self.is_paused() {
+            return None;
+        }
+
+        if controls.is_pressed(Action::Down) {
+            self.selected_choice = match self.selected_choice {
+                PauseChoice::Resume => PauseChoice::Restart,
+                PauseChoice::Restart => PauseChoice::Exit,
+                PauseChoice::Exit => PauseChoice::Resume,
+            };
+        }
+
+        if controls.is_pressed(Action::Up) {
+            self.selected_choice = match self.selected_choice {
+                PauseChoice::Resume => PauseChoice::Exit,
+                PauseChoice::Restart => PauseChoice::Resume,
+                PauseChoice::Exit => PauseChoice::Restart,
+            };
+        }
+
+        if controls.is_pressed(Action::Accept) {
+            if self.selected_choice == PauseChoice::Resume {
+                self.currently_paused = false;
+            }
+
+            return Some(self.selected_choice.clone());
+        }
+
+        return None;
     }
 
     pub fn draw(&self, font: &Font) {
@@ -50,7 +81,7 @@ impl Pause {
 
         draw_text_ex2(
             "Game Paused",
-            0.51,
+            0.53,
             0.40,
             0.05,
             Self::ACTIVE,
