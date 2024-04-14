@@ -29,7 +29,6 @@ codegen-units = 1
 panic = "abort"
 
 [dependencies]
-color-eyre = "0.6.2"
 hecs = "0.10.4"
 macroquad = { version = "0.4.5", features = ["audio", "backtrace", "log"] }
 macroquad-profiler = "0.2.0"
