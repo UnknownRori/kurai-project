@@ -2,7 +2,8 @@ use macroquad::prelude::*;
 
 use crate::{
     assets::konst::{BLOOM_MATERIAL, LIGHTMAP},
-    engine::{assets::AssetsManager, camera::screen_buffer2d::ScreenBuffer2D},
+    assets::AssetsManager,
+    camera::screen_buffer2d::ScreenBuffer2D,
 };
 
 pub fn fetch_lightmap(assets: &AssetsManager, from: &ScreenBuffer2D, to: &ScreenBuffer2D) {

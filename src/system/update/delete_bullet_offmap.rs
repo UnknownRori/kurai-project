@@ -1,7 +1,7 @@
 use hecs::World;
 use rayon::iter::{ParallelBridge, ParallelIterator};
 
-use crate::{components::bullet::Bullet, engine::components::Transform2D};
+use crate::{components::bullet::Bullet, components::transform2d::Transform2D};
 
 pub fn delete_bullet_offmap(world: &mut World) {
     let out_of_bound_bullets = world

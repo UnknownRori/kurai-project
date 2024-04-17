@@ -1,11 +1,8 @@
-use std::sync::Arc;
-
 use hecs::World;
-use macroquad::texture::Texture2D;
 
-use crate::{
-    components::{bullet::Bullet, enemy::Enemy, movement::MoveParams},
-    engine::components::{CircleHitbox2D, Sprite2D, Transform2D},
+use crate::components::{
+    bullet::Bullet, circle_hitbox2d::CircleHitbox2D, enemy::Enemy, movement::MoveParams,
+    sprite2d::Sprite2D, transform2d::Transform2D,
 };
 
 pub fn spawn_generic_bullet(

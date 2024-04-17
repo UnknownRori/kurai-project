@@ -3,31 +3,7 @@ use macroquad::{
     text::{camera_font_scale, draw_text_ex, measure_text, Font, TextParams},
 };
 
-use crate::{
-    assets::konst::TEXTURE_HUD,
-    cmpx,
-    components::hud::HUD,
-    engine::{
-        assets::AssetsManager,
-        components::{Sprite2D, Transform2D},
-        fps_counter::FPSCounter,
-    },
-    konst::GAME_VERSION,
-    score::ScoreData,
-    vec2,
-};
-
-pub fn init_game_hud(assets_manager: &AssetsManager) -> (HUD, Sprite2D, Transform2D) {
-    let texture = assets_manager
-        .textures
-        .get(TEXTURE_HUD)
-        .expect("texture hud not found!");
-
-    let sprite = Sprite2D::new(texture);
-    let transform = Transform2D::new(cmpx!(0.5), vec2!(1.), 0.);
-
-    (HUD, sprite, transform)
-}
+use crate::{konst::GAME_VERSION, score::ScoreData, utils::FPSCounter};
 
 pub fn draw_hud_info(font: &Font, fps_counter: &FPSCounter) {
     fps_counter.draw(font);

@@ -3,7 +3,7 @@ use macroquad::{
     miniquad::{self, BlendFactor, BlendState, Equation, PipelineParams, UniformType},
 };
 
-use crate::engine::assets::AssetsManager;
+use crate::assets::AssetsManager;
 
 use super::{
     konst::{

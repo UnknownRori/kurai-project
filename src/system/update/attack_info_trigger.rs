@@ -1,8 +1,7 @@
 use hecs::World;
 
-use crate::{
-    components::{attack_info::AttackInfo, bullet::Bullet, enemy::Enemy, player::Player},
-    engine::components::Transform2D,
+use crate::components::{
+    attack_info::AttackInfo, bullet::Bullet, enemy::Enemy, player::Player, transform2d::Transform2D,
 };
 
 pub fn attack_info_trigger(world: &mut World, time: f64, delta: f32) {

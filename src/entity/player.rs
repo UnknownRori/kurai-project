@@ -4,16 +4,16 @@ use hecs::World;
 
 use crate::{
     assets::konst::{FOCUS, REMILIA_TEXTURE_1},
+    assets::AssetsManager,
     attack_info::players::remi::RemiliaBasicAttack,
     cmpx,
     components::{
         attack_info::{AttackInfo, AttackSpawnFn, PlayerAttack, SpellInfo},
+        circle_hitbox2d::CircleHitbox2D,
         movement::MoveParams,
         player::{Focus, Player},
-    },
-    engine::{
-        assets::AssetsManager,
-        components::{CircleHitbox2D, Sprite2D, Transform2D},
+        sprite2d::Sprite2D,
+        transform2d::Transform2D,
     },
     vec2,
 };

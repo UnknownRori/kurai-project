@@ -1,5 +1,4 @@
 use kurai_project::{game_window, App};
-use macroquad::window::next_frame;
 
 #[macroquad::main(game_window)]
 async fn main() {

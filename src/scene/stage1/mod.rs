@@ -5,18 +5,20 @@ use macroquad::prelude::*;
 use num_traits::ToPrimitive as _;
 
 use crate::{
-    assets::konst::{FAIRY_1, STAGE_1_BG_SHADER, STAGE_1_GROUND, SUPER_PERLIN},
+    assets::{
+        konst::{FAIRY_1, STAGE_1_BG_SHADER, STAGE_1_GROUND, SUPER_PERLIN},
+        AssetsManager,
+    },
     cmpx,
     components::{
+        hitpoint::Hitpoint,
         movement::MoveParams,
+        sprite2d::Sprite2D,
+        transform2d::Transform2D,
         waypoint::{Waypoint, WaypointFactor},
         waypoints::Waypoints,
     },
-    engine::{
-        components::{Hitpoint, Sprite2D, Transform2D},
-        ecs::{SpawnEvent, Spawner},
-    },
-    entity::{lazy_spawn_enemy, lazy_spawn_enemy2, player::lazy_spawn_player},
+    entity::{lazy_spawn_enemy, lazy_spawn_enemy2, player::lazy_spawn_player, SpawnEvent, Spawner},
     konst::{VIRTUAL_STAGE_HEIGHT, VIRTUAL_STAGE_WIDTH},
     render::RenderingBuffer,
 };
@@ -105,7 +107,7 @@ impl StageInfo for Stage1Lazy {
 }
 
 impl LazyStage for Stage1Lazy {
-    fn build(&self, assets_manager: &crate::engine::assets::AssetsManager) -> Box<dyn Stage> {
+    fn build(&self, assets_manager: &AssetsManager) -> Box<dyn Stage> {
         let player_spawn = lazy_spawn_player(assets_manager);
 
         let fairy = assets_manager.textures.get(FAIRY_1).unwrap();

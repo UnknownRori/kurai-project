@@ -1,23 +1,28 @@
+mod create_window;
+mod icon;
+pub mod utils;
+
+pub use create_window::create_window;
+
 use macroquad::{miniquad::conf::Platform, prelude::*, window::Conf};
 
-use crate::{
-    engine::{ui::icon::KuraiIcon, window::create_window},
-    konst::{FULLSCREEN, GAME_NAME, WINDOW_RESIZEABLE},
-};
+use crate::konst::{FULLSCREEN, GAME_NAME, WINDOW_RESIZEABLE};
+
+use self::icon::KuraiIcon;
 
 pub fn game_window() -> Conf {
     let kurai_icon_16 = Image::from_file_with_format(
-        include_bytes!("../resources/icon/icon_16.png"),
+        include_bytes!("../../resources/icon/icon_16.png"),
         Some(ImageFormat::Png),
     )
     .unwrap();
     let kurai_icon_32 = Image::from_file_with_format(
-        include_bytes!("../resources/icon/icon_32.png"),
+        include_bytes!("../../resources/icon/icon_32.png"),
         Some(ImageFormat::Png),
     )
     .unwrap();
     let kurai_icon_64 = Image::from_file_with_format(
-        include_bytes!("../resources/icon/icon_64.png"),
+        include_bytes!("../../resources/icon/icon_64.png"),
         Some(ImageFormat::Png),
     )
     .unwrap();

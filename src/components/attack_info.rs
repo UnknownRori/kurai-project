@@ -5,7 +5,7 @@ use std::{
 
 use hecs::World;
 
-use crate::engine::components::Transform2D;
+use crate::components::transform2d::Transform2D;
 
 pub type AttackSpawnFn = Arc<Mutex<dyn AttackSpawner>>;
 

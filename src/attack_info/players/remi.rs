@@ -3,14 +3,14 @@ use macroquad::prelude::*;
 
 use crate::{
     assets::konst::REMI_BULLET_1,
+    assets::AssetsManager,
     cmpx,
-    components::{attack_info::AttackSpawner, movement::MoveParams},
-    engine::{
-        assets::AssetsManager,
-        components::{Sprite2D, Transform2D},
-        time::Timer,
+    components::{
+        attack_info::AttackSpawner, movement::MoveParams, sprite2d::Sprite2D,
+        transform2d::Transform2D,
     },
     entity::spawn_player_bullet,
+    time::Timer,
 };
 
 #[derive(Debug, Clone)]

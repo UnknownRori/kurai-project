@@ -1,6 +1,6 @@
 use macroquad::prelude::*;
 
-use super::Transform2D;
+use super::transform2d::Transform2D;
 
 #[derive(Debug, Clone)]
 pub struct Sprite2D(Texture2D);

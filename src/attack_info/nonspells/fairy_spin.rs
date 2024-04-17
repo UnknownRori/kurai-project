@@ -5,14 +5,13 @@ use num_complex::Complex;
 
 use crate::{
     assets::konst::RED_BULLET,
-    cmpx,
-    components::{attack_info::AttackSpawner, bullet::Bullet, enemy::Enemy, movement::MoveParams},
-    engine::{
-        assets::AssetsManager,
-        components::{CircleHitbox2D, Sprite2D, Transform2D},
-        math::ComplexExt,
-        time::Timer,
+    assets::AssetsManager,
+    components::{
+        attack_info::AttackSpawner, bullet::Bullet, circle_hitbox2d::CircleHitbox2D, enemy::Enemy,
+        movement::MoveParams, sprite2d::Sprite2D, transform2d::Transform2D,
     },
+    math::ComplexExt,
+    time::Timer,
 };
 
 #[derive(Debug)]
@@ -52,8 +51,8 @@ impl AttackSpawner for FairySpin {
     fn spawn(
         &mut self,
         world: &mut hecs::World,
-        current: &crate::engine::components::Transform2D,
-        player: &crate::engine::components::Transform2D,
+        current: &Transform2D,
+        player: &Transform2D,
         _delta: f32,
     ) {
         if self.current_bullet == 0 {

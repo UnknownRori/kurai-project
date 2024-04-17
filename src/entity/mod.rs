@@ -1,5 +1,8 @@
 pub mod bullet;
 pub mod player;
+mod spawner;
+
+pub use spawner::{SpawnEvent, Spawner};
 
 use std::sync::{Arc, Mutex};
 
@@ -7,15 +10,12 @@ use hecs::{Entity, World};
 use macroquad::math::vec2;
 
 use crate::{
+    assets::AssetsManager,
     attack_info::nonspells::{fairy_burst::FairyBurst, fairy_spin::FairySpin},
-    cmpx,
     components::{
-        attack_info::AttackInfo, bullet::Bullet, enemy::Enemy, movement::MoveParams,
-        player::Player, waypoints::Waypoints,
-    },
-    engine::{
-        assets::AssetsManager,
-        components::{CircleHitbox2D, Hitpoint, Sprite2D, Transform2D},
+        attack_info::AttackInfo, bullet::Bullet, circle_hitbox2d::CircleHitbox2D, enemy::Enemy,
+        hitpoint::Hitpoint, movement::MoveParams, player::Player, sprite2d::Sprite2D,
+        transform2d::Transform2D, waypoints::Waypoints,
     },
 };
 

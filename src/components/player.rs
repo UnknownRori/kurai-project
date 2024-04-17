@@ -1,4 +1,4 @@
-use crate::engine::components::Sprite2D;
+use crate::components::sprite2d::Sprite2D;
 
 pub struct Player;
 

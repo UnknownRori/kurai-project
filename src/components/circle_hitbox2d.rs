@@ -1,8 +1,8 @@
 use macroquad::math::vec2;
 
-use crate::engine::math::ToVec2;
+use crate::math::ToVec2;
 
-use super::Transform2D;
+use super::transform2d::Transform2D;
 
 #[derive(Debug, Clone, Copy)]
 pub struct CircleHitbox2D {

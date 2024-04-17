@@ -2,10 +2,10 @@ use hecs::World;
 use macroquad::text::Font;
 
 use crate::{
-    controls::Action,
-    engine::{controls::Controls, fps_counter::FPSCounter},
+    controls::{Action, Controls},
     score::ScoreData,
     ui::game_hud::{draw_hud_info, draw_score},
+    utils::FPSCounter,
 };
 
 use self::{

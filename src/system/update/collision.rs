@@ -4,10 +4,11 @@ use rayon::iter::{ParallelBridge, ParallelIterator};
 use crate::{
     components::{
         bullet::{Bullet, GrazedBullet},
+        circle_hitbox2d::CircleHitbox2D,
         enemy::Enemy,
         player::Player,
+        transform2d::Transform2D,
     },
-    engine::components::{CircleHitbox2D, Transform2D},
     score::ScoreData,
 };
 

@@ -1,6 +1,6 @@
 use macroquad::prelude::*;
 
-use crate::engine::{rand::rand_dir, time::Timer};
+use crate::{time::Timer, utils::rand_dir};
 
 pub struct ScreenShake {
     pub distance: f32,

@@ -1,9 +1,11 @@
 use macroquad::miniquad::FilterMode;
 
-use crate::engine::assets::AssetsManager;
-
 pub mod konst;
 pub mod preload;
+
+mod assets_manager;
+
+pub use assets_manager::AssetsManager;
 
 pub async fn preload_texture(assets_manager: &mut AssetsManager, name: &str, path: &str) {
     assets_manager

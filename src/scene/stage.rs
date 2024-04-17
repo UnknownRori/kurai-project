@@ -1,6 +1,6 @@
 use hecs::World;
 
-use crate::{engine::assets::AssetsManager, render::RenderingBuffer};
+use crate::{assets::AssetsManager, render::RenderingBuffer};
 
 use super::{lazy_stage::LazyStage, scene::Scene, stage_info::StageInfo};
 

@@ -4,13 +4,13 @@ use num_complex::Complex;
 
 use crate::{
     cmpx,
-    components::{attack_info::PlayerAttack, bullet::Bullet, movement::MoveParams, player::Player},
-    controls::Action,
-    engine::{
-        components::Transform2D,
-        controls::Controls,
-        math::{ComplexExt, ToVec2},
+    components::{
+        attack_info::PlayerAttack, bullet::Bullet, movement::MoveParams, player::Player,
+        transform2d::Transform2D,
     },
+    controls::Action,
+    controls::Controls,
+    math::{ComplexExt, ToVec2},
 };
 
 pub fn update_player_control(

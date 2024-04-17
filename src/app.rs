@@ -3,21 +3,18 @@ use macroquad::prelude::*;
 
 use crate::{
     assets::preload::preload,
+    assets::AssetsManager,
+    camera::screen_shake::ScreenShake,
+    controls::Controls,
     controls::{init_controls, Action},
-    engine::{
-        assets::AssetsManager,
-        camera::screen_shake::{self, ScreenShake},
-        controls::Controls,
-        fps_counter::FPSCounter,
-        window::utils::get_adjusted_screen,
-    },
     konst::DESIRED_ASPECT_RATIO,
     pause::Pause,
     render::{draw_main_ui, draw_stage, RenderingBuffer},
     scene::{stage::StageManager, stage1::Stage1Lazy},
     score::ScoreData,
     system::update_system,
-    ui::game_hud::init_game_hud,
+    utils::FPSCounter,
+    window::utils::get_adjusted_screen,
 };
 
 pub struct App {

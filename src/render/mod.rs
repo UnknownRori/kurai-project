@@ -3,13 +3,10 @@ use macroquad::prelude::*;
 
 use crate::{
     assets::konst::{POST_PROCESSING, TEXTURE_HUD},
+    assets::AssetsManager,
+    camera::screen_buffer2d::{ScreenBuffer2D, ScreenBuffer2DBuilder},
     controls::Action,
-    engine::{
-        assets::AssetsManager,
-        camera::screen_buffer2d::{ScreenBuffer2D, ScreenBuffer2DBuilder},
-        controls::Controls,
-        fps_counter::FPSCounter,
-    },
+    controls::Controls,
     konst::{
         DESIRED_ASPECT_RATIO, VIRTUAL_SCREEN_WIDTH, VIRTUAL_STAGE_HEIGHT, VIRTUAL_STAGE_WIDTH,
     },
@@ -17,11 +14,9 @@ use crate::{
     scene::stage::StageManager,
     score::ScoreData,
     shader::{fetch_lightmap, generate_bloom},
-    system::{
-        draw::entity_draw::{game_entity_draw, player_focus_draw},
-        update_draw_hud,
-    },
+    system::draw::entity_draw::{game_entity_draw, player_focus_draw},
     ui::game_hud::{draw_entity_number, draw_hud_info, draw_score},
+    utils::FPSCounter,
     vec2,
 };
 

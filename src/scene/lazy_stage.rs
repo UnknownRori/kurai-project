@@ -1,4 +1,4 @@
-use crate::engine::assets::AssetsManager;
+use crate::assets::AssetsManager;
 
 use super::{stage::Stage, stage_info::StageInfo};
 

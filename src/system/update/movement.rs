@@ -1,7 +1,7 @@
 use hecs::World;
 use rayon::iter::{ParallelBridge, ParallelIterator};
 
-use crate::{components::movement::MoveParams, engine::components::Transform2D};
+use crate::{components::movement::MoveParams, components::transform2d::Transform2D};
 
 pub fn update_movement(world: &mut World, delta: f32) {
     world
@@ -12,4 +12,3 @@ pub fn update_movement(world: &mut World, delta: f32) {
             move_params.update(&mut transform.position, delta);
         });
 }
-

@@ -1,9 +1,6 @@
 use macroquad::prelude::*;
 
-use crate::{
-    controls::Action,
-    engine::{controls::Controls, text::draw_text_ex2},
-};
+use crate::{controls::Action, controls::Controls, text::draw_text_ex2};
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum PauseChoice {
