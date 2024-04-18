@@ -44,7 +44,7 @@ pub fn update_player_control(
         .iter()
         .for_each(|(_, (_, transform, move_params))| {
             let mut new_pos = cmpx!(0.);
-            let move_speed = 10.; // TODO : Make this correspond player mode
+            let move_speed = 12.5; // TODO : Make this correspond player mode
 
             if controls.is_key_down(Action::Left) {
                 new_pos += Complex::new(-move_speed, 0.0);
@@ -63,7 +63,7 @@ pub fn update_player_control(
             }
 
             let move_speed = if controls.is_key_down(Action::Focus) {
-                1. / 2.
+                1. / 2.6
             } else {
                 1.
             };
