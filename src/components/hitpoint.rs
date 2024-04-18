@@ -14,6 +14,14 @@ impl Hitpoint {
         }
     }
 
+    pub fn is_dead(&self) -> bool {
+        if self.invulnerable {
+            return false;
+        }
+
+        return self.hp < 0.;
+    }
+
     pub fn damage(&mut self, damage: f32) -> bool {
         if !self.invulnerable {
             self.hp -= damage;
