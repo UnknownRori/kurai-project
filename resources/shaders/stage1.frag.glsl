@@ -16,9 +16,9 @@ uniform sampler2D entities_buffer;	// Texture from macroquad draw_texture
 #define SCALE 0.8
 
 // How time affect the distortion
-#define TIME_MULTIPLIER 0.15
+#define TIME_MULTIPLIER 0.0002
 // How much strength of the distortion
-#define DISTORTION_STRENGTH 0.15
+#define DISTORTION_STRENGTH 0.08
 
 lowp float noise( in lowp vec2 p )
 {
@@ -47,7 +47,7 @@ lowp float generateDistortion(in lowp float iTime, in lowp vec2 uv)
 }
 
 lowp vec4 water(in lowp vec2 uv) {
-    lowp float distortion = generateDistortion(iTime, uv);
+    lowp float distortion = generateDistortion(iTime, uv * 12.);
     
     // Apply the distortion to uv
     lowp vec2 distortedUv = fragTexCoord;
