@@ -11,7 +11,9 @@ use macroquad::math::vec2;
 
 use crate::{
     assets::AssetsManager,
-    attack_info::nonspells::{fairy_burst::FairyBurst, fairy_spin::FairySpin},
+    attack_info::nonspells::{
+        fairy_burst::FairyBurst, fairy_spin::FairySpin, fairy_spin_delay::FairySpinDelay,
+    },
     components::{
         attack_info::AttackInfo, bullet::Bullet, circle_hitbox2d::CircleHitbox2D, enemy::Enemy,
         hitpoint::Hitpoint, movement::MoveParams, player::Player, sprite2d::Sprite2D,
@@ -58,7 +60,7 @@ pub fn lazy_spawn_enemy(
             hitpoint.clone(),
             MoveParams::default(),
             AttackInfo::new(attack.clone()),
-            CircleHitbox2D::new(0.01),
+            CircleHitbox2D::new(0.03),
         ));
     })
 }
@@ -71,6 +73,7 @@ pub fn lazy_spawn_enemy2(
     waypoints: Waypoints,
 ) -> Box<dyn Fn(&mut World)> {
     let attack = Arc::new(Mutex::new(FairySpin::new(&assets_manager)));
+    // let attack = Arc::new(Mutex::new(FairySpinDelay::new(&assets_manager)));
 
     Box::new(move |world| {
         world.spawn((
@@ -79,9 +82,9 @@ pub fn lazy_spawn_enemy2(
             sprite.clone(),
             hitpoint.clone(),
             MoveParams::default(),
-            waypoints.clone(),
+            // waypoints.clone(),
             AttackInfo::new(attack.clone()),
-            CircleHitbox2D::new(0.01),
+            CircleHitbox2D::new(0.03),
         ));
     })
 }

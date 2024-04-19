@@ -11,6 +11,7 @@ use crate::{
     controls::Action,
     controls::Controls,
     math::{ComplexExt, ToVec2},
+    time::Timer,
 };
 
 pub fn update_player_control(
@@ -30,7 +31,7 @@ pub fn update_player_control(
             })
             .collect::<Vec<_>>();
 
-        for (id, pos, info) in player.iter() {
+        for (_, pos, info) in player.iter() {
             if controls.is_key_down(Action::Attack) {
                 let mut normal_spawner = info.normal.spawner.lock().unwrap();
                 normal_spawner.spawn(world, pos, pos, delta);

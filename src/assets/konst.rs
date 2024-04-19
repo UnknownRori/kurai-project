@@ -24,6 +24,7 @@ pub const GRAZE: &str = "graze";
 pub const BLOOM_MATERIAL: &str = "bloom";
 pub const LIGHTMAP: &str = "lightmap";
 pub const POST_PROCESSING: &str = "post";
+pub const HIT_MATERIAL: &str = "hit";
 
 // Stage Resource
 // Stage 1

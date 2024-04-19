@@ -2,6 +2,7 @@ use hecs::World;
 use macroquad::text::Font;
 
 use crate::{
+    assets::AssetsManager,
     controls::{Action, Controls},
     score::ScoreData,
     ui::game_hud::{draw_hud_info, draw_score},
@@ -12,7 +13,6 @@ use self::{
     draw::{
         collision_draw::collision_draw,
         entity_draw::{game_entity_draw, player_focus_draw},
-        hud_draw::hud_draw,
     },
     update::{
         ai_movement::enemy_movement_update, attack_info_trigger::attack_info_trigger,
@@ -40,7 +40,13 @@ pub fn update_system(
     delete_bullet_offmap(world);
 }
 
-pub fn update_draw(world: &World, controls: &Controls<Action>, time: f64, _delta: f32) {
+pub fn update_draw(
+    world: &World,
+    controls: &Controls<Action>,
+    assets: &AssetsManager,
+    time: f64,
+    _delta: f32,
+) {
     game_entity_draw(world);
     player_focus_draw(world, controls, time);
     collision_draw(world);
@@ -55,7 +61,6 @@ pub fn update_draw_hud(
     _time: f64,
     _delta: f32,
 ) {
-    hud_draw(world);
     draw_hud_info(font, fps_counter);
     draw_score(score, font);
 }

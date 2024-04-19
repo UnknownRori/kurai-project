@@ -7,7 +7,7 @@ use crate::assets::AssetsManager;
 
 use super::{
     konst::{
-        BLOOM_MATERIAL, FAIRY_1, FOCUS, GENERIC_SHOOT_SOUND, GRAZE, LIGHTMAP, PICHUN,
+        BLOOM_MATERIAL, FAIRY_1, FOCUS, GENERIC_SHOOT_SOUND, GRAZE, HIT_MATERIAL, LIGHTMAP, PICHUN,
         POST_PROCESSING, RED_BULLET, REMILIA_TEXTURE_1, REMI_BULLET_1, STAGE_1_BG_SHADER,
         STAGE_1_GROUND, SUPER_PERLIN, TEXTURE_HUD,
     },
@@ -72,6 +72,23 @@ pub async fn preload(assets_manager: &mut AssetsManager) {
         "./resources/noise/super-perlin.png",
     )
     .await;
+
+    assets_manager
+        .shaders
+        .register(
+            HIT_MATERIAL,
+            "./resources/shaders/hit.vert.glsl",
+            "./resources/shaders/hit.frag.glsl",
+            MaterialParams {
+                uniforms: vec![
+                    (String::from("iTime"), UniformType::Float1),
+                    (String::from("iResolution"), UniformType::Float2),
+                ],
+                ..Default::default()
+            },
+        )
+        .await
+        .unwrap();
 
     assets_manager
         .shaders
