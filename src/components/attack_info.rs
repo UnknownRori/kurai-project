@@ -1,65 +1,44 @@
-use std::{
-    fmt::Debug,
-    sync::{Arc, Mutex},
-};
+use std::sync::{Arc, Mutex};
 
 use hecs::World;
 
-use crate::components::transform2d::Transform2D;
+use super::Transform2D;
 
-pub type AttackSpawnFn = Arc<Mutex<dyn AttackSpawner>>;
-
-pub trait AttackSpawner: Send + Sync + Debug {
-    fn spawn(
-        &mut self,
-        _world: &mut World,
-        _current: &Transform2D,
-        _player: &Transform2D,
-        _delta: f32,
-    );
+pub trait AttackSpawner: Sync + Send {
+    fn spawn(&mut self, _: &mut World, _current: &Transform2D, _player: Option<&Transform2D>);
 }
 
-#[derive(Debug, Clone)]
-pub struct PlayerAttack {
+#[derive(Clone)]
+pub struct PlayerAttackInfo {
     pub normal: AttackInfo,
     pub focus: AttackInfo,
     pub spell: SpellInfo,
 }
 
-#[derive(Debug, Clone)]
-pub enum Attack {
-    Attack(AttackInfo),
-    Focus(AttackInfo),
-    Spell(SpellInfo),
-}
-
-#[derive(Debug, Clone)]
+#[derive(Clone)]
 pub struct AttackInfo {
-    // TODO : Is it really need to be a Arc<Mutex<T>>(?)
-    pub spawner: AttackSpawnFn,
+    pub spawn: Arc<Mutex<dyn AttackSpawner>>,
 }
 
 impl AttackInfo {
-    pub fn new(spawner: AttackSpawnFn) -> Self {
-        Self { spawner }
+    pub fn new(spawn: Arc<Mutex<dyn AttackSpawner>>) -> Self {
+        Self { spawn }
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Clone)]
 pub struct SpellInfo {
-    pub id: usize, // TODO : Maybe for replay purpose
     pub name: String,
-    pub timeout: f64,
-    pub action: AttackSpawnFn,
+    pub timeout: f32,
+    pub spawn: Arc<Mutex<dyn AttackSpawner>>,
 }
 
 impl SpellInfo {
-    pub fn new(id: usize, name: String, timeout: f64, action: AttackSpawnFn) -> Self {
+    pub fn new(name: &str, timeout: f32, spawn: Arc<Mutex<dyn AttackSpawner>>) -> Self {
         Self {
-            id,
-            name,
+            name: name.to_owned(),
             timeout,
-            action,
+            spawn,
         }
     }
 }

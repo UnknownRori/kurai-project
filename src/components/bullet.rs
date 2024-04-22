@@ -1,2 +1,3 @@
 pub struct Bullet;
-pub struct GrazedBullet;
+pub struct Grazed;
+pub struct Laser;

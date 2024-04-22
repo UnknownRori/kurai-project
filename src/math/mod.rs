@@ -1,5 +1,4 @@
 mod complex;
-mod utils;
 mod vec2;
 
 pub use complex::ComplexExt;

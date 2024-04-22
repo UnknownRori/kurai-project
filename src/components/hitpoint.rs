@@ -1,14 +1,9 @@
-use crate::time::Timer;
-
 #[derive(Debug, Clone, Copy)]
 pub struct Hitpoint {
     pub hp: f32,
     pub max_hp: f32,
     pub invulnerable: bool, // INFO : Phase for invulnerable stuff
 }
-
-#[derive(Debug, Clone, Copy)]
-pub struct Damaged;
 
 impl Hitpoint {
     pub fn new(hp: f32) -> Self {

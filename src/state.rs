@@ -1,12 +1,5 @@
 pub enum GameState {
-    GameRunning,
-    GamePaused,
+    Running,
+    Pause,
     GameOver,
-    MainMenu(MainMenuState),
-}
-
-pub enum MainMenuState {
-    TitleScreen,
-    Option,
-    HighScore,
 }

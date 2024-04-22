@@ -3,9 +3,9 @@ use macroquad::prelude::*;
 use super::transform2d::Transform2D;
 
 #[derive(Debug, Clone)]
-pub struct Sprite2D(Texture2D);
+pub struct Sprite(Texture2D);
 
-impl Sprite2D {
+impl Sprite {
     pub fn new(texture: Texture2D) -> Self {
         Self(texture)
     }

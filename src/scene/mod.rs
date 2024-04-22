@@ -1,5 +1,6 @@
-pub mod lazy_stage;
-pub mod scene;
-pub mod stage;
-pub mod stage1;
-pub mod stage_info;
+#[derive(Debug, Copy, Clone)]
+pub enum Scene {
+    MainMenu,
+    Options,
+    Stage,
+}

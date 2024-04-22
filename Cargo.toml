@@ -33,5 +33,3 @@ hecs = "0.10.4"
 macroquad = { version = "0.4.5", features = ["audio", "backtrace", "log"] }
 macroquad-profiler = "0.2.0"
 num-complex = "0.4.5"
-num-traits = "0.2.18"
-rayon = "1.8.1"

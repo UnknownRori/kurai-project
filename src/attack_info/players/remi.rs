@@ -1,15 +1,11 @@
 use hecs::World;
-use macroquad::prelude::*;
+use macroquad::texture::Texture2D;
 
 use crate::{
-    assets::konst::REMI_BULLET_1,
-    assets::AssetsManager,
+    assets::{konst::BULLET_REMI, Assets},
     cmpx,
-    components::{
-        attack_info::AttackSpawner, movement::MoveParams, sprite2d::Sprite2D,
-        transform2d::Transform2D,
-    },
-    entity::spawn_player_bullet,
+    components::{AttackSpawner, MoveParams, Transform2D},
+    entity::player_bullet_spawn,
     time::Timer,
 };
 
@@ -20,8 +16,8 @@ pub struct RemiliaBasicAttack {
 }
 
 impl RemiliaBasicAttack {
-    pub fn new(assets: &AssetsManager) -> Self {
-        let bullet = assets.textures.get(REMI_BULLET_1).unwrap();
+    pub fn new(assets: &Assets) -> Self {
+        let bullet = assets.textures.get(BULLET_REMI).unwrap().clone();
         let timer = Timer::new(0.05, true);
 
         Self { bullet, timer }
@@ -29,15 +25,15 @@ impl RemiliaBasicAttack {
 }
 
 impl AttackSpawner for RemiliaBasicAttack {
-    fn spawn(&mut self, world: &mut World, current: &Transform2D, _: &Transform2D, _delta: f32) {
+    fn spawn(&mut self, world: &mut World, current: &Transform2D, _: Option<&Transform2D>) {
         self.timer.update();
         if self.timer.completed() {
-            spawn_player_bullet(
+            player_bullet_spawn(
                 world,
-                current,
-                Sprite2D::new(self.bullet.clone()),
+                &self.bullet,
+                current.clone(),
                 MoveParams::move_linear(cmpx!(0., -2.)),
-            );
+            )
         }
     }
 }

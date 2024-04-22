@@ -1,48 +1,69 @@
-use std::sync::{Arc, Mutex};
+use std::{
+    cell::Cell,
+    sync::{Arc, Mutex},
+};
 
 use hecs::World;
+use macroquad::texture::Texture2D;
 
 use crate::{
-    assets::konst::{FOCUS, REMILIA_TEXTURE_1},
-    assets::AssetsManager,
-    attack_info::players::remi::RemiliaBasicAttack,
+    assets::Assets,
+    attack_info::players::RemiliaBasicAttack,
     cmpx,
     components::{
-        attack_info::{AttackInfo, AttackSpawnFn, PlayerAttack, SpellInfo},
-        circle_hitbox2d::CircleHitbox2D,
-        movement::MoveParams,
-        player::{Focus, Player},
-        sprite2d::Sprite2D,
-        transform2d::Transform2D,
+        AttackInfo, Bullet, Controllable, Hitbox, MoveParams, Player, PlayerAttackInfo, SpellInfo,
+        Sprite, Transform2D,
     },
     vec2,
 };
 
-pub fn lazy_spawn_player(assets_manager: &AssetsManager) -> Box<dyn Fn(&mut World)> {
-    let texture = assets_manager.textures.get(REMILIA_TEXTURE_1).unwrap();
-    let focus = assets_manager.textures.get(FOCUS).unwrap();
+pub type EntitySpawnAction = fn(&mut World, &Assets);
 
-    // TODO : Put this character specific somewhere
-    let remi_attack =
-        Arc::new(Mutex::new(RemiliaBasicAttack::new(assets_manager))) as AttackSpawnFn;
+pub fn player_spawn(world: &mut World, assets: &Assets) {
+    let remi = assets.textures.get("remi").unwrap().clone();
+    let transform = Transform2D::new(cmpx!(0.5, 0.8), vec2!(0.11), 0.);
+    let hitbox = Hitbox::new(0.01);
 
-    Box::new(move |world| {
-        let remi_attack = remi_attack.clone();
-        let player_attack = PlayerAttack {
-            normal: AttackInfo::new(Arc::clone(&remi_attack)),
-            focus: AttackInfo::new(Arc::clone(&remi_attack)),
-            spell: SpellInfo::new(1, "Gugnir".to_string(), 0., Arc::clone(&remi_attack)),
-        };
-        let focus = Focus(Sprite2D::new(focus.clone()));
+    let attack_info = PlayerAttackInfo {
+        focus: AttackInfo::new(Arc::new(Mutex::new(RemiliaBasicAttack::new(assets)))),
+        normal: AttackInfo::new(Arc::new(Mutex::new(RemiliaBasicAttack::new(assets)))),
+        spell: SpellInfo::new(
+            "Spear of Gugnir",
+            16.,
+            Arc::new(Mutex::new(RemiliaBasicAttack::new(assets))),
+        ),
+    };
 
-        world.spawn((
-            Player,
-            Transform2D::new(cmpx!(0.5), vec2!(0.1), 0.),
-            focus,
-            MoveParams::move_dampen(cmpx!(0.), 0.85),
-            Sprite2D::new(texture.clone()),
-            player_attack,
-            CircleHitbox2D::new(0.010),
-        ));
-    })
+    world.spawn((
+        Player,
+        Controllable,
+        MoveParams::move_dampen(cmpx!(0.), 0.85),
+        Sprite::new(remi),
+        attack_info,
+        transform,
+        hitbox,
+    ));
+}
+
+pub fn player_bullet_spawn(
+    world: &mut World,
+    sprite: &Texture2D,
+    transform: Transform2D,
+    movement: MoveParams,
+) {
+    let transform = Transform2D {
+        scale: vec2!(0.15, 0.15),
+        ..transform
+    };
+
+    let components = (
+        Player,
+        Bullet,
+        transform,
+        movement,
+        Sprite::new(sprite.clone()),
+        Hitbox::new(0.010),
+    );
+
+    world.spawn(components);
 }
