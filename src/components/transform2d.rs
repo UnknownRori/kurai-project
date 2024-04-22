@@ -29,21 +29,3 @@ impl Transform2D {
         &self.rotation
     }
 }
-
-impl AsRef<Complex<f32>> for Transform2D {
-    fn as_ref(&self) -> &Complex<f32> {
-        self.position()
-    }
-}
-
-impl AsRef<Vec2> for Transform2D {
-    fn as_ref(&self) -> &Vec2 {
-        self.scale()
-    }
-}
-
-impl AsRef<f32> for Transform2D {
-    fn as_ref(&self) -> &f32 {
-        self.rotation()
-    }
-}

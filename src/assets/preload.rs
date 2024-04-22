@@ -1,99 +1,103 @@
 use macroquad::{
     material::MaterialParams,
-    miniquad::{self, BlendFactor, BlendState, Equation, PipelineParams, UniformType},
+    miniquad::{
+        BlendFactor, BlendState, BlendValue, Equation, FilterMode, PipelineParams, UniformType,
+    },
 };
-
-use crate::assets::AssetsManager;
 
 use super::{
     konst::{
-        BLOOM_MATERIAL, FAIRY_1, FOCUS, GENERIC_SHOOT_SOUND, GRAZE, HIT_MATERIAL, LIGHTMAP, PICHUN,
-        POST_PROCESSING, RED_BULLET, REMILIA_TEXTURE_1, REMI_BULLET_1, STAGE_1_BG_SHADER,
-        STAGE_1_GROUND, SUPER_PERLIN, TEXTURE_HUD,
+        BLOOM, BULLET_RED, BULLET_REMI, FAIRY, FOCUS, HUD, LIGHTMAP, PERLIN, POINT,
+        POST_PROCESSING, POWER, REMI, STAGE1_BG_SHADERS, STAGE1_GROUND,
     },
-    preload_sfx, preload_texture,
+    Assets,
 };
 
-// TODO : Make this lazy load at specific stage only if the texture only used on that stage
-pub async fn preload(assets_manager: &mut AssetsManager) {
-    preload_texture(assets_manager, TEXTURE_HUD, "./resources/ui/hud.png").await;
-    preload_texture(
-        assets_manager,
-        FOCUS,
-        "./resources/textures/parts/focus.png",
-    )
-    .await;
-    preload_texture(
-        assets_manager,
-        REMILIA_TEXTURE_1,
-        "./resources/textures/remilia-scarlet/1.png",
-    )
-    .await;
-    preload_texture(
-        assets_manager,
-        FAIRY_1,
-        "./resources/textures/fairy/fairy0001.png",
-    )
-    .await;
-
-    preload_texture(
-        assets_manager,
-        RED_BULLET,
-        "./resources/textures/projectiles/generic-bullet-red.png",
-    )
-    .await;
-
-    preload_texture(
-        assets_manager,
-        REMI_BULLET_1,
-        "./resources/textures/projectiles/remi-bullet.png",
-    )
-    .await;
-
-    preload_sfx(
-        assets_manager,
-        GENERIC_SHOOT_SOUND,
-        "./resources/sfx/generic-shoot.ogg",
-    )
-    .await;
-    preload_sfx(assets_manager, PICHUN, "./resources/sfx/death.ogg").await;
-    preload_sfx(assets_manager, GRAZE, "./resources/sfx/graze.ogg").await;
-
-    preload_texture(
-        assets_manager,
-        STAGE_1_GROUND,
-        "./resources/background/stage1/ground.png",
-    )
-    .await;
-
-    preload_texture(
-        assets_manager,
-        SUPER_PERLIN,
-        "./resources/noise/super-perlin.png",
-    )
-    .await;
-
-    assets_manager
-        .shaders
-        .register(
-            HIT_MATERIAL,
-            "./resources/shaders/hit.vert.glsl",
-            "./resources/shaders/hit.frag.glsl",
-            MaterialParams {
-                uniforms: vec![
-                    (String::from("iTime"), UniformType::Float1),
-                    (String::from("iResolution"), UniformType::Float2),
-                ],
-                ..Default::default()
-            },
+pub async fn preload(assets: &mut Assets) {
+    assets
+        .load_texture(
+            "./resources/textures/remilia-scarlet/1.png",
+            REMI,
+            Some(FilterMode::Linear),
+        )
+        .await
+        .unwrap();
+    assets
+        .load_texture("./resources/ui/hud.png", HUD, Some(FilterMode::Linear))
+        .await
+        .unwrap();
+    assets
+        .load_texture(
+            "./resources/textures/parts/focus.png",
+            FOCUS,
+            Some(FilterMode::Linear),
         )
         .await
         .unwrap();
 
-    assets_manager
-        .shaders
-        .register(
-            STAGE_1_BG_SHADER,
+    assets
+        .load_texture(
+            "./resources/textures/items/point.png",
+            POINT,
+            Some(FilterMode::Linear),
+        )
+        .await
+        .unwrap();
+    assets
+        .load_texture(
+            "./resources/textures/items/power.png",
+            POWER,
+            Some(FilterMode::Linear),
+        )
+        .await
+        .unwrap();
+
+    assets
+        .load_texture(
+            "./resources/textures/fairy/fairy0001.png",
+            FAIRY,
+            Some(FilterMode::Linear),
+        )
+        .await
+        .unwrap();
+    assets
+        .load_texture(
+            "./resources/textures/projectiles/generic-bullet-red.png",
+            BULLET_RED,
+            Some(FilterMode::Linear),
+        )
+        .await
+        .unwrap();
+    assets
+        .load_texture(
+            "./resources/textures/projectiles/remi-bullet.png",
+            BULLET_REMI,
+            Some(FilterMode::Linear),
+        )
+        .await
+        .unwrap();
+
+    assets
+        .load_texture(
+            "./resources/background/stage1/ground.png",
+            STAGE1_GROUND,
+            Some(FilterMode::Linear),
+        )
+        .await
+        .unwrap();
+
+    assets
+        .load_texture(
+            "./resources/noise/super-perlin.png",
+            PERLIN,
+            Some(FilterMode::Linear),
+        )
+        .await
+        .unwrap();
+
+    assets
+        .load_material(
+            STAGE1_BG_SHADERS,
             "./resources/shaders/stage1.vert.glsl",
             "./resources/shaders/stage1.frag.glsl",
             MaterialParams {
@@ -111,9 +115,8 @@ pub async fn preload(assets_manager: &mut AssetsManager) {
         .await
         .unwrap();
 
-    assets_manager
-        .shaders
-        .register(
+    assets
+        .load_material(
             LIGHTMAP,
             "./resources/shaders/lightmap.vert.glsl",
             "./resources/shaders/lightmap.frag.glsl",
@@ -122,8 +125,8 @@ pub async fn preload(assets_manager: &mut AssetsManager) {
                 pipeline_params: PipelineParams {
                     color_blend: Some(BlendState::new(
                         Equation::Add,
-                        BlendFactor::Value(miniquad::BlendValue::SourceAlpha),
-                        BlendFactor::OneMinusValue(miniquad::BlendValue::SourceAlpha),
+                        BlendFactor::Value(BlendValue::SourceAlpha),
+                        BlendFactor::OneMinusValue(BlendValue::SourceAlpha),
                     )),
                     alpha_blend: Some(BlendState::new(
                         Equation::Add,
@@ -138,10 +141,9 @@ pub async fn preload(assets_manager: &mut AssetsManager) {
         .await
         .unwrap();
 
-    assets_manager
-        .shaders
-        .register(
-            BLOOM_MATERIAL,
+    assets
+        .load_material(
+            BLOOM,
             "./resources/shaders/bloom.vert.glsl",
             "./resources/shaders/bloom.frag.glsl",
             MaterialParams {
@@ -152,8 +154,8 @@ pub async fn preload(assets_manager: &mut AssetsManager) {
                 pipeline_params: PipelineParams {
                     color_blend: Some(BlendState::new(
                         Equation::Add,
-                        BlendFactor::Value(miniquad::BlendValue::SourceAlpha),
-                        BlendFactor::OneMinusValue(miniquad::BlendValue::SourceAlpha),
+                        BlendFactor::Value(BlendValue::SourceAlpha),
+                        BlendFactor::OneMinusValue(BlendValue::SourceAlpha),
                     )),
                     alpha_blend: Some(BlendState::new(
                         Equation::Add,
@@ -168,9 +170,8 @@ pub async fn preload(assets_manager: &mut AssetsManager) {
         .await
         .unwrap();
 
-    assets_manager
-        .shaders
-        .register(
+    assets
+        .load_material(
             POST_PROCESSING,
             "./resources/shaders/post_processing.vert.glsl",
             "./resources/shaders/post_processing.frag.glsl",
@@ -183,8 +184,8 @@ pub async fn preload(assets_manager: &mut AssetsManager) {
                 pipeline_params: PipelineParams {
                     color_blend: Some(BlendState::new(
                         Equation::Add,
-                        BlendFactor::Value(miniquad::BlendValue::SourceAlpha),
-                        BlendFactor::OneMinusValue(miniquad::BlendValue::SourceAlpha),
+                        BlendFactor::Value(BlendValue::SourceAlpha),
+                        BlendFactor::OneMinusValue(BlendValue::SourceAlpha),
                     )),
                     alpha_blend: Some(BlendState::new(
                         Equation::Add,

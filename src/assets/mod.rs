@@ -1,20 +1,87 @@
-use macroquad::miniquad::FilterMode;
-
 pub mod konst;
-pub mod preload;
+mod preload;
 
-mod assets_manager;
+pub use preload::preload;
 
-pub use assets_manager::AssetsManager;
+use std::{collections::HashMap, error::Error};
 
-pub async fn preload_texture(assets_manager: &mut AssetsManager, name: &str, path: &str) {
-    assets_manager
-        .textures
-        .register(name, path, Some(FilterMode::Nearest))
-        .await
-        .unwrap();
+use macroquad::{
+    audio::{load_sound, Sound},
+    prelude::*,
+};
+
+#[derive(Debug, Clone)]
+pub struct Assets {
+    pub textures: HashMap<String, Texture2D>,
+    pub materials: HashMap<String, Material>,
+    pub audio: HashMap<String, Sound>,
+    pub font: Font,
 }
 
-pub async fn preload_sfx(assets_manager: &mut AssetsManager, name: &str, path: &str) {
-    assets_manager.sfx.register(name, path).await.unwrap();
+impl Assets {
+    pub async fn new() -> Self {
+        let mut font = load_ttf_font("./resources/fonts/PressStart2P-Regular.ttf")
+            .await
+            .unwrap();
+
+        font.set_filter(FilterMode::Nearest);
+
+        Self {
+            textures: Default::default(),
+            materials: Default::default(),
+            audio: Default::default(),
+            font,
+        }
+    }
+
+    pub async fn load_audio(&mut self, path: &str, name: &str) -> Result<(), Box<dyn Error>> {
+        if self.audio.contains_key(name) {
+            return Ok(());
+        }
+
+        let sound = load_sound(path).await?;
+        self.audio.insert(name.to_owned(), sound);
+        Ok(())
+    }
+
+    pub async fn load_texture(
+        &mut self,
+        path: &str,
+        name: &str,
+        filter: Option<FilterMode>,
+    ) -> Result<(), Box<dyn Error>> {
+        if self.textures.contains_key(name) {
+            return Ok(());
+        }
+
+        let texture = load_texture(path).await?;
+        texture.set_filter(filter.unwrap_or(FilterMode::Nearest));
+        self.textures.insert(name.to_owned(), texture);
+        Ok(())
+    }
+
+    pub async fn load_material(
+        &mut self,
+        name: &str,
+        vertex_path: &str,
+        fragment_path: &str,
+        params: MaterialParams,
+    ) -> Result<(), Box<dyn Error>> {
+        if self.materials.contains_key(name) {
+            return Ok(());
+        }
+
+        let vertex = String::from_utf8(load_file(vertex_path).await?)?;
+        let fragment = String::from_utf8(load_file(fragment_path).await?)?;
+        let material = load_material(
+            ShaderSource::Glsl {
+                vertex: &vertex,
+                fragment: &fragment,
+            },
+            params,
+        )?;
+
+        self.materials.insert(name.to_owned(), material);
+        Ok(())
+    }
 }

@@ -1,22 +1,16 @@
 use std::f32::consts::PI;
 
+use hecs::World;
 use macroquad::prelude::*;
 use num_complex::Complex;
 
 use crate::{
-    assets::konst::RED_BULLET,
-    assets::AssetsManager,
+    assets::konst::BULLET_RED,
+    assets::Assets,
     cmpx,
     components::{
-        attack_info::AttackSpawner,
-        bullet::Bullet,
-        circle_hitbox2d::CircleHitbox2D,
-        enemy::Enemy,
-        movement::MoveParams,
-        sprite2d::Sprite2D,
-        transform2d::Transform2D,
-        waypoint::{Waypoint, WaypointFactor},
-        waypoints::Waypoints,
+        AttackSpawner, Bullet, Enemy, Hitbox, MoveParams, Sprite, Transform2D, Waypoint,
+        WaypointFactor, Waypoints,
     },
     math::ComplexExt,
     time::Timer,
@@ -35,8 +29,8 @@ pub struct FairySpinDelay {
 }
 
 impl FairySpinDelay {
-    pub fn new(assets: &AssetsManager) -> Self {
-        let bullet = assets.textures.get(RED_BULLET).unwrap();
+    pub fn new(assets: &Assets) -> Self {
+        let bullet = assets.textures.get(BULLET_RED).unwrap().clone();
         let bullet_count = 20;
         let current_bullet = 0;
         let angular_seperation = 2. * PI / (bullet_count as f32);
@@ -56,13 +50,11 @@ impl FairySpinDelay {
 }
 
 impl AttackSpawner for FairySpinDelay {
-    fn spawn(
-        &mut self,
-        world: &mut hecs::World,
-        current: &Transform2D,
-        player: &Transform2D,
-        _delta: f32,
-    ) {
+    fn spawn(&mut self, world: &mut World, current: &Transform2D, player: Option<&Transform2D>) {
+        if player.is_none() {
+            return;
+        }
+
         if self.current_bullet == 0 {
             self.timer.update();
             if !self.timer.completed() {
@@ -70,14 +62,14 @@ impl AttackSpawner for FairySpinDelay {
             }
 
             self.last_position = Some(*current.position());
-            self.last_player = Some(*player.position());
+            self.last_player = Some(*player.unwrap().position());
         }
 
         self.current_bullet = (self.current_bullet + 1) % self.bullet_count;
         let dir = self
             .last_position
             .unwrap_or(*current.position())
-            .dir(&self.last_player.unwrap_or(*player.position()));
+            .dir(&self.last_player.unwrap_or(*player.unwrap().position()));
 
         const BULLET_SPEED: f32 = 0.5;
         let angle = self.current_bullet as f32 * self.angular_seperation;
@@ -94,8 +86,8 @@ impl AttackSpawner for FairySpinDelay {
             Enemy,
             Bullet,
             transform,
-            CircleHitbox2D::new(0.010),
-            Sprite2D::new(self.bullet.clone()),
+            Hitbox::new(0.010),
+            Sprite::new(self.bullet.clone()),
             MoveParams::move_asymptotic_halflife(new_dir, new_dir, 1.),
             Waypoints::new(vec![Waypoint::new(
                 3.,

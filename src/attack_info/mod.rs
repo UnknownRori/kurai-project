@@ -1,3 +1,3 @@
 pub mod boss;
-pub mod nonspells;
+pub mod non_spells;
 pub mod players;

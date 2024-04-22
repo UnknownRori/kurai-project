@@ -5,20 +5,20 @@ use crate::math::ToVec2;
 use super::transform2d::Transform2D;
 
 #[derive(Debug, Clone, Copy)]
-pub struct CircleHitbox2D {
+pub struct Hitbox {
     pub radius: f32,
 }
 
-impl CircleHitbox2D {
+impl Hitbox {
     pub fn new(radius: f32) -> Self {
         Self { radius }
     }
 
-    pub fn is_intersect_with_circle_hitbox(
+    pub fn is_intersect(
         &self,
         current_pos: &Transform2D,
         target_pos: &Transform2D,
-        target_hitbox: &CircleHitbox2D,
+        target_hitbox: &Self,
     ) -> bool {
         let distance_squared = vec2(current_pos.position().re, current_pos.position().im)
             .distance_squared(vec2(target_pos.position().re, target_pos.position().im));
@@ -29,7 +29,7 @@ impl CircleHitbox2D {
         &self,
         current_pos: &Transform2D,
         target_pos: &Transform2D,
-        target_hitbox: &CircleHitbox2D,
+        target_hitbox: &Self,
     ) -> bool {
         let distance_squared = current_pos
             .position()

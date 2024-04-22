@@ -1,7 +1,6 @@
-use kurai_project::{game_window, App};
+use kurai_project::{kurai_window, Game};
 
-#[macroquad::main(game_window)]
+#[macroquad::main(kurai_window)]
 async fn main() {
-    let mut app = App::new().await;
-    app.game_loop().await;
+    Game::new().await.game_loop().await;
 }

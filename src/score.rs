@@ -2,9 +2,9 @@ use crate::difficulty::Difficulty;
 
 pub struct ScoreData {
     pub graze: i32,
-    pub score: i32,
+    pub score: u64,
     pub power: f32,
-    pub value: i32,
+    pub value: u64,
     pub life: i8,
     pub spell: i8,
     pub difficulty: Difficulty,

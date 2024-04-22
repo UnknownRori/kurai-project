@@ -1,32 +1,24 @@
-// PART
+// INFO : TEXTURES
+pub const HUD: &str = "hud";
+pub const REMI: &str = "remi";
+pub const FAIRY: &str = "fairy";
 pub const FOCUS: &str = "focus";
-pub const TEXTURE_HUD: &str = "hud";
 
-// NOISE
-pub const SUPER_PERLIN: &str = "spr-perlin";
+pub const POINT: &str = "point";
+pub const POWER: &str = "power";
 
-// BULLET
-pub const RED_BULLET: &str = "red-bullet";
-pub const REMI_BULLET_1: &str = "remi-blt-1";
+pub const BULLET_RED: &str = "blt-red";
+pub const BULLET_REMI: &str = "blt-remi";
 
-// ENTITY
-pub const FAIRY_1: &str = "fairy1";
+pub const STAGE1_GROUND: &str = "stg1-ground";
 
-pub const REMILIA_TEXTURE_1: &str = "remi1";
+pub const PERLIN: &str = "perlin";
 
-// SOUND
-pub const GENERIC_SHOOT_SOUND: &str = "generic-snd";
-pub const PLAYER_SHOOT_SOUND: &str = "plr-shoot-snd";
-pub const PICHUN: &str = "pichun";
-pub const GRAZE: &str = "graze";
+// INFO : SOUND
 
-// MATERIAL
-pub const BLOOM_MATERIAL: &str = "bloom";
+// INFO : SHADERS
 pub const LIGHTMAP: &str = "lightmap";
+pub const BLOOM: &str = "bloom";
 pub const POST_PROCESSING: &str = "post";
-pub const HIT_MATERIAL: &str = "hit";
 
-// Stage Resource
-// Stage 1
-pub const STAGE_1_GROUND: &str = "stg1-grnd";
-pub const STAGE_1_BG_SHADER: &str = "stg1-bg";
+pub const STAGE1_BG_SHADERS: &str = "stg1-bg";

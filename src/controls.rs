@@ -1,27 +1,8 @@
-use std::{collections::HashMap, hash::Hash};
+use std::collections::HashMap;
 
-use macroquad::miniquad::KeyCode;
-use macroquad::{
-    input::{is_key_down, is_key_pressed},
-    miniquad::KeyMods,
-};
+use macroquad::{miniquad::KeyMods, prelude::*};
 
-#[derive(Hash, Eq, PartialEq)]
-pub enum Action {
-    Attack,
-    Spell,
-    Focus,
-
-    Up,
-    Right,
-    Left,
-    Down,
-
-    Escape,
-    Accept,
-}
-
-pub fn init_controls() -> Controls<Action> {
+pub fn init_controls() -> Controls {
     let mut controls = Controls::new();
 
     controls.add(Action::Attack, Combination::Single(KeyCode::Z));
@@ -39,28 +20,38 @@ pub fn init_controls() -> Controls<Action> {
     controls
 }
 
+#[derive(Hash, Eq, PartialEq)]
+pub enum Action {
+    Attack,
+    Spell,
+    Focus,
+
+    Up,
+    Right,
+    Left,
+    Down,
+
+    Escape,
+    Accept,
+}
+
 pub enum Combination {
     Single(KeyCode),
     Double(KeyCode, KeyMods),
 }
 
-pub struct Controls<T>(HashMap<T, Combination>)
-where
-    T: Hash + Eq + PartialEq;
+pub struct Controls(HashMap<Action, Combination>);
 
-impl<T> Controls<T>
-where
-    T: Hash + Eq + PartialEq,
-{
+impl Controls {
     pub fn new() -> Self {
         Self(HashMap::new())
     }
 
-    pub fn add(&mut self, action: T, combination: Combination) {
+    pub fn add(&mut self, action: Action, combination: Combination) {
         self.0.insert(action, combination);
     }
 
-    pub fn is_pressed(&self, action: T) -> bool {
+    pub fn is_pressed(&self, action: Action) -> bool {
         self.0.get(&action).map_or(false, |a| match a {
             Combination::Single(key) => is_key_pressed(*key),
             Combination::Double(key, mods) => {
@@ -103,7 +94,7 @@ where
         })
     }
 
-    pub fn is_key_down(&self, action: T) -> bool {
+    pub fn is_down(&self, action: Action) -> bool {
         self.0.get(&action).map_or(false, |a| match a {
             Combination::Single(key) => is_key_down(*key),
             Combination::Double(key, mods) => {

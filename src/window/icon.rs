@@ -1,12 +1,12 @@
-use macroquad::{miniquad::conf::Icon, texture::Image};
+use macroquad::{miniquad::conf::Icon as MiniquadIcon, texture::Image};
 
-pub struct KuraiIcon {
+pub struct Icon {
     image16: Image,
     image32: Image,
     image64: Image,
 }
 
-impl KuraiIcon {
+impl Icon {
     pub fn new(image16: Image, image32: Image, image64: Image) -> Self {
         Self {
             image16,
@@ -15,7 +15,7 @@ impl KuraiIcon {
         }
     }
 
-    pub fn icon(self) -> Icon {
+    pub fn icon(self) -> MiniquadIcon {
         let mut small: [u8; 1024] = [0; 1024];
         let mut medium: [u8; 4096] = [0; 4096];
         let mut big: [u8; 16384] = [0; 16384];
@@ -24,7 +24,7 @@ impl KuraiIcon {
         populate_array(&self.image32, &mut medium);
         populate_array(&self.image64, &mut big);
 
-        Icon { small, medium, big }
+        MiniquadIcon { small, medium, big }
     }
 }
 

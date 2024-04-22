@@ -1,1 +1,3 @@
-pub mod remi;
+mod remi;
+
+pub use remi::RemiliaBasicAttack;
